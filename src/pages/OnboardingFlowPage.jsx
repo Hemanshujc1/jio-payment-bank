@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import HorizontalLinearAlternativeLabelStepper from "../components/HorizontalLinearAlternativeLabelStepper";
@@ -21,6 +21,14 @@ const OnboardingFlowPage = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const next = () => setCurrentStep((s) => Math.min(s + 1, STEPS.length));
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [currentStep]);
+
+  const [isOtpVerified, setIsOtpVerified] = useState(false);
+  const [showOtp, setShowOtp] = useState(false);
+  const [mobileNumber, setMobileNumber] = useState("");
+
   const methods = useForm({
     resolver: zodResolver(onboardingSchema),
     mode: "onChange",
@@ -34,6 +42,7 @@ const OnboardingFlowPage = () => {
         agreeSweep: false,
         pan: "",
         aadhaar: "",
+        fatcaDeclared: false,
       },
       applicant: {
         firstName: "",
@@ -81,7 +90,17 @@ const OnboardingFlowPage = () => {
       />
 
       <FormProvider {...methods}>
-        {currentStep === 1 && <OnboardingTab onNext={next} />}
+        {currentStep === 1 && (
+          <OnboardingTab
+            onNext={next}
+            isOtpVerified={isOtpVerified}
+            setIsOtpVerified={setIsOtpVerified}
+            showOtp={showOtp}
+            setShowOtp={setShowOtp}
+            mobileNumber={mobileNumber}
+            setMobileNumber={setMobileNumber}
+          />
+        )}
         {currentStep === 2 && <AadhaarDetailsTab onNext={next} />}
         {currentStep === 3 && <FamilyFinancialDetailsTab onNext={next} />}
         {currentStep === 4 && <NomineeDetailsTab onNext={next} />}

@@ -132,7 +132,10 @@ const AadhaarDetailsTab = ({ onNext }) => {
             </div>
             <div className="flex flex-col gap-1">
               <span className="font-semibold text-[14px]">Date of Birth<span className="text-red-500">*</span>: </span>
-              <CustomDatePicker name="applicant.dob" maxDate={new Date()} />
+              <CustomDatePicker 
+                name="applicant.dob" 
+                maxDate={new Date(new Date().setFullYear(new Date().getFullYear() - 18))} 
+              />
             </div>
 
             <div className="flex flex-col gap-1">

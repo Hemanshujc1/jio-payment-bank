@@ -15,7 +15,7 @@ const ReviewFamilyDetails = ({ onEdit }) => {
     spouseName: { firstName: "Anjali", middleName: "Deepak", lastName: "Singh" }
   };
 
-  const displayFamily = family?.fatherName?.firstName ? family : dummyFamily;
+  const displayFamily = dummyFamily;
 
   const NameRow = ({ label, person }) => (
     <div className="flex md:items-center gap-2">

@@ -70,10 +70,8 @@ export const validateAgeDifference = (applicantDob, nomineeDob, relationship) =>
   }
   
   if (relationship === 'Son' || relationship === 'Daughter') {
-    // Nominee (Child) must be at least 18 years younger than Applicant
-    // So Applicant DOB < Nominee DOB - 18
-    // differenceInYears(nomDate, appDate) should be >= 18
-    return differenceInYears(nomDate, appDate) >= 18;
+    // Parent must be older than child
+    return ageDiff <= 0; // Negative or zero because Applicant DOB < Nominee DOB
   }
 
   if (relationship === 'Spouse' || relationship === 'Husband' || relationship === 'Wife') {

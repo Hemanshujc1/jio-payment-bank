@@ -46,7 +46,7 @@ const personSchema = z.object({
   lastName: nameField(true),
 });
 
-export const onboardingSchema = z.object({
+export const  onboardingSchema = z.object({
   onboarding: z.object({
     productType: z.enum(["savings", "current"]).default("savings"),
     aepsConsent: z.enum(["yes", "no"]).default("yes"),
@@ -54,15 +54,28 @@ export const onboardingSchema = z.object({
     agreeTerms: z.boolean().refine(val => val === true, "Must agree to terms and conditions"),
     agreeAeps: z.boolean().refine(val => val === true, "Must agree to AEPS terms"),
     agreeSweep: z.boolean().refine(val => val === true, "Must agree to sweep terms"),
-    pan: z.string().regex(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/, "Enter Valid PAN Number").optional().or(z.literal("")),
-    aadhaar: z.string().length(12, "Aadhaar must be 12 digits").regex(/^\d+$/, "Aadhaar must be numeric").optional().or(z.literal("")),
+    pan: z.string().min(1, "PAN Number is required").regex(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/, "Enter Valid PAN Number"),
+    aadhaar: z.string().min(1, "Aadhaar Number is required").length(12, "Aadhaar must be 12 digits").regex(/^\d+$/, "Aadhaar must be numeric"),
+    fatcaDeclared: z.boolean().refine(val => val === true, "Must declare FATCA status"),
   }),
   applicant: z.object({
     firstName: nameField(),
     middleName: optionalNameField,
     lastName: nameField(true),
     gender: z.enum(["Male", "Female"]),
-    dob: z.string().refine(val => !!parseDate(val), "Enter Valid Date of Birth"),
+    dob: z.string()
+      .refine(val => {
+        const date = parseDate(val);
+        if (!date) return false;
+        const year = date.getFullYear();
+        return year >= 1900 && year <= new Date().getFullYear();
+      }, "Enter a valid Date")
+      .refine(val => {
+        const date = parseDate(val);
+        if (!date) return false;
+        const age = differenceInYears(new Date(), date);
+        return age >= 18;
+      }, "Applicant must be at least 18 years old"),
     maritalStatus: z.enum(["Married", "Unmarried", "Single"]),
     email: z.string().email("Enter Valid Email ID").optional().or(z.literal("")),
     communicationAddress: addressSchema,
@@ -82,7 +95,13 @@ export const onboardingSchema = z.object({
     firstName: nameField().optional(),
     lastName: nameField(true).optional(),
     middleName: optionalNameField,
-    dob: z.string().optional(),
+    dob: z.string().optional().refine(val => {
+      if (!val) return true;
+      const date = parseDate(val);
+      if (!date) return false;
+      const year = date.getFullYear();
+      return year >= 1900 && year <= new Date().getFullYear();
+    }, "Enter a valid Date"),
     address: z.string().optional(),
     addressDetails: addressSchema.optional(),
   }),
@@ -91,7 +110,13 @@ export const onboardingSchema = z.object({
     lastName: optionalLastNameField,
     middleName: optionalNameField,
     relationship: z.string().optional(),
-    dob: z.string().optional(),
+    dob: z.string().optional().refine(val => {
+      if (!val) return true;
+      const date = parseDate(val);
+      if (!date) return false;
+      const year = date.getFullYear();
+      return year >= 1900 && year <= new Date().getFullYear();
+    }, "Enter a valid Date"),
     address: z.string().optional(),
     addressDetails: addressSchema.optional(),
   }),
@@ -99,7 +124,6 @@ export const onboardingSchema = z.object({
     occupation: z.string().min(1, "Occupation is required"),
     sourceOfIncome: z.string().min(1, "Source of income is required"),
     annualIncome: z.string().min(1, "Annual income is required"),
-    fatcaDeclared: z.boolean().refine(val => val === true, "Must declare FATCA status"),
   }),
 }).superRefine((data, ctx) => {
   const applicantFullName = `${data.applicant.firstName} ${data.applicant.middleName || ""} ${data.applicant.lastName}`.replace(/\s+/g, ' ').trim();
@@ -135,6 +159,7 @@ export const onboardingSchema = z.object({
   }
 
   // Nominee/Guardian checks against core family
+  /* Relaxing name duplication constraints as per user request
   if (data.nominee.provide === "Yes") {
     const nominee = data.nominee;
     const nomineeFullName = `${nominee.firstName || ""} ${nominee.middleName || ""} ${nominee.lastName || ""}`.replace(/\s+/g, ' ').trim();
@@ -166,6 +191,7 @@ export const onboardingSchema = z.object({
       }
     }
   }
+  */
 
   // Explicit Spouse Validation when Married
   if (data.applicant.maritalStatus === 'Married') {
@@ -281,7 +307,7 @@ export const onboardingSchema = z.object({
       if (!isValidAgeDiff) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: "Enter Valid Date of Birth",
+          message: "Please enter a valid Date of Birth",
           path: ["nominee", "dob"],
         });
       }

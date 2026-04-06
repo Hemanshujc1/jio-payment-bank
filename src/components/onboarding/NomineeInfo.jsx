@@ -143,7 +143,7 @@ const NomineeInfo = () => {
             Date Of Birth<span className="text-red-500">*</span>:
           </span>
           <div className="grow relative z-30">
-            <CustomDatePicker name="nominee.dob" maxDate={new Date()} />
+            <CustomDatePicker name="nominee.dob" maxDate={new Date()} showAge={true} />
           </div>
         </div>
 

@@ -18,7 +18,6 @@ const FamilyFinancialDetailsTab = ({ onNext }) => {
       "financial.occupation",
       "financial.sourceOfIncome",
       "financial.annualIncome",
-      "financial.fatcaDeclared",
     ];
 
     if (maritalStatus === "Married") {

@@ -78,23 +78,7 @@ const FinancialDetails = () => {
 
       </div>
 
-      {/* FATCA Declaration */}
-      <div className="flex flex-col gap-2 mt-12 items-center justify-center w-full max-w-4xl mx-auto">
-        <div className="flex items-center align-middle gap-4 justify-center w-full">
-          <span className="font-semibold whitespace-nowrap pt-0.5">FATCA Declaration:</span>
-          <div className="flex items-start gap-3">
-            <input 
-              type="checkbox" 
-              {...register("financial.fatcaDeclared")}
-              className={`w-5.5 h-5.5 border-2 ${errors.financial?.fatcaDeclared ? 'border-red-500' : 'border-[#D1A054]'} accent-black cursor-pointer rounded-sm shrink-0`}
-            />
-            <span className="text-[14px] text-gray-800 leading-snug">
-              I hereby declare that i am Indian Citizen, Indian Tax resident and not a US Citizen / Green Card Holder.
-            </span>
-          </div>
-        </div>
-        {errors.financial?.fatcaDeclared && <span className="text-red-500 text-[12px]">{errors.financial.fatcaDeclared.message}</span>}
-      </div>
+
       
     </section>
   );

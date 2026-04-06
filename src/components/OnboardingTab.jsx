@@ -8,7 +8,15 @@ import IdentityInputs from "./onboarding/IdentityInputs";
 import ConsentsSection from "./onboarding/ConsentsSection";
 import LanguageSelection from "./onboarding/LanguageSelection";
 
-const OnboardingTab = ({ onNext }) => {
+const OnboardingTab = ({
+  onNext,
+  isOtpVerified,
+  setIsOtpVerified,
+  showOtp,
+  setShowOtp,
+  mobileNumber,
+  setMobileNumber,
+}) => {
   const {
     register,
     trigger,
@@ -23,14 +31,12 @@ const OnboardingTab = ({ onNext }) => {
   const agreeTerms = watch("onboarding.agreeTerms");
   const agreeAeps = watch("onboarding.agreeAeps");
   const agreeSweep = watch("onboarding.agreeSweep");
+  const fatcaDeclared = watch("onboarding.fatcaDeclared");
   const pan = watch("onboarding.pan") || "";
   const aadhaar = watch("onboarding.aadhaar") || "";
 
   const [showPan, setShowPan] = useState(false);
   const [showAadhaar, setShowAadhaar] = useState(false);
-  const [showOtp, setShowOtp] = useState(false);
-  const [mobileNumber, setMobileNumber] = useState("");
-  const [isOtpVerified, setIsOtpVerified] = useState(false);
 
   const handleGenerateOtp = () => {
     if (mobileNumber.length >= 10) {
@@ -42,27 +48,50 @@ const OnboardingTab = ({ onNext }) => {
 
   const handleAadhaarChange = (e) => {
     const val = e.target.value;
+    let chars = "";
+
     if (showAadhaar) {
-      const chars = val.replace(/[^0-9]/g, "");
-      setValue("onboarding.aadhaar", chars.slice(0, 12), { shouldValidate: true });
+      chars = val.replace(/[^0-9]/g, "");
     } else {
-      if (val.length < aadhaar.length) {
-        setValue("onboarding.aadhaar", aadhaar.slice(0, val.length), { shouldValidate: true });
+      // Logic for masked input: detect added/removed digits
+      const maskedVal = formatAadhaar(aadhaar).replace(/[0-9]/g, "X");
+      if (val.length > maskedVal.length) {
+        // User added a character (likely at the end)
+        const added = val.slice(-1);
+        if (/[0-9]/.test(added)) {
+          chars = (aadhaar + added).slice(0, 12);
+        } else {
+          chars = aadhaar;
+        }
+      } else if (val.length < maskedVal.length) {
+        // User deleted a character
+        chars = aadhaar.slice(0, -1);
       } else {
-        const added = val.slice(aadhaar.length);
-        const addedChars = added.replace(/[^0-9]/g, "");
-        setValue("onboarding.aadhaar", (aadhaar + addedChars).slice(0, 12), { shouldValidate: true });
+        chars = aadhaar;
       }
     }
+    setValue("onboarding.aadhaar", chars, { shouldValidate: false });
   };
 
   const handlePanChange = (e) => {
     const val = e.target.value.toUpperCase();
     const chars = val.replace(/[^A-Z0-9]/g, "");
-    setValue("onboarding.pan", chars.slice(0, 10), { shouldValidate: true });
+    setValue("onboarding.pan", chars.slice(0, 10), { shouldValidate: false });
   };
 
-  const displayAadhaar = showAadhaar ? aadhaar : (aadhaar ? aadhaar.replace(/./g, "X") : "");
+  const handleBlur = (field) => {
+    trigger(`onboarding.${field}`);
+  };
+
+  const formatAadhaar = (val) => {
+    if (!val) return "";
+    const parts = val.match(/.{1,4}/g);
+    return parts ? parts.join("-") : val;
+  };
+
+  const displayAadhaar = showAadhaar
+    ? formatAadhaar(aadhaar)
+    : (aadhaar ? formatAadhaar(aadhaar).replace(/[0-9]/g, "X") : "");
 
   const languages = [
     "English",
@@ -110,8 +139,10 @@ const OnboardingTab = ({ onNext }) => {
         aadhaar={aadhaar}
         handleAadhaarChange={handleAadhaarChange}
         handlePanChange={handlePanChange}
+        handleBlur={handleBlur}
         displayAadhaar={displayAadhaar}
         pan={pan}
+        errors={errors.onboarding}
       />
 
       <ConsentsSection
@@ -123,6 +154,8 @@ const OnboardingTab = ({ onNext }) => {
         setAgreeAeps={(val) => setValue("onboarding.agreeAeps", val)}
         agreeSweep={agreeSweep}
         setAgreeSweep={(val) => setValue("onboarding.agreeSweep", val)}
+        fatcaDeclared={fatcaDeclared}
+        setFatcaDeclared={(val) => setValue("onboarding.fatcaDeclared", val)}
         errors={errors.onboarding}
       />
 

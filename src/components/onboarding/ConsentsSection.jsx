@@ -10,13 +10,18 @@ const ConsentsSection = ({
   setAgreeAeps,
   agreeSweep,
   setAgreeSweep,
+  fatcaDeclared,
+  setFatcaDeclared,
   errors,
 }) => {
   return (
     <>
       {/* T&C Checkbox */}
       <div className="flex flex-col gap-1 mb-8">
-        <label className="flex items-center gap-3 cursor-pointer w-fit">
+        <div 
+          className="flex items-center gap-3 cursor-pointer w-fit"
+          onClick={() => setAgreeTerms(!agreeTerms)}
+        >
           <div className={`w-5 h-5 border-2 ${errors?.agreeTerms ? 'border-red-500' : 'border-primary'} flex items-center justify-center shrink-0`}>
             {agreeTerms && <IoMdCheckmark />}
           </div>
@@ -28,9 +33,9 @@ const ConsentsSection = ({
             type="checkbox"
             className="hidden"
             checked={agreeTerms}
-            onChange={(e) => setAgreeTerms(e.target.checked)}
+            readOnly
           />
-        </label>
+        </div>
         {errors?.agreeTerms && <span className="text-red-500 text-[12px] font-medium ml-8">{errors.agreeTerms.message}</span>}
       </div>
 
@@ -66,7 +71,10 @@ const ConsentsSection = ({
       {/* Long Checkboxes */}
       <div className="flex flex-col gap-2 mb-5">
         <div className="flex items-start gap-4">
-          <label className="cursor-pointer shrink-0 mt-0.5">
+          <div 
+            className="cursor-pointer shrink-0 mt-0.5"
+            onClick={() => setAgreeAeps(!agreeAeps)}
+          >
             <div className={`w-5 h-5 border-2 ${errors?.agreeAeps ? 'border-red-500' : 'border-primary'} flex items-center justify-center`}>
               {agreeAeps && <IoMdCheckmark />}
             </div>
@@ -74,9 +82,9 @@ const ConsentsSection = ({
               type="checkbox"
               className="hidden"
               checked={agreeAeps}
-              onChange={(e) => setAgreeAeps(e.target.checked)}
+              readOnly
             />
-          </label>
+          </div>
           <p className="text-[13px] leading-tight text-black max-w-6xl">
             I hereby give consent to activate Aadhaar-enabled Payment System
             (AePS) services for my bank account with Jio Payments Bank Ltd. I
@@ -90,7 +98,10 @@ const ConsentsSection = ({
 
       <div className="flex flex-col gap-2 mb-10">
         <div className="flex items-start gap-4">
-          <label className="cursor-pointer shrink-0 mt-0.5">
+          <div 
+            className="cursor-pointer shrink-0 mt-0.5"
+            onClick={() => setAgreeSweep(!agreeSweep)}
+          >
             <div className={`w-5 h-5 border-2 ${errors?.agreeSweep ? 'border-red-500' : 'border-primary'} flex items-center justify-center`}>
               {agreeSweep && <IoMdCheckmark />}
             </div>
@@ -98,9 +109,9 @@ const ConsentsSection = ({
               type="checkbox"
               className="hidden"
               checked={agreeSweep}
-              onChange={(e) => setAgreeSweep(e.target.checked)}
+              readOnly
             />
-          </label>
+          </div>
           <p className="text-[13px] leading-tight text-black max-w-6xl">
             I agree to opening a Sweep Savings Account with Jio Payments Bank’s
             partner bank. I hereby provide my consent to Jio Payments Bank Limited
@@ -116,6 +127,29 @@ const ConsentsSection = ({
           </p>
         </div>
         {errors?.agreeSweep && <span className="text-red-500 text-[12px] font-medium ml-9">{errors.agreeSweep.message}</span>}
+      </div>
+
+      <div className="flex flex-col gap-2 mb-10">
+        <div className="flex items-start gap-4">
+          <div 
+            className="cursor-pointer shrink-0 mt-0.5"
+            onClick={() => setFatcaDeclared(!fatcaDeclared)}
+          >
+            <div className={`w-5 h-5 border-2 ${errors?.fatcaDeclared ? 'border-red-500' : 'border-primary'} flex items-center justify-center`}>
+              {fatcaDeclared && <IoMdCheckmark />}
+            </div>
+            <input 
+              type="checkbox" 
+              className="hidden"
+              checked={fatcaDeclared}
+              readOnly
+            />
+          </div>
+          <p className="text-[14px] leading-tight text-black max-w-6xl">
+            I hereby declare that i am Indian Citizen, Indian Tax resident and not a US Citizen / Green Card Holder. (FATCA Declaration)
+          </p>
+        </div>
+        {errors?.fatcaDeclared && <span className="text-red-500 text-[12px] font-medium ml-9">{errors.fatcaDeclared.message}</span>}
       </div>
     </>
   );

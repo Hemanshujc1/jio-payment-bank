@@ -8,7 +8,7 @@ const ReviewAadhaarDetails = ({ onEdit }) => {
     lastName: "Singh",
     gender: "Male",
     dob: "15/08/1995",
-    email: "hemanshu.singh@example.com",
+    email: "test.singh@example.com",
     communicationAddress: {
       houseNo: "123",
       building: "Bhairav Plaza",
@@ -33,7 +33,7 @@ const ReviewAadhaarDetails = ({ onEdit }) => {
         </button>
       </div>
       <div className="flex flex-col md:flex-row gap-8 items-start">
-        <div className="w-[130px] h-[150px] bg-[#D4D5D9] shrink-0 overflow-hidden rounded-md border border-neutral-light/30">
+        <div className="w-32.5 h-37.5 bg-[#D4D5D9] shrink-0 overflow-hidden rounded-md border border-neutral-light/30">
           <img src="/jpb/2.jpeg" alt="user photo" className="w-full h-full object-cover" />
         </div>
         <div className="flex flex-col gap-5 w-full mt-2 lg:ml-4">
@@ -56,7 +56,7 @@ const ReviewAadhaarDetails = ({ onEdit }) => {
 
           <div className="flex items-center gap-2 text-[14.5px]">
             <span className="font-bold text-gray-700">Email ID:</span>
-            <span className="font-medium text-gray-900 ml-1">xxxxxxx@example.com</span>
+    <span className="font-medium text-gray-900 ml-1"> {applicant.email}</span>
           </div>
         </div>
       </div>

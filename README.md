@@ -1,17 +1,19 @@
-Note:
-1) AadhaarDetailsTab.jsx: 
-    --> only email is optional
+At OnboardingTab
+1) after entering the otp once in a session then it should open onboardingTab form directly, means when the user click on the step 1 again then it should see onboardingTab form instead of otp page again
 
-2) At FamilyFinacialDetailsTab.jsx
-   --> all the fields are mandatory
+2) Add the pan card format input (COEPC9333B) and show error if not in the same format, 
+and for the addhar show like (XXXX-XXXX-XXXX-XXXX) instead of XXXXXXXXXXXX
 
-3) At NomineeDetailsTab.jsx: 
-   --> all the fields are mandatory if the nomminee is minor then the gurdain dsetails are also mandatory.
-   
+3) make the input of the pan and addhar mandatory 
 
-4) At Application Review Tab
-   --> for now show dummpy data
+at AadhaarDetailsTab
 
-Note: 
-1) in case of middle name, it should be optional everywhere.
-2) show the labels of all the forms at the top of the input like aadhar page
+1) Add the validation of the year, that min year allow should be 1900, and no minor should able to enter the age, that means the applicat age must be 18 years atleast
+
+at FamilyFinancialDetailsTab
+
+1) move the FATCA Declaration check box to the OnboardingTab form
+
+at NomineeDetailsTab
+1)  Add the validation of the year, that min year allow should be 1900
+

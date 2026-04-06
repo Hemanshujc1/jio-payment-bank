@@ -9,6 +9,7 @@ const IdentityInputs = ({
   aadhaar,
   handleAadhaarChange,
   handlePanChange,
+  handleBlur,
   displayAadhaar,
   pan,
   errors,
@@ -28,6 +29,7 @@ const IdentityInputs = ({
               type={showPan ? "text" : "password"}
               value={pan}
               onChange={handlePanChange}
+              onBlur={() => handleBlur("pan")}
               placeholder="Enter your PAN Number"
               className="grow outline-none bg-transparent placeholder-neutral-400 tracking-wider text-[14px]"
             />
@@ -49,6 +51,7 @@ const IdentityInputs = ({
               type="text"
               value={displayAadhaar}
               onChange={handleAadhaarChange}
+              onBlur={() => handleBlur("aadhaar")}
               placeholder="XXXX-XXXX-XXXX"
               className="grow outline-none bg-transparent placeholder-neutral-400 font-mono tracking-[0.15em] text-[14px]"
             />

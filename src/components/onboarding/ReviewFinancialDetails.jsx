@@ -41,12 +41,7 @@ const ReviewFinancialDetails = ({ onEdit }) => {
           <span className="text-[14.5px] font-medium text-gray-900">{financial.annualIncome}</span>
         </div>
       </div>
-      <div className="mt-8 text-[14.5px] leading-relaxed px-2">
-        <span className="font-bold text-gray-700">FATCA Declaration:</span>{" "}
-        <span className="font-medium text-gray-900">
-          {financial.fatcaDeclared ? "Declared (I hereby declare that I am Indian Citizen, Indian Tax resident and not a US Citizen / Green Card Holder)" : "Not Declared"}
-        </span>
-      </div>
+    
     </section>
   );
 };

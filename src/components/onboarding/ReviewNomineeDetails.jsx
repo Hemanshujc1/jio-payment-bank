@@ -10,11 +10,11 @@ const ReviewNomineeDetails = ({ onEdit }) => {
     lastName: "Singh",
     relationship: "Son",
     dob: "10/05/2015",
-    address: "Others",
+    address: "Address as per Aadhaar",
     addressDetails: {
-      houseNo: "402",
-      building: "ABC House",
-      street: "DEF Street",
+      houseNo: "401",
+      building: "XYZ House",
+      street: "Fake Street",
       city: "Mumbai",
       state: "Maharashtra",
       pincode: "400059"
@@ -25,7 +25,16 @@ const ReviewNomineeDetails = ({ onEdit }) => {
     middleName: "Deepak",
     lastName: "Singh",
     relationship: "Mother",
-    dob: "20/06/1990"
+    dob: "20/06/1990",
+    address: "Others",
+    addressDetails: {
+      houseNo: "402",
+      building: "ABC House",
+      street: "DEF Street",
+      city: "Mumbai",
+      state: "Maharashtra",
+      pincode: "400059"
+    }
   };
   const provideNominee = "Yes";
   const nominee = dummyNominee;
@@ -73,6 +82,19 @@ const ReviewNomineeDetails = ({ onEdit }) => {
           </div>
         </div>
 
+        <div className="text-[14.5px] flex flex-col gap-2">
+          <div className="flex items-center gap-2">
+            <span className="font-bold text-gray-700 shrink-0">Address Option:</span> 
+            <span className="font-medium text-gray-900">{nominee.address}</span>
+          </div>
+          {nominee.addressDetails && (
+            <div className="text-[14px] text-gray-800">
+              <span className="font-bold text-gray-700">Nominee Address: </span>
+              {nominee.addressDetails.houseNo}, {nominee.addressDetails.building}, {nominee.addressDetails.street}, {nominee.addressDetails.city}, {nominee.addressDetails.state} - {nominee.addressDetails.pincode}
+            </div>
+          )}
+        </div>
+
         {/* Guardian details if needed */}
         {isMinor && (
           <div className="mt-2 flex flex-col gap-5">
@@ -92,21 +114,22 @@ const ReviewNomineeDetails = ({ onEdit }) => {
                 <span className="text-[14.5px] font-medium text-gray-900">{guardian.dob}</span>
               </div>
             </div>
-          </div>
-        )}
-
-        <div className="text-[14.5px] flex flex-col gap-2">
+            <div className="text-[14.5px] flex flex-col gap-2">
           <div className="flex items-center gap-2">
             <span className="font-bold text-gray-700 shrink-0">Address Option:</span> 
             <span className="font-medium text-gray-900">{nominee.address}</span>
           </div>
-          {nominee.addressDetails && (
+          {guardian.addressDetails && (
             <div className="text-[14px] text-gray-800">
-              <span className="font-bold text-gray-700">Nominee Address: </span>
-              {nominee.addressDetails.houseNo}, {nominee.addressDetails.building}, {nominee.addressDetails.street}, {nominee.addressDetails.city}, {nominee.addressDetails.state} - {nominee.addressDetails.pincode}
+              <span className="font-bold text-gray-700">Gurdain Address: </span>
+              {guardian.addressDetails.houseNo}, {guardian.addressDetails.building}, {guardian.addressDetails.street}, {guardian.addressDetails.city}, {guardian.addressDetails.state} - {guardian.addressDetails.pincode}
             </div>
           )}
         </div>
+          </div>
+        )}
+
+       
       </div>
     </section>
   );

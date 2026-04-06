@@ -5,7 +5,7 @@ const Footer = () => {
   return (
     <footer className='w-full flex flex-col items-center shrink-0 bg-white'>
       <img src={footerimg} alt="Footer Details" className='w-full h-auto object-cover' />
-      <p> &copy; 2026 Vakrangee Limited & Jio Payments Bank. All Rights Reserved</p>
+      <p className='text-xs'> &copy; 2026 Vakrangee Limited & Jio Payments Bank. All Rights Reserved</p>
     </footer>
   )
 }

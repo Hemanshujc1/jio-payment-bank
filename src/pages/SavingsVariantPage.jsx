@@ -7,9 +7,9 @@ const SavingsVariantPage = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="w-full flex-col px-4 md:px-8 py-10 items-center justify-center flex text-black font-sans">
+    <div className="w-full flex-col px-4 md:px-8 py-1 items-center justify-center flex text-black font-sans">
       {/* Page Title */}
-      <h2 className="font-bold text-xl md:text-[22px] tracking-tight mb-12 text-center">
+      <h2 className="font-bold text-xl md:text-[22px] tracking-tight mb-8 text-center">
         Select Savings A/C Variant
       </h2>
 

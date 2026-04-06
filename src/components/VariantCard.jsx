@@ -12,7 +12,7 @@ const VariantCard = ({
   benefits = []
 }) => {
   return (
-    <div className="flex flex-col gap-4 w-full md:w-95 group relative ">
+    <div className="flex flex-col gap-4 w-full md:w-94 group relative ">
       <div className="bg-white rounded-[28px] p-6 flex flex-col items-center text-center shadow-lg h-115 transform transition-transform duration-300 group-hover:-translate-y-2 relative overflow-hidden">
         
         {/* Hover Overlay for Benefits */}

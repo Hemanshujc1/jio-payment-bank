@@ -1,14 +1,20 @@
 import React from "react";
 import { Controller, useFormContext } from "react-hook-form";
+import { parseDate } from "../../utils/validationUtils";
+import { differenceInYears } from "date-fns";
 
-const CustomDatePicker = ({ name, maxDate }) => {
-  const { control, formState: { errors } } = useFormContext();
+const CustomDatePicker = ({ name, maxDate}) => {
+  const { control, watch, formState: { errors } } = useFormContext();
+  const value = watch(name);
 
   const getError = (obj, path) => {
     return path.split('.').reduce((acc, part) => acc && acc[part], obj);
   };
 
   const error = getError(errors, name);
+
+ 
+
 
   // Convert DD/MM/YYYY to YYYY-MM-DD for native input
   const toNativeDate = (val) => {

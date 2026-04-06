@@ -11,7 +11,7 @@ const GuardianInfo = () => {
 
   const MOCK_AADHAAR_ADDRESS = {
     houseNo: "123",
-    building: "Vakrangee  House",
+    building: "FakeVilla",
     street: "Marol Road",
     city: "Mumbai",
     state: "Maharashtra",
@@ -117,6 +117,7 @@ const GuardianInfo = () => {
             <CustomDatePicker 
               name="guardian.dob" 
               maxDate={new Date(new Date().setFullYear(new Date().getFullYear() - 18))} 
+              showAge={true}
             />
           </div>
         </div>
