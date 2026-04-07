@@ -1,8 +1,8 @@
 import React from 'react';
 import { useFormContext } from 'react-hook-form';
-import ProceedButton from './ProceedButton';
-import FamilyDetails from './onboarding/FamilyDetails';
-import FinancialDetails from './onboarding/FinancialDetails';
+import ProceedButton from "../../common/ProceedButton";
+import FamilyDetails from "../sections/FamilyDetails";
+import FinancialDetails from "../sections/FinancialDetails";
 
 const FamilyFinancialDetailsTab = ({ onNext }) => {
   const { trigger, watch } = useFormContext();

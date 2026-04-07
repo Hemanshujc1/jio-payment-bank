@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { useFormContext } from "react-hook-form";
-import ProceedButton from "./ProceedButton";
-import MobileOtpSection from "./onboarding/MobileOtpSection";
-import OnboardingHeader from "./onboarding/OnboardingHeader";
-import ProductSelection from "./onboarding/ProductSelection";
-import IdentityInputs from "./onboarding/IdentityInputs";
-import ConsentsSection from "./onboarding/ConsentsSection";
-import LanguageSelection from "./onboarding/LanguageSelection";
+import ProceedButton from "../../common/ProceedButton";
+import MobileOtpSection from "../sections/MobileOtpSection";
+import OnboardingHeader from "../ui/OnboardingHeader";
+import ProductSelection from "../sections/ProductSelection";
+import IdentityInputs from "../sections/IdentityInputs";
+import ConsentsSection from "../sections/ConsentsSection";
+import LanguageSelection from "../sections/LanguageSelection";
 
 const OnboardingTab = ({
   onNext,
@@ -51,7 +51,7 @@ const OnboardingTab = ({
     let chars = "";
 
     if (showAadhaar) {
-      chars = val.replace(/[^0-9]/g, "");
+      chars = val.replace(/[^0-9]/g, "").slice(0, 12);
     } else {
       // Logic for masked input: detect added/removed digits
       const maskedVal = formatAadhaar(aadhaar).replace(/[0-9]/g, "X");

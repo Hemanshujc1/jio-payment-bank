@@ -1,7 +1,7 @@
 import React from "react";
-import ProceedButton from "../ProceedButton";
-import OtpVerification from "../OtpVerification";
-import mobileicon from "../../assets/mobileicon.svg";
+import ProceedButton from "../../common/ProceedButton";
+import OtpVerification from "../../common/OtpVerification";
+import mobileicon from "../../../assets/mobileicon.svg";
 
 const MobileOtpSection = ({
   mobileNumber,

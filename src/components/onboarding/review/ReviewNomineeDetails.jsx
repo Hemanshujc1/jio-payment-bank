@@ -1,7 +1,7 @@
 import React from 'react';
 import { useFormContext } from 'react-hook-form';
 import { differenceInYears } from 'date-fns';
-import { parseDate } from '../../utils/validationUtils';
+import { parseDate } from '../../../utils/validationUtils';
 
 const ReviewNomineeDetails = ({ onEdit }) => {
   const dummyNominee = {
@@ -59,7 +59,7 @@ const ReviewNomineeDetails = ({ onEdit }) => {
         <h3 className="font-bold text-[16.5px]">Nominee Details</h3>
         <button
           onClick={onEdit}
-          className="absolute right-0 top-1/2 -translate-y-1/2 bg-[#3A1E08] text-[#EBC080] rounded px-5 py-1 text-[13px] font-bold border border-[#2A1505] shadow-sm hover:opacity-90 tracking-wide"
+          className="absolute right-0 top-1/2 -translate-y-1/2 bg-[#3A1E08] text-sand-350 rounded px-5 py-1 text-[13px] font-bold border border-[#2A1505] shadow-sm hover:opacity-90 tracking-wide"
         >
           Edit
         </button>

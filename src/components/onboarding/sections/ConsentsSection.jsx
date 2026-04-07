@@ -27,7 +27,7 @@ const ConsentsSection = ({
           </div>
           <span className="text-[15px]">
             I agree to the{" "}
-            <span className="text-primary font-medium">Terms & Conditions</span>
+            <span className="text-[blue] font-medium">Terms & Conditions</span>
           </span>
           <input
             type="checkbox"

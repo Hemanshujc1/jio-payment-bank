@@ -1,11 +1,11 @@
 import React from "react";
 import { useFormContext, useWatch } from "react-hook-form";
-import ProceedButton from "./ProceedButton";
-import NomineeChoice from "./onboarding/NomineeChoice";
-import NomineeInfo from "./onboarding/NomineeInfo";
-import GuardianInfo from "./onboarding/GuardianInfo";
+import ProceedButton from "../../common/ProceedButton";
+import NomineeChoice from "../sections/NomineeChoice";
+import NomineeInfo from "../sections/NomineeInfo";
+import GuardianInfo from "../sections/GuardianInfo";
 import { differenceInYears } from "date-fns";
-import { parseDate } from "../utils/validationUtils";
+import { parseDate } from "../../../utils/validationUtils";
 
 const NomineeDetailsTab = ({ onNext }) => {
   const { trigger } = useFormContext();

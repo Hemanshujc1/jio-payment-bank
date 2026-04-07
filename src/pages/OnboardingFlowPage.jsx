@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import HorizontalLinearAlternativeLabelStepper from "../components/HorizontalLinearAlternativeLabelStepper";
-import OnboardingTab from "../components/OnboardingTab";
-import AadhaarDetailsTab from "../components/AadhaarDetailsTab";
-import FamilyFinancialDetailsTab from "../components/FamilyFinancialDetailsTab";
-import NomineeDetailsTab from "../components/NomineeDetailsTab";
-import ApplicationReviewTab from "../components/ApplicationReviewTab";
+import HorizontalLinearAlternativeLabelStepper from "../components/common/HorizontalLinearAlternativeLabelStepper";
+import OnboardingTab from "../components/onboarding/tabs/OnboardingTab";
+import AadhaarDetailsTab from "../components/onboarding/tabs/AadhaarDetailsTab";
+import FamilyFinancialDetailsTab from "../components/onboarding/tabs/FamilyFinancialDetailsTab";
+import NomineeDetailsTab from "../components/onboarding/tabs/NomineeDetailsTab";
+import ApplicationReviewTab from "../components/onboarding/tabs/ApplicationReviewTab";
 import { onboardingSchema } from "../schema/onboardingSchema";
 
 const STEPS = [

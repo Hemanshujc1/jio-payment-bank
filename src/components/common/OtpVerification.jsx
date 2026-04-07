@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import mobileotpicon from "../assets/mobileotpicon.svg"
+import mobileotpicon from "../../assets/mobileotpicon.svg"
 
 // The phone icon with stars used in the Figma design
 

@@ -1,6 +1,6 @@
 import React from "react";
-import jio from "../assets/jio.svg";
-import vakrangeelogo from "../assets/vakrangee.svg";
+import jio from "../../assets/jio.svg";
+import vakrangeelogo from "../../assets/vakrangee.svg";
 import { Link } from "react-router-dom";
 const Navbar = () => {
   return (

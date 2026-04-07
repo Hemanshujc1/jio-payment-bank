@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
-import verification from '../../assets/verification.gif';
+import verification from '../../../assets/verification.gif';
 
 const SuccessOverlay = () => {
   const navigate = useNavigate();

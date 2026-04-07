@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import VariantCard from "../components/VariantCard";
+import VariantCard from "../components/common/VariantCard";
 import debitcardimg from "../assets/debit-card-img.webp";
 
 const SavingsVariantPage = () => {

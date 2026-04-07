@@ -1,6 +1,6 @@
 import React from 'react';
 import { useFormContext, Controller } from 'react-hook-form';
-import CustomDropdown from '../CustomDropdown';
+import CustomDropdown from '../../common/CustomDropdown';
 
 const FinancialDetails = () => {
   const { register, control, formState: { errors } } = useFormContext();

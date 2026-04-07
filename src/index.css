@@ -14,15 +14,19 @@
   --color-sand-100: #EFD1A5;
   --color-sand-200: #EAC690;
   --color-sand-300: #E1B675;
+  --color-sand-350: #EBC080; /* button text */
   --color-sand-400: #BB9255;
   --color-sand-500: #624925;
   --color-sand-900: #312109;
+
+  --color-brown-700: #493118; /* border color */
+  --color-brown-800: #5a4221; /* background color on hover */
 }
 
 body {
   margin: 0;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  background-color: var(--color-sand-200);
+  /* background-color: var(--color-sand-200); */
   color: black;
 }
 

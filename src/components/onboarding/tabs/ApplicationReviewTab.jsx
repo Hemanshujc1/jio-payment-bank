@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
-
-// Sub-components
-import ReviewAadhaarDetails from './onboarding/ReviewAadhaarDetails';
-import ReviewFamilyDetails from './onboarding/ReviewFamilyDetails';
-import ReviewFinancialDetails from './onboarding/ReviewFinancialDetails';
-import ReviewNomineeDetails from './onboarding/ReviewNomineeDetails';
-import ReviewTermsConditions from './onboarding/ReviewTermsConditions';
-import SuccessOverlay from './onboarding/SuccessOverlay';
-import ProceedButton from './ProceedButton';
+import ReviewAadhaarDetails from "../review/ReviewAadhaarDetails";
+import ReviewFamilyDetails from "../review/ReviewFamilyDetails";
+import ReviewFinancialDetails from "../review/ReviewFinancialDetails";
+import ReviewNomineeDetails from "../review/ReviewNomineeDetails";
+import ReviewTermsConditions from "../review/ReviewTermsConditions";
+import SuccessOverlay from "../ui/SuccessOverlay";
+import ProceedButton from "../../common/ProceedButton";
 
 const ApplicationReviewTab = ({ goToStep }) => {
   const [termsAccepted, setTermsAccepted] = useState(false);
