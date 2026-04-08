@@ -5,7 +5,6 @@ const ConsentsSection = ({
   agreeTerms,
   setAgreeTerms,
   aepsConsent,
-  setAepsConsent,
   agreeAeps,
   setAgreeAeps,
   agreeSweep,
@@ -14,59 +13,39 @@ const ConsentsSection = ({
   setFatcaDeclared,
   errors,
 }) => {
+  const isAllSelected = agreeAeps && agreeSweep && fatcaDeclared && agreeTerms;
+  const toggleAllConsents = () => {
+    const newState = !isAllSelected;
+    setAgreeAeps(newState);
+    setAgreeSweep(newState);
+    setFatcaDeclared(newState);
+    setAgreeTerms(newState);
+  };
+
   return (
     <>
-      {/* T&C Checkbox */}
-      <div className="flex flex-col gap-1 mb-8">
-        <div 
-          className="flex items-center gap-3 cursor-pointer w-fit"
-          onClick={() => setAgreeTerms(!agreeTerms)}
-        >
-          <div className={`w-5 h-5 border-2 ${errors?.agreeTerms ? 'border-red-500' : 'border-primary'} flex items-center justify-center shrink-0`}>
-            {agreeTerms && <IoMdCheckmark />}
+
+        {/* Select All Checkbox */}
+        <div className="w-full flex justify-start mb-4">
+        <label className="flex items-center gap-3 cursor-pointer mt-2 select-none">
+          <div 
+            className="cursor-pointer shrink-0"
+            onClick={toggleAllConsents}
+          >
+            <div className={`w-5 h-5 border-2 border-primary flex items-center justify-center`}>
+              {isAllSelected && <IoMdCheckmark className="text-black text-lg" />}
+            </div>
           </div>
-          <span className="text-[15px]">
-            I agree to the{" "}
-            <span className="text-[blue] font-medium">Terms & Conditions</span>
+          <span 
+            className="font-bold text-[15px] cursor-pointer"
+            onClick={toggleAllConsents}
+          >
+            Select All Consents
           </span>
-          <input
-            type="checkbox"
-            className="hidden"
-            checked={agreeTerms}
-            readOnly
-          />
-        </div>
-        {errors?.agreeTerms && <span className="text-red-500 text-[12px] font-medium ml-8">{errors.agreeTerms.message}</span>}
+        </label>
       </div>
 
-      {/* Consent AePS */}
-      <div className="flex flex-col md:flex-row md:items-center gap-6 mb-6">
-        <h2 className="font-semibold text-[19px] tracking-tight">
-          Consent to Enable AePS Service
-        </h2>
-        <div className="flex gap-4">
-          <button
-            className={`w-16 py-1.5 rounded-full border border-black font-semibold transition-colors ${
-              aepsConsent === "yes"
-                ? "bg-primary border-transparent"
-                : "bg-transparent"
-            }`}
-            onClick={() => setAepsConsent("yes")}
-          >
-            YES
-          </button>
-          <button
-            className={`w-16 py-1.5 rounded-full border border-black font-semibold transition-colors ${
-              aepsConsent === "no"
-                ? "bg-primary border-transparent"
-                : "bg-transparent"
-            }`}
-            onClick={() => setAepsConsent("no")}
-          >
-            NO
-          </button>
-        </div>
-      </div>
+  
 
       {/* Long Checkboxes */}
       <div className="flex flex-col gap-2 mb-5">
@@ -150,6 +129,29 @@ const ConsentsSection = ({
           </p>
         </div>
         {errors?.fatcaDeclared && <span className="text-red-500 text-[12px] font-medium ml-9">{errors.fatcaDeclared.message}</span>}
+      </div>
+
+        {/* T&C Checkbox */}
+        <div className="flex flex-col gap-1 mb-8">
+        <div 
+          className="flex items-center gap-3 cursor-pointer w-fit"
+          onClick={() => setAgreeTerms(!agreeTerms)}
+        >
+          <div className={`w-5 h-5 border-2 ${errors?.agreeTerms ? 'border-red-500' : 'border-primary'} flex items-center justify-center shrink-0`}>
+            {agreeTerms && <IoMdCheckmark />}
+          </div>
+          <span className="text-[15px]">
+            I agree to the{" "}
+            <span className="text-[blue] font-medium">Terms & Conditions</span>
+          </span>
+          <input
+            type="checkbox"
+            className="hidden"
+            checked={agreeTerms}
+            readOnly
+          />
+        </div>
+        {errors?.agreeTerms && <span className="text-red-500 text-[12px] font-medium ml-8">{errors.agreeTerms.message}</span>}
       </div>
     </>
   );

@@ -83,16 +83,16 @@ const AddressForm = ({ prefix, title, mockAadhaarAddress }) => {
           )}
 
           {/* Read-only Address Preview */}
-          {addressType &&
-            (currentAddress?.houseNo ||
+          {addressType && addressType !== "Others" &&
+            (currentAddress?.addressLine1 ||
               currentAddress?.city ||
               currentAddress?.pincode) && (
-              <div className="text-[13px] text-gray-600 bg-neutral-light/5 p-3 rounded border border-neutral-light/10 max-w-2xl leading-relaxed">
+              <div className="text-[13px] text-gray-600 p-3 rounded border border-neutral-light/10 max-w-2xl leading-relaxed">
                 <span className="font-bold text-gray-700">Selected Address: </span>
                 {[
-                  currentAddress?.houseNo,
-                  currentAddress?.building,
-                  currentAddress?.street,
+                  currentAddress?.addressLine1,
+                  currentAddress?.addressLine2,
+                  currentAddress?.addressLine3,
                   currentAddress?.city,
                   currentAddress?.state,
                 ]
@@ -105,75 +105,56 @@ const AddressForm = ({ prefix, title, mockAadhaarAddress }) => {
 
         {/* Conditional Address Details for "Others" */}
         {addressType === "Others" && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 bg-neutral-light/10 p-4 rounded-lg items-start border border-dashed border-neutral-light/30">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-4 rounded-lg items-start border border-dashed border-neutral-light/30">
             <div className="flex flex-col gap-1">
               <span className="font-semibold text-[14px]">
-                House/Flat No<span className="text-red-500">*</span>:{" "}
+                Address Line 1<span className="text-red-500">*</span>:{" "}
               </span>
               <input
-                {...register(`${prefix}.addressDetails.houseNo`)}
+                {...register(`${prefix}.addressDetails.addressLine1`)}
+                maxLength={50}
                 className={`bg-white rounded-md px-3 py-1.5 border ${
-                  error?.addressDetails?.houseNo
+                  error?.addressDetails?.addressLine1
                     ? "border-red-500"
                     : "border-neutral-light/50"
                 } focus:outline-none text-[14px]`}
-                placeholder="House/Flat No"
+                placeholder="Address Line 1"
               />
+              {error?.addressDetails?.addressLine1 && <span className="text-red-500 text-[12px] font-medium">{error.addressDetails.addressLine1.message}</span>}
             </div>
+            
             <div className="flex flex-col gap-1">
-              <span className="font-semibold text-[14px]">Building Name: </span>
+              <span className="font-semibold text-[14px]">Address Line 2 (Optional): </span>
               <input
-                {...register(`${prefix}.addressDetails.building`)}
+                {...register(`${prefix}.addressDetails.addressLine2`)}
+                maxLength={50}
                 className={`bg-white rounded-md px-3 py-1.5 border ${
-                  error?.addressDetails?.building
+                  error?.addressDetails?.addressLine2
                     ? "border-red-500"
                     : "border-neutral-light/50"
                 } focus:outline-none text-[14px]`}
-                placeholder="Building Name"
+                placeholder="Address Line 2"
               />
+              {error?.addressDetails?.addressLine2 && <span className="text-red-500 text-[12px] font-medium">{error.addressDetails.addressLine2.message}</span>}
             </div>
-            <div className="flex flex-col gap-1">
-              <span className="font-semibold text-[14px]">
-                Street/Area<span className="text-red-500">*</span>:{" "}
-              </span>
-              <input
-                {...register(`${prefix}.addressDetails.street`)}
-                className={`bg-white rounded-md px-3 py-1.5 border ${
-                  error?.addressDetails?.street
-                    ? "border-red-500"
-                    : "border-neutral-light/50"
-                } focus:outline-none text-[14px]`}
-                placeholder="Street/Area"
-              />
-            </div>
+            
             <div className="flex flex-col gap-1">
               <span className="font-semibold text-[14px]">
-                City<span className="text-red-500">*</span>:{" "}
+                Address Line 3 (Optional):{" "}
               </span>
               <input
-                {...register(`${prefix}.addressDetails.city`)}
+                {...register(`${prefix}.addressDetails.addressLine3`)}
+                maxLength={50}
                 className={`bg-white rounded-md px-3 py-1.5 border ${
-                  error?.addressDetails?.city
+                  error?.addressDetails?.addressLine3
                     ? "border-red-500"
                     : "border-neutral-light/50"
                 } focus:outline-none text-[14px]`}
-                placeholder="City"
+                placeholder="Address Line 3"
               />
+              {error?.addressDetails?.addressLine3 && <span className="text-red-500 text-[12px] font-medium">{error.addressDetails.addressLine3.message}</span>}
             </div>
-            <div className="flex flex-col gap-1">
-              <span className="font-semibold text-[14px]">
-                State<span className="text-red-500">*</span>:{" "}
-              </span>
-              <input
-                {...register(`${prefix}.addressDetails.state`)}
-                className={`bg-white rounded-md px-3 py-1.5 border ${
-                  error?.addressDetails?.state
-                    ? "border-red-500"
-                    : "border-neutral-light/50"
-                } focus:outline-none text-[14px]`}
-                placeholder="State"
-              />
-            </div>
+            
             <div className="flex flex-col gap-1">
               <span className="font-semibold text-[14px]">
                 Pincode<span className="text-red-500">*</span>:{" "}
@@ -181,24 +162,50 @@ const AddressForm = ({ prefix, title, mockAadhaarAddress }) => {
               <input
                 {...register(`${prefix}.addressDetails.pincode`)}
                 maxLength={6}
-                className={`bg-white rounded-md px-3 py-2 border ${
+                onInput={(e) => { e.target.value = e.target.value.replace(/[^0-9]/g, ""); }}
+                className={`bg-white rounded-md px-3 py-1.5 border ${
                   error?.addressDetails?.pincode
                     ? "border-red-500"
                     : "border-neutral-light/50"
                 } focus:outline-none text-[14px]`}
                 placeholder="6-digit Pincode"
               />
+              {error?.addressDetails?.pincode && <span className="text-red-500 text-[12px] font-medium">{error.addressDetails.pincode.message}</span>}
             </div>
-
-            {(error?.addressDetails?.houseNo ||
-              error?.addressDetails?.street ||
-              error?.addressDetails?.city ||
-              error?.addressDetails?.state ||
-              error?.addressDetails?.pincode) && (
-              <span className="text-red-500 text-[12px] font-medium sm:col-span-2 lg:col-span-3">
-                Please fill all mandatory address fields.
+            
+            <div className="flex flex-col gap-1">
+              <span className="font-semibold text-[14px]">
+                City<span className="text-red-500">*</span>:{" "}
               </span>
-            )}
+              <input
+                {...register(`${prefix}.addressDetails.city`)}
+                maxLength={20}
+                className={`bg-white rounded-md px-3 py-1.5 border ${
+                  error?.addressDetails?.city
+                    ? "border-red-500"
+                    : "border-neutral-light/50"
+                } focus:outline-none text-[14px]`}
+                placeholder="City"
+              />
+              {error?.addressDetails?.city && <span className="text-red-500 text-[12px] font-medium">{error.addressDetails.city.message}</span>}
+            </div>
+            
+            <div className="flex flex-col gap-1">
+              <span className="font-semibold text-[14px]">
+                State<span className="text-red-500">*</span>:{" "}
+              </span>
+              <input
+                {...register(`${prefix}.addressDetails.state`)}
+                maxLength={20}
+                className={`bg-white rounded-md px-3 py-1.5 border ${
+                  error?.addressDetails?.state
+                    ? "border-red-500"
+                    : "border-neutral-light/50"
+                } focus:outline-none text-[14px]`}
+                placeholder="State"
+              />
+              {error?.addressDetails?.state && <span className="text-red-500 text-[12px] font-medium">{error.addressDetails.state.message}</span>}
+            </div>
           </div>
         )}
       </div>

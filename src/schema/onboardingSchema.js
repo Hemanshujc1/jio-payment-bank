@@ -33,11 +33,26 @@ const optionalLastNameField = z.string()
   .refine(val => !val || !hasConsecutiveLetters(val), "Enter valid name");
 
 const addressSchema = z.object({
-  houseNo: z.string().min(1, "House number is required"),
-  street: z.string().min(1, "Street is required"),
-  city: z.string().min(1, "City reached is required"),
-  state: z.string().min(1, "State is required"),
-  pincode: z.string().length(6, "Pincode must be 6 digits").regex(/^\d+$/, "Pincode must be numeric"),
+  addressLine1: z.string()
+    .min(10, "Address Line 1 must be at least 10 characters")
+    .max(50, "Address Line 1 cannot exceed 50 characters"),
+  addressLine2: z.string()
+    .max(50, "Address Line 2 cannot exceed 50 characters")
+    .optional()
+    .or(z.literal("")),
+  addressLine3: z.string()
+    .max(50, "Address Line 3 cannot exceed 50 characters")
+    .optional()
+    .or(z.literal("")),
+  city: z.string()
+    .min(4, "City must be at least 4 characters")
+    .max(20, "City cannot exceed 20 characters"),
+  state: z.string()
+    .min(4, "State must be at least 4 characters")
+    .max(20, "State cannot exceed 20 characters"),
+  pincode: z.string()
+    .length(6, "Pincode must be 6 digits")
+    .regex(/^\d+$/, "Pincode must be numeric"),
 });
 
 const personSchema = z.object({
@@ -76,8 +91,8 @@ export const  onboardingSchema = z.object({
         const age = differenceInYears(new Date(), date);
         return age >= 18;
       }, "Applicant must be at least 18 years old"),
-    maritalStatus: z.enum(["Married", "Unmarried", "Single"]),
-    email: z.string().email("Enter Valid Email ID").optional().or(z.literal("")),
+    maritalStatus: z.enum(["Married", "Unmarried"]),
+    email: z.string().optional().or(z.literal("")),
     communicationAddress: addressSchema,
   }),
   family: z.object({
@@ -92,8 +107,8 @@ export const  onboardingSchema = z.object({
   nominee: z.object({
     provide: z.enum(["Yes", "No"]),
     relationship: z.string().optional(),
-    firstName: nameField().optional(),
-    lastName: nameField(true).optional(),
+    firstName: nameField().optional().or(z.literal("")),
+    lastName: nameField(true).optional().or(z.literal("")),
     middleName: optionalNameField,
     dob: z.string().optional().refine(val => {
       if (!val) return true;
@@ -277,8 +292,7 @@ export const  onboardingSchema = z.object({
 
     // Address Details if 'Others'
     if (nominee.address === "Others") {
-      if (!nominee.addressDetails?.houseNo) ctx.addIssue({ code: z.ZodIssueCode.custom, message: "House/Flat No is required", path: ["nominee", "addressDetails", "houseNo"] });
-      if (!nominee.addressDetails?.street) ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Street/Area is required", path: ["nominee", "addressDetails", "street"] });
+      if (!nominee.addressDetails?.addressLine1) ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Address Line 1 is required", path: ["nominee", "addressDetails", "addressLine1"] });
       if (!nominee.addressDetails?.city) ctx.addIssue({ code: z.ZodIssueCode.custom, message: "City is required", path: ["nominee", "addressDetails", "city"] });
       if (!nominee.addressDetails?.state) ctx.addIssue({ code: z.ZodIssueCode.custom, message: "State is required", path: ["nominee", "addressDetails", "state"] });
       if (!nominee.addressDetails?.pincode) {
@@ -297,7 +311,7 @@ export const  onboardingSchema = z.object({
     }
 
     // Marital Status check
-    if (data.applicant.maritalStatus === "Single" && (nominee.relationship === "Husband" || nominee.relationship === "Wife")) {
+    if (data.applicant.maritalStatus === "" && (nominee.relationship === "Husband" || nominee.relationship === "Wife")) {
       ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Please select valid Nominee relation", path: ["nominee", "relationship"] });
     }
 
@@ -342,8 +356,7 @@ export const  onboardingSchema = z.object({
       if (!g.address) {
         ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Please select an address option", path: ["guardian", "address"] });
       } else if (g.address === "Others") {
-        if (!g.addressDetails?.houseNo) ctx.addIssue({ code: z.ZodIssueCode.custom, message: "House/Flat No is required", path: ["guardian", "addressDetails", "houseNo"] });
-        if (!g.addressDetails?.street) ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Street/Area is required", path: ["guardian", "addressDetails", "street"] });
+        if (!g.addressDetails?.addressLine1) ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Address Line 1 is required", path: ["guardian", "addressDetails", "addressLine1"] });
         if (!g.addressDetails?.city) ctx.addIssue({ code: z.ZodIssueCode.custom, message: "City is required", path: ["guardian", "addressDetails", "city"] });
         if (!g.addressDetails?.state) ctx.addIssue({ code: z.ZodIssueCode.custom, message: "State is required", path: ["guardian", "addressDetails", "state"] });
         if (!g.addressDetails?.pincode) {

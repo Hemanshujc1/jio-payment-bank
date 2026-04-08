@@ -3,20 +3,23 @@ import { useFormContext } from 'react-hook-form';
 
 const ReviewAadhaarDetails = ({ onEdit }) => {
   const dummyApplicant = {
+    phoneNumber:"9876543210",
+    emailid:"customer@example.com",
+    panNumber:"ABCDE1234F",
+    aadharNumber:"XXXX XXXX 9012",
     firstName: "Test",
     middleName: "Name",
     lastName: "Singh",
     gender: "Male",
     dob: "15/08/1995",
-    email: "test.singh@example.com",
     communicationAddress: {
-      houseNo: "123",
-      building: "Bhairav Plaza",
-      street: "150 Feet Road",
+      addressLine1: "123, Bhairav Plaza",
+      addressLine2: "150 Feet Road",
+      addressLine3: "",
       city: "Mumbai",
       state: "Maharashtra",
       pincode: "400013"
-    }
+    },
   };
 
   const applicant = dummyApplicant;
@@ -24,7 +27,7 @@ const ReviewAadhaarDetails = ({ onEdit }) => {
   return (
     <section className="w-full relative">
       <div className="relative w-full flex justify-center mb-6">
-        <h3 className="font-bold text-[16.5px]">Aadhaar Details</h3>
+        <h3 className="font-bold text-[16.5px]">Personal Details</h3>
         <button
           onClick={onEdit}
           className="absolute right-0 top-1/2 -translate-y-1/2 bg-[#3A1E08] text-sand-350 rounded px-5 py-1 text-[13px] font-bold border border-[#2A1505] shadow-sm hover:opacity-90 tracking-wide"
@@ -51,14 +54,33 @@ const ReviewAadhaarDetails = ({ onEdit }) => {
           
           <div className="text-[14.5px] leading-relaxed max-w-5xl">
             <span className="font-bold text-gray-700">Communication Address:</span>{" "}
-            {`${applicant.communicationAddress.houseNo}, ${applicant.communicationAddress.building}, ${applicant.communicationAddress.street}, ${applicant.communicationAddress.city}, ${applicant.communicationAddress.state} - ${applicant.communicationAddress.pincode}`}
+            {[
+              applicant.communicationAddress.addressLine1,
+              applicant.communicationAddress.addressLine2,
+              applicant.communicationAddress.addressLine3,
+              applicant.communicationAddress.city,
+              applicant.communicationAddress.state
+            ].filter(Boolean).join(", ")} - {applicant.communicationAddress.pincode}
           </div>
+          <div className="flex flex-wrap gap-x-12 gap-y-3 text-[14.5px]">
+  <span>
+    <span className="font-bold text-gray-700">Email:</span> {applicant.emailid}
+  </span>
 
-          <div className="flex items-center gap-2 text-[14.5px]">
-            <span className="font-bold text-gray-700">Email ID:</span>
-    <span className="font-medium text-gray-900 ml-1"> {applicant.email}</span>
-          </div>
+  <span>
+    <span className="font-bold text-gray-700">Phone:</span> {applicant.phoneNumber}
+  </span>
+
+  <span>
+    <span className="font-bold text-gray-700">PAN:</span> {applicant.panNumber}
+  </span>
+
+  <span>
+    <span className="font-bold text-gray-700">Aadhaar:</span> {applicant.aadharNumber}
+  </span>
+</div>
         </div>
+
       </div>
     </section>
   );

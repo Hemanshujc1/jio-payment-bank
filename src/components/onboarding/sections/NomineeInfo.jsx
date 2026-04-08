@@ -16,7 +16,7 @@ const NomineeInfo = () => {
   ].filter(opt => {
     if (applicant.gender === "Male" && opt === "Husband") return false;
     if (applicant.gender === "Female" && opt === "Wife") return false;
-    if (applicant.maritalStatus === "Single" && (opt === "Husband" || opt === "Wife" || opt === "Spouse")) return false;
+    if (applicant.maritalStatus === "Unmarried" && (opt === "Husband" || opt === "Wife" || opt === "Spouse")) return false;
     if (applicant.maritalStatus !== "Married" && opt === "Spouse") return false;
     return true;
   });
@@ -24,9 +24,9 @@ const NomineeInfo = () => {
   const isAutoPopulated = ["Father", "Mother", "Spouse", "Husband", "Wife"].includes(relationship);
 
   const MOCK_AADHAAR_ADDRESS = {
-    houseNo: "123",
-    building: "Corporate House",
-    street: "Marol  Road",
+    addressLine1: "123",
+    addressLine2: "Corporate House",
+    addressLine3: "Marol  Road",
     city: "Mumbai",
     state: "Maharashtra",
     pincode: "400059",
@@ -120,7 +120,7 @@ const NomineeInfo = () => {
             Date Of Birth<span className="text-red-500">*</span>:
           </span>
           <div className="grow relative z-30">
-            <CustomDatePicker name="nominee.dob" maxDate={new Date()} showAge={true} />
+            <CustomDatePicker name="nominee.dob" maxDate={new Date()} />
           </div>
         </div>
 

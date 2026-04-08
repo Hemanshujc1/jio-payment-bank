@@ -12,9 +12,9 @@ const ReviewNomineeDetails = ({ onEdit }) => {
     dob: "10/05/2015",
     address: "Address as per Aadhaar",
     addressDetails: {
-      houseNo: "401",
-      building: "XYZ House",
-      street: "Fake Street",
+      addressLine1: "401, XYZ House",
+      addressLine2: "Fake Street",
+      addressLine3: "",
       city: "Mumbai",
       state: "Maharashtra",
       pincode: "400059"
@@ -28,9 +28,9 @@ const ReviewNomineeDetails = ({ onEdit }) => {
     dob: "20/06/1990",
     address: "Others",
     addressDetails: {
-      houseNo: "402",
-      building: "ABC House",
-      street: "DEF Street",
+      addressLine1: "402, ABC House",
+      addressLine2: "DEF Street",
+      addressLine3: "",
       city: "Mumbai",
       state: "Maharashtra",
       pincode: "400059"
@@ -90,7 +90,7 @@ const ReviewNomineeDetails = ({ onEdit }) => {
           {nominee.addressDetails && (
             <div className="text-[14px] text-gray-800">
               <span className="font-bold text-gray-700">Nominee Address: </span>
-              {nominee.addressDetails.houseNo}, {nominee.addressDetails.building}, {nominee.addressDetails.street}, {nominee.addressDetails.city}, {nominee.addressDetails.state} - {nominee.addressDetails.pincode}
+              {[nominee.addressDetails.addressLine1, nominee.addressDetails.addressLine2, nominee.addressDetails.addressLine3, nominee.addressDetails.city, nominee.addressDetails.state].filter(Boolean).join(", ")} - {nominee.addressDetails.pincode}
             </div>
           )}
         </div>
@@ -122,7 +122,7 @@ const ReviewNomineeDetails = ({ onEdit }) => {
           {guardian.addressDetails && (
             <div className="text-[14px] text-gray-800">
               <span className="font-bold text-gray-700">Gurdain Address: </span>
-              {guardian.addressDetails.houseNo}, {guardian.addressDetails.building}, {guardian.addressDetails.street}, {guardian.addressDetails.city}, {guardian.addressDetails.state} - {guardian.addressDetails.pincode}
+              {[guardian.addressDetails.addressLine1, guardian.addressDetails.addressLine2, guardian.addressDetails.addressLine3, guardian.addressDetails.city, guardian.addressDetails.state].filter(Boolean).join(", ")} - {guardian.addressDetails.pincode}
             </div>
           )}
         </div>

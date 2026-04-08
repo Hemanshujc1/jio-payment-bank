@@ -1,9 +1,9 @@
 import React from "react";
 import { Controller, useFormContext } from "react-hook-form";
-import { parseDate } from "../../utils/validationUtils";
-import { differenceInYears } from "date-fns";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
-const CustomDatePicker = ({ name, maxDate}) => {
+const CustomDatePicker = ({ name, maxDate, disabled }) => {
   const { control, watch, formState: { errors } } = useFormContext();
   const value = watch(name);
 
@@ -13,44 +13,54 @@ const CustomDatePicker = ({ name, maxDate}) => {
 
   const error = getError(errors, name);
 
- 
-
-
-  // Convert DD/MM/YYYY to YYYY-MM-DD for native input
-  const toNativeDate = (val) => {
-    if (!val) return "";
-    const parts = val.split("/");
-    if (parts.length !== 3) return "";
-    return `${parts[2]}-${parts[1]}-${parts[0]}`;
+  // Parse "DD/MM/YYYY" to Date
+  const parseToDateObj = (str) => {
+    if (!str) return null;
+    const parts = str.split("/");
+    if (parts.length !== 3) return null;
+    return new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
   };
 
-  // Convert YYYY-MM-DD to DD/MM/YYYY for form state
-  const fromNativeDate = (val) => {
-    if (!val) return "";
-    const parts = val.split("-");
-    if (parts.length !== 3) return "";
-    return `${parts[2]}/${parts[1]}/${parts[0]}`;
+  // Format Date obj to "DD/MM/YYYY"
+  const formatDateObj = (dateObj) => {
+    if (!dateObj) return "";
+    const dd = String(dateObj.getDate()).padStart(2, "0");
+    const mm = String(dateObj.getMonth() + 1).padStart(2, "0");
+    const yyyy = dateObj.getFullYear();
+    return `${dd}/${mm}/${yyyy}`;
   };
-
-  const maxDateStr = maxDate ? toNativeDate(
-    `${String(maxDate.getDate()).padStart(2, '0')}/${String(maxDate.getMonth() + 1).padStart(2, '0')}/${maxDate.getFullYear()}`
-  ) : undefined;
 
   return (
     <div className="flex flex-col gap-1 w-full">
-      <div className={`flex bg-white rounded-md px-3 py-1.5 border ${error ? 'border-red-500' : 'border-neutral-light/50'} items-center justify-between min-h-10 transition-colors focus-within:border-gray-400`}>
+      <div className={`flex ${disabled ? 'bg-gray-100' : 'bg-white'} rounded-md px-3 py-2 border ${error ? 'border-red-500' : 'border-neutral-light/50'} items-center justify-between transition-colors focus-within:border-gray-400`}>
         <Controller
           control={control}
           name={name}
           render={({ field: { onChange, onBlur, value } }) => (
-            <input
-              type="date"
-              value={toNativeDate(value)}
-              onChange={(e) => onChange(fromNativeDate(e.target.value))}
-              onBlur={onBlur}
-              max={maxDateStr}
-              className="bg-transparent focus:outline-none w-full text-[14px] font-medium placeholder-neutral-400 appearance-none"
-            />
+            <DatePicker
+            selected={parseToDateObj(value)}
+            onChange={(date) => onChange(formatDateObj(date))}
+            showMonthDropdown
+            showYearDropdown
+            dropdownMode="select"
+            scrollableYearDropdown
+            yearDropdownItemNumber={100} // last 100 years
+            onKeyDown={(e) => {
+              const allowedKeys = ["Backspace", "ArrowLeft", "ArrowRight", "Tab", "Delete", "/", "Enter"];
+              if (e.metaKey || e.ctrlKey) return;
+              if (!/^[0-9]$/.test(e.key) && !allowedKeys.includes(e.key)) {
+                e.preventDefault();
+              }
+            }}
+            maxLength={10}
+            onBlur={onBlur}
+            maxDate={maxDate}
+            disabled={disabled}
+            dateFormat="dd/MM/yyyy"
+            placeholderText="dd/mm/yyyy"
+            className={`bg-transparent focus:outline-none w-full text-[14px] font-medium placeholder-neutral-400 ${disabled ? 'text-gray-500 cursor-not-allowed' : ''}`}
+            wrapperClassName="w-full"
+          />
           )}
         />
       </div>

@@ -25,9 +25,17 @@ const OnboardingFlowPage = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [currentStep]);
 
-  const [isOtpVerified, setIsOtpVerified] = useState(false);
+  const [isVerificationComplete, setIsVerificationComplete] = useState(false);
+  const [isMobileVerified, setIsMobileVerified] = useState(false);
   const [showOtp, setShowOtp] = useState(false);
   const [mobileNumber, setMobileNumber] = useState("");
+
+  const [email, setEmail] = useState("");
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
+  const [showEmailOtp, setShowEmailOtp] = useState(false);
+
+  // Application Number assigned on load
+  const [applicationNumber] = useState(() => Math.floor(100000000000 + Math.random() * 900000000000).toString());
 
   const methods = useForm({
     resolver: zodResolver(onboardingSchema),
@@ -83,6 +91,15 @@ const OnboardingFlowPage = () => {
 
   return (
     <div className="w-full flex flex-col px-4 md:px-8 py-8 text-black font-sans">
+      {isVerificationComplete && (
+        <div className="w-full flex justify-end mb-4 -mt-4 animate-in fade-in zoom-in duration-500">
+          <div className="font-bold text-sand-350 bg-sand-500 border border-brown-700 px-4 py-1.5 rounded-lg text-[13px] tracking-wider shadow-sm flex items-center gap-2">
+            <span className="opacity-80">Application No:</span>
+            <span>{applicationNumber}</span>
+          </div>
+        </div>
+      )}
+
       <HorizontalLinearAlternativeLabelStepper
         activeStep={currentStep - 1}
         steps={STEPS}
@@ -93,12 +110,20 @@ const OnboardingFlowPage = () => {
         {currentStep === 1 && (
           <OnboardingTab
             onNext={next}
-            isOtpVerified={isOtpVerified}
-            setIsOtpVerified={setIsOtpVerified}
+            isVerificationComplete={isVerificationComplete}
+            setIsVerificationComplete={setIsVerificationComplete}
+            isMobileVerified={isMobileVerified}
+            setIsMobileVerified={setIsMobileVerified}
             showOtp={showOtp}
             setShowOtp={setShowOtp}
             mobileNumber={mobileNumber}
             setMobileNumber={setMobileNumber}
+            email={email}
+            setEmail={setEmail}
+            isEmailVerified={isEmailVerified}
+            setIsEmailVerified={setIsEmailVerified}
+            showEmailOtp={showEmailOtp}
+            setShowEmailOtp={setShowEmailOtp}
           />
         )}
         {currentStep === 2 && <AadhaarDetailsTab onNext={next} />}

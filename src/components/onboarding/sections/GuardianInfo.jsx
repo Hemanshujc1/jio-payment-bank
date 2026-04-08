@@ -8,12 +8,12 @@ const GuardianInfo = () => {
   const { register, control, formState: { errors } } = useFormContext();
 
   const MOCK_AADHAAR_ADDRESS = {
-    houseNo: "123",
-    building: "FakeVilla",
-    street: "Marol Road",
+    addressLine1: "A/1001, FakeVilla Apartment",
+    addressLine2: "XYZ Buliding",
+    addressLine3: "150 Road",
     city: "Mumbai",
     state: "Maharashtra",
-    pincode: "400059",
+    pincode: "400013",
   };
 
   return (
@@ -92,7 +92,6 @@ const GuardianInfo = () => {
             <CustomDatePicker 
               name="guardian.dob" 
               maxDate={new Date(new Date().setFullYear(new Date().getFullYear() - 18))} 
-              showAge={true}
             />
           </div>
         </div>

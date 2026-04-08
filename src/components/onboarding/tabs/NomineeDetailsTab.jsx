@@ -15,13 +15,18 @@ const NomineeDetailsTab = ({ onNext }) => {
   const isMinor = nomineeDob ? differenceInYears(new Date(), parseDate(nomineeDob)) < 18 : false;
 
   const handleProceed = async () => {
-    const fieldsToTrigger = ["nominee"];
+    let isValid = false;
 
-    if (isMinor) {
-      fieldsToTrigger.push("guardian");
+    if (provideNominee === "Yes") {
+      const fieldsToTrigger = ["nominee"];
+      if (isMinor) {
+        fieldsToTrigger.push("guardian");
+      }
+      isValid = await trigger(fieldsToTrigger);
+    } else {
+      isValid = await trigger(["nominee.provide"]);
     }
 
-    const isValid = await trigger(fieldsToTrigger);
     if (isValid) {
       onNext();
     }

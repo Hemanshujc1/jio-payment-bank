@@ -4,13 +4,10 @@ const OnboardingHeader = () => {
   return (
     <>
       {/* On-Boarding Mode */}
-      <div className="flex items-center gap-4 mb-10">
-        <h2 className="font-semibold text-xl md:text-2xl tracking-tight">
-          Select On-Boarding Mode<span className="text-red-500">*</span>
-        </h2>
-        <div className="bg-primary px-8 py-2 rounded-full font-semibold shadow-sm">
-          E-KYC
-        </div>
+      <div className="flex justify-center items-center gap-4 mb-10">
+        <h2 className="font-bold text-2xl tracking-wide text-center">
+        On-Boarding Mode: E-KYC
+      </h2>
       </div>
       {/* Customer should hold */}
       <div className="mb-10">

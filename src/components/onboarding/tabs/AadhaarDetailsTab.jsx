@@ -6,15 +6,23 @@ import AadhaarAddressSection from "../sections/AadhaarAddressSection";
 
 const AadhaarDetailsTab = ({ onNext }) => {
   const MOCK_AADHAAR_ADDRESS = {
-    houseNo: "A/1001",
-    building: "XYZ Buliding",
-    street: "150 Road",
+    addressLine1: "A/1001, FakeVilla Apartment",
+    addressLine2: "XYZ Buliding",
+    addressLine3: "150 Road",
     city: "Mumbai",
     state: "Maharashtra",
     pincode: "400013",
   };
 
-  const { trigger } = useFormContext();
+  const { trigger, setValue } = useFormContext();
+
+  React.useEffect(() => {
+    setValue("applicant.firstName", "Ramesh");
+    setValue("applicant.middleName", "Kumar");
+    setValue("applicant.lastName", "Sharma");
+    setValue("applicant.gender", "Male");
+    setValue("applicant.dob", "15/08/1990");
+  }, [setValue]);
 
   const handleProceed = async () => {
     const isValid = await trigger([
@@ -36,7 +44,7 @@ const AadhaarDetailsTab = ({ onNext }) => {
       <h2 className="font-bold text-2xl tracking-wide mb-10 text-center">
         Details as per Aadhaar
       </h2>
-      <div className="flex flex-col md:flex-row gap-8 lg:gap-12 justify-center items-start w-full max-w-5xl mx-auto mb-10">
+      <div className="flex flex-col md:flex-row gap-6 lg:gap-12 justify-center items-start w-full max-w-5xl mx-auto mb-10">
         <div className="w-35 h-48 md:w-46 md:h-56 shrink-0">
           <img
             src="/jpb/2.jpeg"
@@ -50,10 +58,10 @@ const AadhaarDetailsTab = ({ onNext }) => {
           <AadhaarFieldGrid />
 
           {/* Aadhaar Address Preview */}
-          <div className="mt-8">
-            <h3 className="font-bold text-[16px] text-gray-900 mb-3">Aadhaar Address</h3>
+          <div className="mt-1">
+            <h3 className="font-bold text-[16px] text-gray-900 mb-0">Aadhaar Address</h3>
             <div className="text-[14px] leading-relaxed">
-              {MOCK_AADHAAR_ADDRESS.houseNo}, {MOCK_AADHAAR_ADDRESS.building}, {MOCK_AADHAAR_ADDRESS.street}, {MOCK_AADHAAR_ADDRESS.city}, {MOCK_AADHAAR_ADDRESS.state} - {MOCK_AADHAAR_ADDRESS.pincode}
+              {MOCK_AADHAAR_ADDRESS.addressLine1}, {MOCK_AADHAAR_ADDRESS.addressLine2}, {MOCK_AADHAAR_ADDRESS.addressLine3}, {MOCK_AADHAAR_ADDRESS.city}, {MOCK_AADHAAR_ADDRESS.state} - {MOCK_AADHAAR_ADDRESS.pincode}
             </div>
           </div>
 
@@ -62,7 +70,7 @@ const AadhaarDetailsTab = ({ onNext }) => {
         </div>
       </div>
 
-      <div className="flex justify-center mb-10 mt-12 pt-2">
+      <div className="flex justify-center mb-8 mt-8 pt-1">
         <ProceedButton onClick={handleProceed} className="w-47.5" />
       </div>
     </div>
