@@ -19,7 +19,7 @@ const VariantCard = ({
         onClick={onPayClick} 
         onMouseEnter={() => setShowBenefits(true)}
         onMouseLeave={() => setShowBenefits(false)}
-        className="bg-white rounded-3xl sm:rounded-[28px] p-5 sm:p-6 flex flex-col items-center text-center shadow-lg h-auto min-h-105 sm:min-h-120 lg:min-h-125 transform transition-transform duration-300 lg:group-hover:-translate-y-2 relative overflow-hidden"
+        className="bg-white rounded-3xl sm:rounded-[28px] p-5 sm:p-6 [@media(max-height:700px)]:p-4 flex flex-col items-center text-center shadow-lg h-auto min-h-105 sm:min-h-120 lg:min-h-125 [@media(max-height:700px)]:lg:min-h-[410px] transform transition-transform duration-300 lg:group-hover:-translate-y-2 relative overflow-hidden"
       >
 
         {/* Hover Overlay for Benefits */}
@@ -38,7 +38,7 @@ const VariantCard = ({
         )}
 
         {/* Image Placeholder */}
-        <div className="w-[90%] sm:w-full h-36 sm:h-44 bg-neutral-light rounded-2xl sm:rounded-2xl mb-4 sm:mb-6 overflow-hidden flex items-center justify-center shrink-0">
+        <div className="w-[90%] sm:w-full h-36 sm:h-44 [@media(max-height:700px)]:h-32 [@media(max-height:700px)]:sm:h-36 bg-neutral-light rounded-2xl sm:rounded-2xl mb-4 sm:mb-6 [@media(max-height:700px)]:mb-3 overflow-hidden flex items-center justify-center shrink-0">
           <img 
             src={imgsrc}
             alt={imageAlt} 
@@ -47,9 +47,9 @@ const VariantCard = ({
         </div>
         
         <h3 className="text-primary font-bold text-[19px] sm:text-[22px] tracking-tight mb-1 leading-tight">{title}</h3>
-        <p className="font-medium text-[14px] sm:text-[16px] mb-4 sm:mb-5 text-gray-600">{subtitle}</p>
+        <p className="font-medium text-[14px] sm:text-[16px] [@media(max-height:700px)]:text-[14px] mb-4 sm:mb-5 [@media(max-height:700px)]:mb-2 text-gray-600">{subtitle}</p>
         
-        <p className="text-[13px] sm:text-[15px] leading-relaxed mb-6 sm:mb-8 grow flex items-start justify-center pt-1 sm:pt-2">
+        <p className="text-[13px] sm:text-[15px] [@media(max-height:700px)]:text-[13px] leading-relaxed mb-6 sm:mb-8 [@media(max-height:700px)]:mb-4 grow flex items-start justify-center pt-1 sm:pt-2">
           {description}
         </p>
         

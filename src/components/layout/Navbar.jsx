@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 const Navbar = () => {
   return (
-    <nav className="w-full min-h-16 sm:min-h-20 py-2 sm:py-0 bg-white flex flex-col sm:flex-row justify-center sm:justify-between items-center px-2 sm:px-6 md:px-12 shadow-md shrink-0 border-b border-neutral-light gap-2 sm:gap-0">
+    <nav className="w-full min-h-16 sm:min-h-17 py-1 sm:py-0 bg-white flex flex-col sm:flex-row justify-center sm:justify-between items-center px-2 sm:px-6 md:px-12 shadow-md shrink-0 border-b border-neutral-light gap-2 sm:gap-0">
       <Link to="/" className="w-full sm:w-auto flex justify-center sm:justify-start shrink-0">
         <div className="flex items-center h-full gap-3 sm:gap-4">
           <img src={jio} alt="jio logo" className="h-8 sm:h-10 w-auto shrink-0" />
