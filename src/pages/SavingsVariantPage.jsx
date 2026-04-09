@@ -24,16 +24,16 @@ const SavingsVariantPage = () => {
           imageAlt="Physical Card Placeholder"
           benefits={[
             "Complimentary Domestic Airport/Railway Lounge Access, once per year",
-         "Complimentary RuPay Platinum Debit Card",
-          "Upto 2 lakhs personal accident insurance cover",
-          "Exclusive lifestyle offers provided by merchants",
-          "Enhanced daily PoS / E-commerce shopping limit of Rs. 50,000/-",
-          "5 free ATM transactions per month with daily withdrawable limit of Rs. 50,000/-",
-          "No minimum balance requirement",
-          "Upto 4%* p.a. Interest",
-          "Free Fund Transfers",
-          "Free Monthly E-statements",
-          "UPI for transfers, bill payments, recharges & more"
+            "Complimentary RuPay Platinum Debit Card",
+            "Upto 2 lakhs personal accident insurance cover",
+            "Exclusive lifestyle offers provided by merchants",
+            "Enhanced daily PoS / E-commerce shopping limit of Rs. 50,000/-",
+            "5 free ATM transactions per month with daily withdrawable limit of Rs. 50,000/-",
+            "No minimum balance requirement",
+            "Upto 4%* p.a. Interest",
+            "Free Fund Transfers",
+            "Free Monthly E-statements",
+            "UPI for transfers, bill payments, recharges & more",
           ]}
           onPayClick={() => {
             navigate("/onboarding-flow");

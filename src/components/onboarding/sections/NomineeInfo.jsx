@@ -24,12 +24,12 @@ const NomineeInfo = () => {
   const isAutoPopulated = ["Father", "Mother", "Spouse", "Husband", "Wife"].includes(relationship);
 
   const MOCK_AADHAAR_ADDRESS = {
-    addressLine1: "123",
-    addressLine2: "Corporate House",
-    addressLine3: "Marol  Road",
-    city: "Mumbai",
-    state: "Maharashtra",
-    pincode: "400059",
+      addressLine1: "401, XYZ House",
+      addressLine2: "Fake Street",
+      addressLine3: "150 Road",
+      city: "Mumbai",
+      state: "Maharashtra",
+      pincode: "400059",
   };
 
   useEffect(() => {

@@ -14,7 +14,7 @@ const ReviewNomineeDetails = ({ onEdit }) => {
     addressDetails: {
       addressLine1: "401, XYZ House",
       addressLine2: "Fake Street",
-      addressLine3: "",
+      addressLine3: "150 Road",
       city: "Mumbai",
       state: "Maharashtra",
       pincode: "400059"
