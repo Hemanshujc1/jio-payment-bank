@@ -301,8 +301,17 @@ const OnboardingTab = ({
                 <div className="relative">
                   <input
                     type="file"
-                    accept=".jpg,.jpeg,image/jpeg"
-                    onChange={(e) => setPanFile(e.target.files[0] || null)}
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      if (file && !file.type.startsWith("image/")) {
+                        alert("Please select an image file (e.g., JPG, PNG).");
+                        e.target.value = ""; // Clear the input
+                        setPanFile(null);
+                      } else {
+                        setPanFile(file || null);
+                      }
+                    }}
                     className="block w-fit text-sm text-gray-600 file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border file:border-brown-700 file:text-[13.5px] file:font-extrabold file:bg-sand-500 file:text-sand-350 hover:file:bg-brown-800 file:cursor-pointer file:transition-colors bg-white rounded-xl border border-gray-200 outline-none focus-within:border-gray-800 p-1.5 shadow-sm"
                   />
                 </div>
