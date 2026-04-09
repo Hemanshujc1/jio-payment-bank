@@ -15,11 +15,16 @@ const VariantCard = ({
 
   return (
     <div className="flex flex-col gap-2 w-[92%] sm:w-full max-w-85 sm:max-w-sm md:max-w-95 lg:max-w-100 mx-auto group relative">
-      <div onClick={onPayClick} className="bg-white rounded-3xl sm:rounded-[28px] p-5 sm:p-6 flex flex-col items-center text-center shadow-lg h-auto min-h-105 sm:min-h-120 lg:min-h-125 transform transition-transform duration-300 lg:group-hover:-translate-y-2 relative overflow-hidden">
+      <div 
+        onClick={onPayClick} 
+        onMouseEnter={() => setShowBenefits(true)}
+        onMouseLeave={() => setShowBenefits(false)}
+        className="bg-white rounded-3xl sm:rounded-[28px] p-5 sm:p-6 flex flex-col items-center text-center shadow-lg h-auto min-h-105 sm:min-h-120 lg:min-h-125 transform transition-transform duration-300 lg:group-hover:-translate-y-2 relative overflow-hidden"
+      >
 
         {/* Hover Overlay for Benefits */}
         {benefits && benefits.length > 0 && (
-          <div className={`absolute inset-x-1 top-1 bottom-16 sm:bottom-20 bg-white/95 backdrop-blur-sm rounded-[22px] sm:rounded-3xl z-10 p-5 px-5 sm:px-6 transition-all duration-300 flex flex-col items-start text-left overflow-y-auto scrollbar-hide border border-gray-100 shadow-inner ${showBenefits ? 'opacity-100 visible' : 'opacity-0 invisible lg:group-hover:opacity-100 lg:group-hover:visible'}`}>
+          <div className={`absolute inset-x-1 top-1 bottom-16 sm:bottom-20 bg-white/95 backdrop-blur-sm rounded-[22px] sm:rounded-3xl z-10 p-5 px-5 sm:px-6 transition-all duration-300 flex flex-col items-start text-left overflow-y-auto scrollbar-hide border border-gray-100 shadow-inner ${showBenefits ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
             <h4 className="font-bold text-[15px] sm:text-[16px] mb-2 sm:mb-3 tracking-wide">BENEFITS:</h4>
             <ul className="space-y-1.5 sm:space-y-2">
               {benefits.map((benefit, idx) => (
@@ -54,6 +59,7 @@ const VariantCard = ({
             type="button"
             onClick={(e) => {
               e.preventDefault();
+              e.stopPropagation();
               setShowBenefits(!showBenefits);
             }}
             className="text-[#641E1E] text-[11px] sm:text-[12px] text-right hover:underline font-medium z-20 relative cursor-pointer"
