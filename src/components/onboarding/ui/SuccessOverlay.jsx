@@ -16,7 +16,7 @@ const SuccessOverlay = () => {
   return (
     <div className="fixed inset-0 bg-[#302F2D]/98 flex flex-col gap-6 sm:gap-10 md:gap-14 [@media(max-height:700px)]:gap-6 items-center justify-center z-50 animate-in fade-in duration-500 p-4 overflow-y-auto">
       <h1
-        className="text-[#36B34A] text-2xl sm:text-4xl md:text-5xl font-black tracking-[0.1em] sm:tracking-[0.2em] text-center drop-shadow-2xl animate-in zoom-in-50 duration-500"
+        className="text-[#36B34A] text-2xl sm:text-4xl md:text-5xl font-black tracking-widest sm:tracking-[0.2em] text-center drop-shadow-2xl animate-in zoom-in-50 duration-500"
         style={{ textShadow: "0 4px 15px rgba(0,0,0,0.6)" }}
       >
         CONGRATULATIONS!

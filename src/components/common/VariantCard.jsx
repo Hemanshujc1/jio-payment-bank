@@ -19,7 +19,7 @@ const VariantCard = ({
         onClick={onPayClick} 
         onMouseEnter={() => setShowBenefits(true)}
         onMouseLeave={() => setShowBenefits(false)}
-        className="bg-white rounded-3xl sm:rounded-[28px] p-5 sm:p-6 [@media(max-height:700px)]:p-4 flex flex-col items-center text-center shadow-lg h-auto min-h-105 sm:min-h-120 lg:min-h-125 [@media(max-height:700px)]:lg:min-h-[410px] transform transition-transform duration-300 lg:group-hover:-translate-y-2 relative overflow-hidden"
+        className="bg-white rounded-3xl sm:rounded-[28px] p-5 sm:p-6 [@media(max-height:700px)]:p-4 flex flex-col items-center text-center shadow-lg h-auto min-h-105 sm:min-h-120 lg:min-h-125 [@media(max-height:700px)]:lg:min-h-102.5 transform transition-transform duration-300 lg:group-hover:-translate-y-2 relative overflow-hidden"
       >
 
         {/* Hover Overlay for Benefits */}
