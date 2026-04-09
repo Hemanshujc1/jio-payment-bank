@@ -22,16 +22,15 @@ const MobileOtpSection = ({
   const isValidEmail = email.length === 0 || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   return (
-    <div className="w-full flex justify-center py-10 px-4 md:px-8 animate-in fade-in duration-500">
-       {/* bg-white rounded-2xl shadow-[0_2px_20px_-4px_rgba(0,0,0,0.05)] border border-gray-100 */}
-      <div className="w-full max-w-4xl p-8 md:p-12 flex flex-col items-start">
+    <div className="w-full flex justify-center py-2 sm:py-0 px-2 sm:px-4 md:px-8 animate-in fade-in duration-500">
+      <div className="w-full max-w-4xl p-4 sm:p-8 md:p-12 flex flex-col items-start">
         
         {/* Header */}
-        <div className="w-full border-b border-sand-500 pb-6 mb-8">
-          <h2 className="text-[24px] md:text-[28px] font-extrabold text-sand-900 tracking-tight">
+        <div className="w-full border-b border-sand-500 text-center pb-4 sm:pb-6 mb-6 sm:mb-8">
+          <h2 className="text-[22px] sm:text-[24px] md:text-[28px] font-extrabold text-sand-900 tracking-tight">
             Customer Verification
           </h2>
-          <p className="text-[14px] md:text-[15px] text-sand-500 mt-2 font-medium">
+          <p className="text-[13px] sm:text-[14px] md:text-[15px] text-sand-500 mt-1 sm:mt-2 font-medium leading-normal">
             Please verify contact details to authorize the onboarding process.
           </p>
         </div>
@@ -132,12 +131,12 @@ const MobileOtpSection = ({
         </div>
         
         {/* Footer Actions */}
-        <div className="w-full flex justify-center items-center mt-10 pt-5 border-t border-sand-500">
+        <div className="w-full flex justify-center items-center mt-8 sm:mt-10 pt-5 border-t border-sand-500">
           <ProceedButton
             text="Proceed to Onboarding"
             onClick={onProceed}
             disabled={!isMobileVerified || (email.length > 0 && !isEmailVerified)}
-            className="max-w-fit rounded-xl text-[12px]"
+            className="w-full sm:max-w-fit rounded-xl text-[12px] py-3 sm:py-2.5 shadow-lg"
           />
         </div>
       </div>

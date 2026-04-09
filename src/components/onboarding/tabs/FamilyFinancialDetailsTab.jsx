@@ -31,14 +31,15 @@ const FamilyFinancialDetailsTab = ({ onNext }) => {
   };
 
   return (
-    <div className="w-full flex-col px-4 md:px-8 py-8 items-center justify-center flex text-black font-sans">
-      <div className="w-full max-w-6xl mx-auto flex flex-col gap-10">
+    <div className="w-full flex flex-col px-3 sm:px-6 md:px-8 py-6 sm:py-8 items-center text-black font-sans animate-in fade-in duration-500">
+      <div className="w-full max-w-6xl mx-auto flex flex-col gap-8 sm:gap-12">
         <FamilyDetails />
+        <div className="border-t border-gray-100 w-full opacity-50" />
         <FinancialDetails />
-        <div className="flex justify-center w-full mt-8 mb-6">
+        <div className="flex justify-center w-full mt-6 sm:mt-10 mb-6">
           <ProceedButton 
             onClick={handleProceed}
-            className="w-full max-w-xs"
+            className="w-fit shadow-lg py-3 sm:py-2.5"
           />
         </div>
       </div>

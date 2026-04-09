@@ -52,7 +52,7 @@ const OtpVerification = ({ length = 6, onComplete }) => {
         })}
       </div>
       
-      <div className="flex items-center justify-between w-full max-w-[280px] text-[13px] text-gray-500 mt-4 px-2 font-medium">
+      <div className="flex items-center justify-between w-full max-w-70 text-[13px] text-gray-500 mt-4 px-2 font-medium">
         <span>Resend OTP in 30 sec</span>
         <button className="text-brown-700 font-bold hover:text-brown-900 transition-colors">
           Resend OTP

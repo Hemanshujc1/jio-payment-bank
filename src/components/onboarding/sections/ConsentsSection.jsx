@@ -47,14 +47,14 @@ const ConsentsSection = ({
 
   
 
-      {/* Long Checkboxes */}
-      <div className="flex flex-col gap-2 mb-5">
-        <div className="flex items-start gap-4">
+      {/* Large Checkboxes */}
+      <div className="flex flex-col gap-4 sm:gap-2 mb-6 sm:mb-5">
+        <div className="flex items-start gap-3 sm:gap-4 group">
           <div 
-            className="cursor-pointer shrink-0 mt-0.5"
+            className="cursor-pointer shrink-0 mt-0.5 sm:mt-1"
             onClick={() => setAgreeAeps(!agreeAeps)}
           >
-            <div className={`w-5 h-5 border-2 ${errors?.agreeAeps ? 'border-red-500' : 'border-primary'} flex items-center justify-center`}>
+            <div className={`w-5 h-5 shrink-0 border-2 ${errors?.agreeAeps ? 'border-red-500' : 'border-primary'} flex items-center justify-center transition-colors group-hover:border-gray-900`}>
               {agreeAeps && <IoMdCheckmark />}
             </div>
             <input
@@ -64,7 +64,7 @@ const ConsentsSection = ({
               readOnly
             />
           </div>
-          <p className="text-[13px] leading-tight text-black max-w-6xl">
+          <p className="text-[12.5px] sm:text-[13px] leading-snug sm:leading-tight text-gray-800 max-w-6xl select-none" onClick={() => setAgreeAeps(!agreeAeps)}>
             I hereby give consent to activate Aadhaar-enabled Payment System
             (AePS) services for my bank account with Jio Payments Bank Ltd. I
             understand and agree to the use of my Aadhaar data solely for secure
@@ -72,16 +72,16 @@ const ConsentsSection = ({
             updates.
           </p>
         </div>
-        {errors?.agreeAeps && <span className="text-red-500 text-[12px] font-medium ml-9">{errors.agreeAeps.message}</span>}
+        {errors?.agreeAeps && <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-8 sm:ml-9">{errors.agreeAeps.message}</span>}
       </div>
 
-      <div className="flex flex-col gap-2 mb-10">
-        <div className="flex items-start gap-4">
+      <div className="flex flex-col gap-4 sm:gap-2 mb-6 sm:mb-10">
+        <div className="flex items-start gap-3 sm:gap-4 group">
           <div 
-            className="cursor-pointer shrink-0 mt-0.5"
+            className="cursor-pointer shrink-0 mt-0.5 sm:mt-1"
             onClick={() => setAgreeSweep(!agreeSweep)}
           >
-            <div className={`w-5 h-5 border-2 ${errors?.agreeSweep ? 'border-red-500' : 'border-primary'} flex items-center justify-center`}>
+            <div className={`w-5 h-5 shrink-0 border-2 ${errors?.agreeSweep ? 'border-red-500' : 'border-primary'} flex items-center justify-center transition-colors group-hover:border-gray-900`}>
               {agreeSweep && <IoMdCheckmark />}
             </div>
             <input
@@ -91,7 +91,7 @@ const ConsentsSection = ({
               readOnly
             />
           </div>
-          <p className="text-[13px] leading-tight text-black max-w-6xl">
+          <p className="text-[12.5px] sm:text-[13px] leading-snug sm:leading-tight text-gray-800 max-w-6xl select-none" onClick={() => setAgreeSweep(!agreeSweep)}>
             I agree to opening a Sweep Savings Account with Jio Payments Bank’s
             partner bank. I hereby provide my consent to Jio Payments Bank Limited
             (Bank) for opening and sharing my KYC details with Suryoday Small
@@ -101,20 +101,20 @@ const ConsentsSection = ({
             Current Account, Savings Account and Pre-Paid Instrument put together
             with the Bank. I understand and agree to the terms and conditions
             governing the bank services as available on the bank’s website. {"("}
-            <span className="underline">www.jiopaymentsbank.com</span>
+            <span className="underline text-blue-600">www.jiopaymentsbank.com</span>
             {")"}
           </p>
         </div>
-        {errors?.agreeSweep && <span className="text-red-500 text-[12px] font-medium ml-9">{errors.agreeSweep.message}</span>}
+        {errors?.agreeSweep && <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-8 sm:ml-9">{errors.agreeSweep.message}</span>}
       </div>
 
-      <div className="flex flex-col gap-2 mb-10">
-        <div className="flex items-start gap-4">
+      <div className="flex flex-col gap-4 sm:gap-2 mb-6 sm:mb-10">
+        <div className="flex items-start gap-3 sm:gap-4 group">
           <div 
-            className="cursor-pointer shrink-0 mt-0.5"
+            className="cursor-pointer shrink-0 mt-0.5 sm:mt-1"
             onClick={() => setFatcaDeclared(!fatcaDeclared)}
           >
-            <div className={`w-5 h-5 border-2 ${errors?.fatcaDeclared ? 'border-red-500' : 'border-primary'} flex items-center justify-center`}>
+            <div className={`w-5 h-5 shrink-0 border-2 ${errors?.fatcaDeclared ? 'border-red-500' : 'border-primary'} flex items-center justify-center transition-colors group-hover:border-gray-900`}>
               {fatcaDeclared && <IoMdCheckmark />}
             </div>
             <input 
@@ -124,25 +124,25 @@ const ConsentsSection = ({
               readOnly
             />
           </div>
-          <p className="text-[14px] leading-tight text-black max-w-6xl">
+          <p className="text-[13px] sm:text-[14px] leading-snug sm:leading-tight text-gray-800 max-w-6xl select-none" onClick={() => setFatcaDeclared(!fatcaDeclared)}>
             I hereby declare that i am Indian Citizen, Indian Tax resident and not a US Citizen / Green Card Holder. (FATCA Declaration)
           </p>
         </div>
-        {errors?.fatcaDeclared && <span className="text-red-500 text-[12px] font-medium ml-9">{errors.fatcaDeclared.message}</span>}
+        {errors?.fatcaDeclared && <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-8 sm:ml-9">{errors.fatcaDeclared.message}</span>}
       </div>
 
         {/* T&C Checkbox */}
-        <div className="flex flex-col gap-1 mb-8">
+        <div className="flex flex-col gap-1 mb-6 sm:mb-8">
         <div 
-          className="flex items-center gap-3 cursor-pointer w-fit"
+          className="flex items-center gap-3 cursor-pointer w-fit group"
           onClick={() => setAgreeTerms(!agreeTerms)}
         >
-          <div className={`w-5 h-5 border-2 ${errors?.agreeTerms ? 'border-red-500' : 'border-primary'} flex items-center justify-center shrink-0`}>
+          <div className={`w-5 h-5 border-2 ${errors?.agreeTerms ? 'border-red-500' : 'border-primary'} flex items-center justify-center shrink-0 transition-colors group-hover:border-gray-900`}>
             {agreeTerms && <IoMdCheckmark />}
           </div>
-          <span className="text-[15px]">
+          <span className="text-[14px] sm:text-[15px] select-none">
             I agree to the{" "}
-            <span className="text-[blue] font-medium">Terms & Conditions</span>
+            <span className="text-blue-600 font-bold hover:underline">Terms & Conditions</span>
           </span>
           <input
             type="checkbox"
@@ -151,7 +151,7 @@ const ConsentsSection = ({
             readOnly
           />
         </div>
-        {errors?.agreeTerms && <span className="text-red-500 text-[12px] font-medium ml-8">{errors.agreeTerms.message}</span>}
+        {errors?.agreeTerms && <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-8 sm:ml-9">{errors.agreeTerms.message}</span>}
       </div>
     </>
   );

@@ -29,12 +29,10 @@ const OnboardingFlowPage = () => {
   const [isMobileVerified, setIsMobileVerified] = useState(false);
   const [showOtp, setShowOtp] = useState(false);
   const [mobileNumber, setMobileNumber] = useState("");
-
   const [email, setEmail] = useState("");
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [showEmailOtp, setShowEmailOtp] = useState(false);
 
-  // Application Number assigned on load
   const [applicationNumber] = useState(() => Math.floor(100000000000 + Math.random() * 900000000000).toString());
 
   const methods = useForm({
@@ -90,11 +88,11 @@ const OnboardingFlowPage = () => {
   });
 
   return (
-    <div className="w-full flex flex-col px-4 md:px-8 py-8 text-black font-sans">
+    <div className="w-full max-w-7xl mx-auto flex flex-col px-3 sm:px-6 md:px-8 py-4 sm:py-8 text-black font-sans">
       {isVerificationComplete && (
-        <div className="w-full flex justify-end mb-4 -mt-4 animate-in fade-in zoom-in duration-500">
-          <div className="font-bold text-sand-350 bg-sand-500 border border-brown-700 px-4 py-1.5 rounded-lg text-[13px] tracking-wider shadow-sm flex items-center gap-2">
-            <span className="opacity-80">Application No:</span>
+        <div className="w-full flex justify-end mb-4 -mt-2 sm:-mt-4 animate-in fade-in zoom-in duration-500">
+          <div className="font-bold text-sand-350 bg-sand-500 border border-brown-700 px-3 sm:px-4 py-1.5 rounded-lg text-[11px] sm:text-[13px] tracking-wider shadow-sm flex items-center gap-2">
+            <span className="opacity-80">App No:</span>
             <span>{applicationNumber}</span>
           </div>
         </div>

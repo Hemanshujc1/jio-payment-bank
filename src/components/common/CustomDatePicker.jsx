@@ -31,8 +31,8 @@ const CustomDatePicker = ({ name, maxDate, disabled }) => {
   };
 
   return (
-    <div className="flex flex-col gap-1 w-full">
-      <div className={`flex ${disabled ? 'bg-gray-100' : 'bg-white'} rounded-md px-3 py-2 border ${error ? 'border-red-500' : 'border-neutral-light/50'} items-center justify-between transition-colors focus-within:border-gray-400`}>
+    <div className="flex flex-col gap-1.5 w-full">
+      <div className={`flex ${disabled ? 'bg-gray-100' : 'bg-white'} rounded-xl px-4 py-3 border shadow-sm transition-all focus-within:border-gray-900 ${error ? 'border-red-500' : 'border-neutral-light'} items-center justify-between`}>
         <Controller
           control={control}
           name={name}
@@ -58,13 +58,13 @@ const CustomDatePicker = ({ name, maxDate, disabled }) => {
             disabled={disabled}
             dateFormat="dd/MM/yyyy"
             placeholderText="dd/mm/yyyy"
-            className={`bg-transparent focus:outline-none w-full text-[14px] font-medium placeholder-neutral-400 ${disabled ? 'text-gray-500 cursor-not-allowed' : ''}`}
-            wrapperClassName="w-full"
+            className={`bg-transparent focus:outline-none w-full text-[14px] font-medium placeholder-neutral-400 p-0 ${disabled ? 'text-gray-500 cursor-not-allowed' : ''}`}
+            wrapperClassName="w-full flex items-center"
           />
           )}
         />
       </div>
-      {error && <span className="text-red-500 text-[12px]">{error.message}</span>}
+      {error && <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-1">{error.message}</span>}
     </div>
   );
 };

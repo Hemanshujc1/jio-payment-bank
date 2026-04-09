@@ -51,40 +51,40 @@ const NomineeInfo = () => {
   return (
     <div className="flex flex-col gap-8">
       {/* Nominee Name */}
-      <div className="flex flex-col gap-2">
-        <span className="font-semibold text-[14px]">
-          Nominee Name<span className="text-red-500">*</span>:
+      <div className="flex flex-col gap-4">
+        <span className="font-bold text-[14px] sm:text-[15px] text-gray-800 ml-0.5">
+          Nominee Name<span className="text-red-500 ml-0.5">*</span>
         </span>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
-          <div className="flex flex-col gap-1">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 items-start">
+          <div className="flex flex-col gap-1.5">
             <input
               {...register("nominee.firstName")}
               type="text"
               placeholder="First Name"
               readOnly={isAutoPopulated}
-              className={`bg-white rounded-md px-4 py-2 border ${errors.nominee?.firstName ? 'border-red-500' : 'border-neutral-light'} shadow-sm focus:outline-none focus:border-gray-400 placeholder:text-gray-500 text-[14px] font-medium ${isAutoPopulated ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+              className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${errors.nominee?.firstName ? 'border-red-500' : 'border-neutral-light focus-within:border-gray-900'} placeholder:text-gray-400 text-[14px] font-medium ${isAutoPopulated ? 'bg-gray-100 cursor-not-allowed text-gray-400' : 'text-gray-900'}`}
             />
-            {errors.nominee?.firstName && <span className="text-red-500 text-[12px] font-medium">{errors.nominee.firstName.message}</span>}
+            {errors.nominee?.firstName && <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-1">{errors.nominee.firstName.message}</span>}
           </div>
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-1.5">
             <input
               {...register("nominee.middleName")}
               type="text"
               placeholder="Middle Name (Optional)"
               readOnly={isAutoPopulated}
-              className={`bg-white rounded-md px-4 py-2 border ${errors.nominee?.middleName ? 'border-red-500' : 'border-neutral-light'} shadow-sm focus:outline-none focus:border-gray-400 placeholder:text-gray-500 text-[14px] font-medium ${isAutoPopulated ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+              className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${errors.nominee?.middleName ? 'border-red-500' : 'border-neutral-light focus-within:border-gray-900'} placeholder:text-gray-400 text-[14px] font-medium ${isAutoPopulated ? 'bg-gray-100 cursor-not-allowed text-gray-400' : 'text-gray-900'}`}
             />
-            {errors.nominee?.middleName && <span className="text-red-500 text-[12px] font-medium">{errors.nominee.middleName.message}</span>}
+            {errors.nominee?.middleName && <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-1">{errors.nominee.middleName.message}</span>}
           </div>
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-1.5">
             <input
               {...register("nominee.lastName")}
               type="text"
               placeholder="Last Name"
               readOnly={isAutoPopulated}
-              className={`bg-white rounded-md px-4 py-2 border ${errors.nominee?.lastName ? 'border-red-500' : 'border-neutral-light'} shadow-sm focus:outline-none focus:border-gray-400 placeholder:text-gray-500 text-[14px] font-medium ${isAutoPopulated ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+              className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${errors.nominee?.lastName ? 'border-red-500' : 'border-neutral-light focus-within:border-gray-900'} placeholder:text-gray-400 text-[14px] font-medium ${isAutoPopulated ? 'bg-gray-100 cursor-not-allowed text-gray-400' : 'text-gray-900'}`}
             />
-            {errors.nominee?.lastName && <span className="text-red-500 text-[12px] font-medium">{errors.nominee.lastName.message}</span>}
+            {errors.nominee?.lastName && <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-1">{errors.nominee.lastName.message}</span>}
           </div>
         </div>
       </div>
@@ -93,8 +93,8 @@ const NomineeInfo = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full items-start">
         {/* Relationship */}
         <div className="flex flex-col gap-2">
-          <span className="font-semibold text-[14px]">
-            Relationship<span className="text-red-500">*</span>:
+          <span className="font-bold text-[14px] sm:text-[15px] text-gray-800 ml-0.5">
+            Relationship<span className="text-red-500 ml-0.5">*</span>
           </span>
           <div className="relative z-40">
             <Controller
@@ -111,21 +111,18 @@ const NomineeInfo = () => {
               )}
             />
           </div>
-          {errors.nominee?.relationship && <span className="text-red-500 text-[12px]">{errors.nominee.relationship.message}</span>}
+          {errors.nominee?.relationship && <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-1">{errors.nominee.relationship.message}</span>}
         </div>
 
         {/* DOB */}
         <div className="flex flex-col gap-2">
-          <span className="font-semibold text-[14px]">
-            Date Of Birth<span className="text-red-500">*</span>:
+          <span className="font-bold text-[14px] sm:text-[15px] text-gray-800 ml-0.5">
+            Date Of Birth<span className="text-red-500 ml-0.5">*</span>
           </span>
           <div className="grow relative z-30">
             <CustomDatePicker name="nominee.dob" maxDate={new Date()} />
           </div>
         </div>
-
-        {/* Empty space for alignment */}
-        <div className="hidden lg:block"></div>
       </div>
 
       {/* Nominee Communication Address */}

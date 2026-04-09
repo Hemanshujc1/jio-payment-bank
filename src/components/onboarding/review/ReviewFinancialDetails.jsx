@@ -1,5 +1,5 @@
-import React from 'react';
-import { useFormContext } from 'react-hook-form';
+import ReviewHeader from './ReviewHeader';
+import ReviewRow from './ReviewRow';
 
 const ReviewFinancialDetails = ({ onEdit }) => {
   const dummyFinancial = {
@@ -11,37 +11,14 @@ const ReviewFinancialDetails = ({ onEdit }) => {
   const financial = dummyFinancial;
 
   return (
-    <section className="w-full relative">
-      <div className="relative w-full flex justify-center mb-8">
-        <h3 className="font-bold text-[16.5px]">Financial Details</h3>
-        <button
-          onClick={onEdit}
-          className="absolute right-0 top-1/2 -translate-y-1/2 bg-[#3A1E08] text-sand-350 rounded px-5 py-1 text-[13px] font-bold border border-[#2A1505] shadow-sm hover:opacity-90 tracking-wide"
-        >
-          Edit
-        </button>
+    <section className="w-full relative px-1 sm:px-0">
+      <ReviewHeader title="Financial Details" onEdit={onEdit} />
+      
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-1">
+        <ReviewRow label="Occupation" value={financial.occupation} labelWidth="sm:w-auto" />
+        <ReviewRow label="Source of Income" value={financial.sourceOfIncome} labelWidth="sm:w-auto" />
+        <ReviewRow label="Annual Income" value={financial.annualIncome} labelWidth="sm:w-auto" />
       </div>
-      <div className="flex flex-col md:flex-row flex-wrap items-start md:items-center gap-x-12 gap-y-6 w-full px-2">
-        <div className="flex items-center gap-2">
-          <span className="font-bold text-[14.5px] shrink-0 text-gray-700">
-            Occupation:
-          </span>
-          <span className="text-[14.5px] font-medium text-gray-900">{financial.occupation}</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="font-bold text-[14.5px] shrink-0 text-gray-700">
-            Source of Income:
-          </span>
-          <span className="text-[14.5px] font-medium text-gray-900">{financial.sourceOfIncome}</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="font-bold text-[14.5px] shrink-0 text-gray-700">
-            Annual Income:
-          </span>
-          <span className="text-[14.5px] font-medium text-gray-900">{financial.annualIncome}</span>
-        </div>
-      </div>
-    
     </section>
   );
 };

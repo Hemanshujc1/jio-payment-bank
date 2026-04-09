@@ -6,12 +6,12 @@ const FinancialDetails = () => {
   const { register, control, formState: { errors } } = useFormContext();
   
   return (
-    <section className="flex flex-col w-full mt-4">
-      <h2 className="font-bold text-[22px] tracking-wide mb-8 text-center">
+    <section className="flex flex-col w-full">
+      <h2 className="font-bold text-[19px] sm:text-[22px] tracking-wide mb-6 sm:mb-8 text-center text-gray-800">
         Financial Details
       </h2>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10 w-full max-w-6xl mx-auto">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-10 w-full max-w-6xl mx-auto">
         
         {/* Occupation */}
         <div className="flex flex-col gap-2">

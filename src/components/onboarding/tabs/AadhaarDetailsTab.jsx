@@ -40,27 +40,28 @@ const AadhaarDetailsTab = ({ onNext }) => {
   };
 
   return (
-    <div className="w-full flex flex-col px-4 md:px-8 py-8 items-center text-black font-sans">
-      <h2 className="font-bold text-2xl tracking-wide mb-10 text-center">
+    <div className="w-full flex flex-col px-3 sm:px-6 md:px-8 py-6 sm:py-8 items-center text-black font-sans">
+      <h2 className="font-bold text-xl sm:text-2xl tracking-wide mb-6 sm:mb-10 text-center text-gray-800">
         Details as per Aadhaar
       </h2>
-      <div className="flex flex-col md:flex-row gap-6 lg:gap-12 justify-center items-start w-full max-w-5xl mx-auto mb-10">
-        <div className="w-35 h-48 md:w-46 md:h-56 shrink-0">
+      <div className="flex flex-col md:flex-row gap-8 lg:gap-12 justify-center items-center md:items-start w-full max-w-5xl mx-auto mb-8 sm:mb-10">
+        <div className="w-40 h-48 sm:w-46 sm:h-56 shrink-0 bg-gray-50 rounded-2xl border border-gray-100 p-2 shadow-sm">
           <img
             src="/jpb/2.jpeg"
             alt="user img"
-            className="w-full h-full object-contain"
+            className="w-full h-full object-contain mix-blend-multiply"
           />
         </div>
 
-        <div className="flex flex-col gap-6 w-full text-[15px] pt-2">
+        <div className="flex flex-col gap-6 w-full text-[14px] sm:text-[15px] sm:pt-2">
           {/* Identity Fields Grid */}
           <AadhaarFieldGrid />
 
           {/* Aadhaar Address Preview */}
-          <div className="mt-1">
-            <h3 className="font-bold text-[16px] text-gray-900 mb-0">Aadhaar Address</h3>
-            <div className="text-[14px] leading-relaxed">
+          {/* <div className="mt-2 p-4 bg-gray-50 rounded-xl border border-gray-100 shadow-sm"> */}
+          <div className="mt-2 p-4">
+            <h3 className="font-bold text-[15px] sm:text-[16px] text-gray-900 mb-1">Aadhaar Address</h3>
+            <div className="text-[13px] sm:text-[14px] leading-relaxed text-black">
               {MOCK_AADHAAR_ADDRESS.addressLine1}, {MOCK_AADHAAR_ADDRESS.addressLine2}, {MOCK_AADHAAR_ADDRESS.addressLine3}, {MOCK_AADHAAR_ADDRESS.city}, {MOCK_AADHAAR_ADDRESS.state} - {MOCK_AADHAAR_ADDRESS.pincode}
             </div>
           </div>
@@ -70,8 +71,8 @@ const AadhaarDetailsTab = ({ onNext }) => {
         </div>
       </div>
 
-      <div className="flex justify-center mb-8 mt-8 pt-1">
-        <ProceedButton onClick={handleProceed} className="w-47.5" />
+      <div className="flex justify-center mb-6 sm:mb-8 mt-4 sm:mt-8 pt-1">
+        <ProceedButton onClick={handleProceed} className="w-full sm:w-47.5 shadow-lg" />
       </div>
     </div>
   );

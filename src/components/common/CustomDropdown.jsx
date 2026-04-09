@@ -26,12 +26,14 @@ const CustomDropdown = ({ options, value, onChange, className = "", error = fals
       {/* Closed State Trigger */}
       <div 
         onClick={() => setIsOpen(!isOpen)}
-        className={`bg-white rounded-md px-3 py-2 border ${error ? 'border-red-500' : 'border-neutral-light'} shadow-sm flex items-center justify-between cursor-pointer focus:outline-none min-h-10 grow min-w-35 ${isOpen ? 'invisible' : 'visible'}`}
+        className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all flex items-center justify-between cursor-pointer focus:outline-none min-h-11.5 grow min-w-35 ${
+          error ? 'border-red-500' : 'border-neutral-light focus-within:border-gray-900'
+        } ${isOpen ? 'invisible' : 'visible'}`}
       >
-        <span className="font-medium text-[12px] text-gray-800 truncate">
+        <span className={`${value ? 'text-gray-900' : 'text-gray-400'} font-medium text-[14px] truncate`}>
           {value || "Select Option"}
         </span>
-       <IoIosArrowDown/>
+       <IoIosArrowDown className="text-gray-400 text-lg" />
       </div>
 
       {/* Expanded Menu Popup */}

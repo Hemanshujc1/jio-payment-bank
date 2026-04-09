@@ -133,12 +133,13 @@ const OnboardingTab = ({
 
   const languages = [
     "English",
+    "Hindi",
     "Marathi",
+    "Bengali",
     "Kannada",
     "Telugu",
-    "Hindi",
-    "Bengali",
     "Tamil",
+    "Malayalam",
   ];
 
   const handleProceed = async () => {
@@ -225,7 +226,7 @@ const OnboardingTab = ({
       />
 
       {/* Biometric Integration Step */}
-      <div className="w-full flex items-center justify-center p-8 mt-10 mb-6 max-w-4xl mx-auto">
+      <div className="w-full flex items-center justify-center py-6 mt-4 mb-2 max-w-4xl mx-auto">
         {/* <h3 className="text-[18px] font-bold text-gray-900 mb-6 tracking-tight">Biometric Verification</h3> */}
         
         {!isBiometricVerified ? (
@@ -233,7 +234,7 @@ const OnboardingTab = ({
             type="button"
             onClick={captureBiometric}
             disabled={isBiometricLoading || aadhaar.length !== 12 || pan.length !== 10}
-            className={`w-full max-w-[280px] h-14 flex items-center justify-center gap-3 font-extrabold text-[15px] rounded-xl transition-all shadow-md
+            className={`w-full max-w-70 h-14 flex items-center justify-center gap-3 font-extrabold text-[15px] rounded-xl transition-all shadow-md
                ${(isBiometricLoading || aadhaar.length !== 12 || pan.length !== 10) ? 'bg-gray-300 text-gray-500 cursor-not-allowed shadow-none' : 'bg-sand-500 text-sand-350 border border-brown-700 hover:bg-brown-800'}`}
           >
             {isBiometricLoading ? (
@@ -261,7 +262,7 @@ const OnboardingTab = ({
       </div>
 
       {/* Verification Logic Block */}
-      <div className="w-full flex flex-col mb-10 -mt-2 px-2 xl:px-0">
+      <div className="w-full flex flex-col mb-4 -mt-2 px-2 xl:px-0">
         {documentStatus === "mismatch" && (
           <div className="flex flex-col gap-6 p-6 animate-in zoom-in-95 duration-300 ">
             <div className="flex items-start gap-3">
@@ -288,7 +289,7 @@ const OnboardingTab = ({
       </div>
 
       {/* Final Proceed */}
-      <div className="flex justify-center mb-10 pt-2">
+      <div className="flex justify-center mb-10 pt-1">
         <ProceedButton 
            onClick={handleProceed} 
            disabled={!isBiometricVerified || (documentStatus === "mismatch" && !panFile)}
