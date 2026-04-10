@@ -11,7 +11,7 @@ export default function HorizontalLinearAlternativeLabelStepper({
   return (
     <Box sx={{ 
       width: "100%", 
-      mb: 6, 
+      mb: 3, 
       mt: 2, 
       overflowX: 'auto',
       scrollbarWidth: 'none', 

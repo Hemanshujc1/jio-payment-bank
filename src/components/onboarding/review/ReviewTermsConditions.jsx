@@ -8,17 +8,17 @@ const ReviewTermsConditions = ({
 }) => {
   return (
     <section className="w-full relative px-1 sm:px-0">
-      <h3 className="font-bold text-[16px] sm:text-[18px] tracking-wide mb-6 text-center text-gray-800">
+      <h3 className="font-bold text-[16px] sm:text-[18px] tracking-wide mb-3 text-center text-gray-800">
         Terms & Conditions
       </h3>
-      <div className="w-full mb-8 text-[14px] sm:text-[15px] leading-relaxed text-gray-600 text-justify max-h-75 overflow-y-auto scrollbar-hide custom-scrollbar">
+      <div className="w-full mb-4 text-[14px] sm:text-[15px] leading-relaxed text-gray-600 text-justify max-h-75 overflow-y-auto scrollbar-hide custom-scrollbar">
         <p>
           Lorem ipsum, dolor sit amet consectetur adipisicing elit. Tempore doloremque quam, dolore quia perspiciatis officiis explicabo dolorum quod iste nesciunt laborum, sequi accusantium vel velit? Error quis, impedit quasi nulla minima inventore labore nemo sint ullam cum, non id! Necessitatibus ullam voluptatum maiores quasi officiis exercitationem commodi atque minima iste.
           Lorem ipsum, dolor sit amet consectetur adipisicing elit. Tempore doloremque quam, dolore quia perspiciatis officiis explicabo dolorum quod iste nesciunt laborum, sequi accusantium vel velit? Error quis, impedit quasi nulla minima inventore labore nemo sint ullam cum, non id! Necessitatibus ullam voluptatum maiores quasi officiis exercitationem commodi atque minima iste.
         </p>
       </div>
       
-      <div className="flex items-start gap-3.5 mb-10 max-w-full mx-auto group cursor-pointer" 
+      <div className="flex items-start gap-3.5 mb-4 max-w-full mx-auto group cursor-pointer" 
       onClick={() => setTermsAccepted(!termsAccepted)}>
         <input
           type="checkbox"
@@ -38,7 +38,7 @@ const ReviewTermsConditions = ({
         <ProceedButton
           onClick={onSubmit}
           disabled={!termsAccepted}
-          className="w-full sm:w-auto min-w-37.5 shadow-lg"
+          className="w-fit shadow-xl hover:scale-105 active:scale-95 transition-all duration-200"
         />
       </div>
     </section>

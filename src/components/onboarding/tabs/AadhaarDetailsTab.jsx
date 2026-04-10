@@ -40,11 +40,11 @@ const AadhaarDetailsTab = ({ onNext }) => {
   };
 
   return (
-    <div className="w-full flex flex-col px-3 sm:px-6 md:px-8 py-6 sm:py-8 items-center text-black font-sans">
-      <h2 className="font-bold text-xl sm:text-2xl tracking-wide mb-6 sm:mb-10 text-center text-gray-800">
+    <div className="w-full flex flex-col px-3 sm:px-6 md:px-8 pt-2 sm:pt-4 pb-0 items-center text-black font-sans">
+      <h2 className="font-bold text-xl sm:text-2xl tracking-wide mb-3 sm:mb-4 text-center text-gray-800">
         Details as per Aadhaar
       </h2>
-      <div className="flex flex-col md:flex-row gap-8 lg:gap-12 justify-center items-center md:items-start w-full max-w-5xl mx-auto mb-8 sm:mb-10">
+      <div className="flex flex-col md:flex-row gap-8 lg:gap-12 justify-center items-center md:items-start w-full max-w-5xl mx-auto mb-2">
         <div className="w-40 h-48 sm:w-46 sm:h-56 shrink-0 bg-gray-50 rounded-2xl border border-gray-100 p-2 shadow-sm">
           <img
             src="/jpb/2.jpeg"
@@ -71,8 +71,8 @@ const AadhaarDetailsTab = ({ onNext }) => {
         </div>
       </div>
 
-      <div className="flex justify-center mb-6 sm:mb-8 mt-4 sm:mt-8 pt-1">
-        <ProceedButton onClick={handleProceed} className="w-full sm:w-47.5 shadow-lg" />
+      <div className="flex justify-center mb-0 mt-1 sm:mt-2 pt-1">
+        <ProceedButton onClick={handleProceed} className="w-fit shadow-xl hover:scale-105 active:scale-95 transition-all duration-200" />
       </div>
     </div>
   );

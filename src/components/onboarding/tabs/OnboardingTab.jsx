@@ -184,7 +184,7 @@ const OnboardingTab = ({
   }
 
   return (
-    <div className="w-full flex-col px-4 md:px-8 py-4 text-black animate-in fade-in duration-500 max-w-7xl mx-auto">
+    <div className="w-full flex-col px-4 md:px-8 pt-2 pb-0 text-black animate-in fade-in duration-500 max-w-7xl mx-auto">
       <OnboardingHeader />
 
       <ProductSelection
@@ -226,7 +226,7 @@ const OnboardingTab = ({
       />
 
       {/* Biometric Integration Step */}
-      <div className="w-full flex items-center justify-center py-6 mt-4 mb-2 max-w-4xl mx-auto">
+      <div className="w-full flex items-center justify-center mb-1 max-w-4xl mx-auto">
         {/* <h3 className="text-[18px] font-bold text-gray-900 mb-6 tracking-tight">Biometric Verification</h3> */}
 
         {!isBiometricVerified ? (
@@ -279,7 +279,7 @@ const OnboardingTab = ({
       </div>
 
       {/* Verification Logic Block */}
-      <div className="w-full flex flex-col mb-4 -mt-2 px-2 xl:px-0">
+      <div className="w-full flex flex-col mb-0 -mt-2 px-2 xl:px-0">
         {documentStatus === "mismatch" && (
           <div className="flex flex-col gap-6 p-6 animate-in zoom-in-95 duration-300 ">
             <div className="flex items-start gap-3">
@@ -322,13 +322,13 @@ const OnboardingTab = ({
       </div>
 
       {/* Final Proceed */}
-      <div className="flex justify-center mb-10 pt-1">
+      <div className="flex justify-center mt-2 mb-0 pt-1">
         <ProceedButton
           onClick={handleProceed}
           disabled={
             !isBiometricVerified || (documentStatus === "mismatch" && !panFile)
           }
-          className="w-47.5 shadow-xl hover:scale-105 transform transition-transform"
+          className="w-fit shadow-xl hover:scale-105 active:scale-95 transition-all duration-200"
         />
       </div>
     </div>

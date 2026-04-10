@@ -10,7 +10,7 @@ const App = () => {
     <div className="flex flex-col min-h-screen">
       <Navbar />
       
-      <main className="grow w-full max-w-7xl mx-auto flex flex-col p-2 sm:p-4 lg:p-2 xl:p-4 overflow-hidden">
+      <main className="grow w-full max-w-7xl mx-auto flex flex-col pt-1 px-2 sm:px-4 pb-0 overflow-hidden">
         <Routes>
           <Route path="/" element={<SavingsVariantPage />} />
           <Route path="/onboarding-flow" element={<OnboardingFlowPage />} />

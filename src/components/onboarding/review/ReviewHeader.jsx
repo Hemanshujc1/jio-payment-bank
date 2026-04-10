@@ -2,7 +2,7 @@ import React from 'react';
 
 const ReviewHeader = ({ title, onEdit }) => {
   return (
-    <div className="relative w-full flex justify-center mb-6 sm:mb-8 text-gray-800">
+    <div className="relative w-full flex justify-center mb-3 sm:mb-4 text-gray-800">
       <h3 className="font-bold text-[16px] sm:text-[18px]">{title}</h3>
       {onEdit && (
         <button

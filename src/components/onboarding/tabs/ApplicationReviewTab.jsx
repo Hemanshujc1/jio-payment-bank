@@ -20,7 +20,7 @@ const ApplicationReviewTab = ({ goToStep }) => {
   const [isBiometricVerified, setIsBiometricVerified] = useState(false);
 
   const Divider = () => (
-    <hr className="border-t border-[#A89885] w-full my-8 opacity-60" />
+    <hr className="border-t border-[#A89885] w-full my-4 opacity-60" />
   );
 
   const handleSubmit = () => {
@@ -57,9 +57,9 @@ const ApplicationReviewTab = ({ goToStep }) => {
   };
 
   return (
-    <div className="w-full flex-col px-3 sm:px-6 md:px-8 pt-4 pb-2  sm:pb-0 sm:pt-8 items-center text-black font-sans animate-in fade-in duration-500">
-      <div className="flex flex-col w-full max-w-6xl mx-auto pb-10 sm:pb-20 relative">
-        <h2 className="font-bold text-xl sm:text-[22px] tracking-wide mb-8 sm:mb-12 text-center text-gray-800">
+    <div className="w-full flex-col px-3 sm:px-6 md:px-8 pt-2 pb-0 sm:pt-4 items-center text-black font-sans animate-in fade-in duration-500">
+      <div className="flex flex-col w-full max-w-6xl mx-auto pb-0 relative">
+        <h2 className="font-bold text-xl sm:text-[22px] tracking-wide mb-4 sm:mb-6 text-center text-gray-800">
           Application Review
         </h2>
 

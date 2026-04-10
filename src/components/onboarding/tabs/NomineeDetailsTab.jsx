@@ -33,10 +33,10 @@ const NomineeDetailsTab = ({ onNext }) => {
   };
 
   return (
-    <div className="w-full flex-col px-3 sm:px-6 md:px-8 py-6 sm:py-8 items-center text-black font-sans animate-in fade-in duration-500">
-      <div className="w-full max-w-6xl mx-auto flex flex-col gap-6 sm:gap-10">
+    <div className="w-full flex-col px-3 sm:px-6 md:px-8 pt-2 sm:pt-4 pb-0 items-center text-black font-sans animate-in fade-in duration-500">
+      <div className="w-full max-w-6xl mx-auto flex flex-col gap-3 sm:gap-4">
         {/* Header */}
-        <h2 className="font-bold text-xl sm:text-[22px] tracking-wide mb-6 sm:mb-8 text-center text-gray-800">
+        <h2 className="font-bold text-xl sm:text-[22px] tracking-wide mb-3 sm:mb-4 text-center text-gray-800">
           Nominee Details
         </h2>
 
@@ -51,8 +51,8 @@ const NomineeDetailsTab = ({ onNext }) => {
           )}
         </div>
 
-        <div className="flex justify-center w-full mt-6 sm:mt-10 mb-6">
-          <ProceedButton onClick={handleProceed} className="w-full sm:w-auto min-w-30 shadow-lg py-3 sm:py-2.5" />
+        <div className="flex justify-center w-full mt-2 sm:mt-4 mb-0">
+          <ProceedButton onClick={handleProceed} className="w-fit shadow-xl hover:scale-105 active:scale-95 transition-all duration-200" />
         </div>
       </div>
     </div>

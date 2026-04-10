@@ -88,7 +88,7 @@ const OnboardingFlowPage = () => {
   });
 
   return (
-    <div className="w-full max-w-7xl mx-auto flex flex-col px-3 sm:px-6 md:px-8 py-4 sm:py-8 text-black font-sans">
+    <div className="w-full max-w-7xl mx-auto flex flex-col px-3 sm:px-6 md:px-8 pt-2 sm:pt-4 pb-0 text-black font-sans">
       {isVerificationComplete && (
         <div className="w-full flex justify-end mb-4 -mt-2 sm:-mt-4 animate-in fade-in zoom-in duration-500">
           <div className="font-bold text-sand-350 bg-sand-500 border border-brown-700 px-3 sm:px-4 py-1.5 rounded-lg text-[11px] sm:text-[13px] tracking-wider shadow-sm flex items-center gap-2">
