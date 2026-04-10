@@ -34,7 +34,7 @@ const ReviewTermsConditions = ({
         </span>
       </div>
 
-      <div className="flex justify-center w-full">
+      <div className="flex justify-center w-full mt-2 mb-5 py-3 sm:mt-4">
         <ProceedButton
           onClick={onSubmit}
           disabled={!termsAccepted}
