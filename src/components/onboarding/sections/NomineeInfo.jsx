@@ -3,6 +3,14 @@ import { useFormContext, Controller, useWatch } from "react-hook-form";
 import CustomDropdown from "../../common/CustomDropdown";
 import CustomDatePicker from "../../common/CustomDatePicker";
 import AddressForm from "./AddressForm";
+const MOCK_AADHAAR_ADDRESS = {
+    addressLine1: "401, XYZ House",
+    addressLine2: "Fake Street",
+    addressLine3: "150 Road",
+    city: "Mumbai",
+    state: "Maharashtra",
+    pincode: "400059",
+};
 
 const NomineeInfo = () => {
   const { register, control, setValue, formState: { errors } } = useFormContext();
@@ -23,14 +31,6 @@ const NomineeInfo = () => {
 
   const isAutoPopulated = ["Father", "Mother", "Spouse", "Husband", "Wife"].includes(relationship);
 
-  const MOCK_AADHAAR_ADDRESS = {
-      addressLine1: "401, XYZ House",
-      addressLine2: "Fake Street",
-      addressLine3: "150 Road",
-      city: "Mumbai",
-      state: "Maharashtra",
-      pincode: "400059",
-  };
 
   useEffect(() => {
     if (relationship === "Father") {

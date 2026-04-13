@@ -3,18 +3,18 @@ import { useFormContext, Controller } from "react-hook-form";
 import CustomDropdown from "../../common/CustomDropdown";
 import CustomDatePicker from "../../common/CustomDatePicker";
 import AddressForm from "./AddressForm";
+const MOCK_AADHAAR_ADDRESS = {
+  addressLine1: "A/1001, FakeVilla Apartment",
+  addressLine2: "XYZ Buliding",
+  addressLine3: "150 Road",
+  city: "Mumbai",
+  state: "Maharashtra",
+  pincode: "400013",
+};
 
 const GuardianInfo = () => {
   const { register, control, formState: { errors } } = useFormContext();
 
-  const MOCK_AADHAAR_ADDRESS = {
-    addressLine1: "A/1001, FakeVilla Apartment",
-    addressLine2: "XYZ Buliding",
-    addressLine3: "150 Road",
-    city: "Mumbai",
-    state: "Maharashtra",
-    pincode: "400013",
-  };
 
   return (
     <div className="flex flex-col gap-8 pb-4">

@@ -7,7 +7,8 @@ import ProductSelection from "../sections/ProductSelection";
 import IdentityInputs from "../sections/IdentityInputs";
 import ConsentsSection from "../sections/ConsentsSection";
 import LanguageSelection from "../sections/LanguageSelection";
-import { FaFingerprint } from "react-icons/fa";
+import BiometricSection from "../sections/BiometricSection";
+import ManualVerificationSection from "../sections/ManualVerificationSection";
 
 const OnboardingTab = ({
   onNext,
@@ -226,100 +227,20 @@ const OnboardingTab = ({
       />
 
       {/* Biometric Integration Step */}
-      <div className="w-full flex items-center justify-center mb-1 max-w-4xl mx-auto">
-        {/* <h3 className="text-[18px] font-bold text-gray-900 mb-6 tracking-tight">Biometric Verification</h3> */}
-
-        {!isBiometricVerified ? (
-          <button
-            type="button"
-            onClick={captureBiometric}
-            disabled={
-              isBiometricLoading || aadhaar.length !== 12 || pan.length !== 10
-            }
-            className={`w-full max-w-70 h-14 flex items-center justify-center gap-3 font-extrabold text-[15px] rounded-xl transition-all shadow-md
-               ${isBiometricLoading || aadhaar.length !== 12 || pan.length !== 10 ? "bg-gray-300 text-gray-500 cursor-not-allowed shadow-none" : "bg-sand-500 text-sand-350 border border-brown-700 hover:bg-brown-800"}`}
-          >
-            {isBiometricLoading ? (
-              <>
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                Capturing Biometric...
-              </>
-            ) : (
-              <>
-                <FaFingerprint className="text-xl" />
-                CAPTURE BIOMETRIC
-              </>
-            )}
-          </button>
-        ) : (
-          documentStatus !== "mismatch" && (
-            <div className="flex flex-col items-center animate-in zoom-in-50 duration-500">
-              <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center text-white mb-4 shadow-lg shadow-green-500/30">
-                <svg
-                  className="w-8 h-8"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="3"
-                    d="M5 13l4 4L19 7"
-                  ></path>
-                </svg>
-              </div>
-              <p className="text-green-700 font-black text-[17px] tracking-wide">
-                Biometric Verified Successfully
-              </p>
-            </div>
-          )
-        )}
-      </div>
+      <BiometricSection
+        isBiometricVerified={isBiometricVerified}
+        captureBiometric={captureBiometric}
+        isBiometricLoading={isBiometricLoading}
+        aadhaar={aadhaar}
+        pan={pan}
+        documentStatus={documentStatus}
+      />
 
       {/* Verification Logic Block */}
-      <div className="w-full flex flex-col mb-0 -mt-2 px-2 xl:px-0">
-        {documentStatus === "mismatch" && (
-          <div className="flex flex-col gap-6 p-6 animate-in zoom-in-95 duration-300 ">
-            <div className="flex items-start gap-3">
-              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-red-500 text-white shrink-0 font-bold">
-                !
-              </div>
-              <p className="text-red-700 font-bold text-[15px] pt-1">
-                Verification Failed: Details do not match our system records.
-                Please manually upload your supporting documents below to
-                proceed.
-              </p>
-            </div>
-
-            <div className="flex flex-col pl-0 md:pl-11 mt-2">
-              <div className="flex flex-col gap-3 md:w-1/2">
-                <label className="font-bold text-gray-800 text-[14.5px]">
-                  Upload PAN Document <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => {
-                      const file = e.target.files[0];
-                      if (file && !file.type.startsWith("image/")) {
-                        alert("Please select an image file (e.g., JPG, PNG).");
-                        e.target.value = ""; // Clear the input
-                        setPanFile(null);
-                      } else {
-                        setPanFile(file || null);
-                      }
-                    }}
-                    className="block w-fit text-sm text-gray-600 file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border file:border-brown-700 file:text-[13.5px] file:font-extrabold file:bg-sand-500 file:text-sand-350 hover:file:bg-brown-800 file:cursor-pointer file:transition-colors bg-white rounded-xl border border-gray-200 outline-none focus-within:border-gray-800 p-1.5 shadow-sm"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
+      <ManualVerificationSection
+        documentStatus={documentStatus}
+        setPanFile={setPanFile}
+      />
 
       {/* Final Proceed */}
       <div className="flex justify-center w-full mt-2 mb-5 py-3 sm:mt-4">

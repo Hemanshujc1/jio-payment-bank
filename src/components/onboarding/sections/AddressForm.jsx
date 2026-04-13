@@ -25,12 +25,23 @@ const AddressForm = ({ prefix, title, mockAadhaarAddress }) => {
   };
 
   useEffect(() => {
+    let targetAddress = null;
+
     if (addressType === "Same as my communication address" && applicantAddress) {
-      setValue(`${prefix}.addressDetails`, applicantAddress);
+      targetAddress = applicantAddress;
     } else if (addressType === "Same as my Aadhaar address" && mockAadhaarAddress) {
-      setValue(`${prefix}.addressDetails`, mockAadhaarAddress);
+      targetAddress = mockAadhaarAddress;
     }
-  }, [addressType, applicantAddress, mockAadhaarAddress, setValue, prefix]);
+
+    if (targetAddress) {
+      const currentJSON = JSON.stringify(currentAddress || {});
+      const targetJSON = JSON.stringify(targetAddress || {});
+      
+      if (currentJSON !== targetJSON) {
+        setValue(`${prefix}.addressDetails`, targetAddress);
+      }
+    }
+  }, [addressType, applicantAddress, mockAadhaarAddress, setValue, prefix, currentAddress]);
 
   const error = getError(prefix);
 
