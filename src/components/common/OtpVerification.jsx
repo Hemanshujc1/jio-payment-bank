@@ -31,7 +31,7 @@ const OtpVerification = ({ length = 6, onComplete }) => {
 
   return (
     <div className="flex flex-col items-center w-full animate-in fade-in duration-500">        
-      <div className="flex justify-center gap-2 sm:gap-3 w-full mb-2">
+      <div className="flex justify-center gap-1 sm:gap-2 w-full mb-2">
         {otp.map((data, index) => {
           return (
             <input
@@ -50,13 +50,6 @@ const OtpVerification = ({ length = 6, onComplete }) => {
             />
           );
         })}
-      </div>
-      
-      <div className="flex items-center justify-between w-full max-w-70 text-[13px] text-gray-500 mt-4 px-2 font-medium">
-        <span>Resend OTP in 30 sec</span>
-        <button className="text-brown-700 font-bold hover:text-brown-900 transition-colors">
-          Resend OTP
-        </button>
       </div>
     </div>
   );

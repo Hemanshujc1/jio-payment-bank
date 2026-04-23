@@ -3,6 +3,7 @@ import { useFormContext } from "react-hook-form";
 import ProceedButton from "../../common/ProceedButton";
 import MobileOtpSection from "../sections/MobileOtpSection";
 import OnboardingHeader from "../ui/OnboardingHeader";
+import onboardingService from "../../../services/onboardingService";
 import ProductSelection from "../sections/ProductSelection";
 import IdentityInputs from "../sections/IdentityInputs";
 import ConsentsSection from "../sections/ConsentsSection";
@@ -26,6 +27,10 @@ const OnboardingTab = ({
   setIsEmailVerified,
   showEmailOtp,
   setShowEmailOtp,
+  applicationNumber,
+  externalAppRefNumber,
+  setApplicationNumber,
+  setExternalAppRefNumber,
 }) => {
   const {
     register,
@@ -75,11 +80,154 @@ const OnboardingTab = ({
     }, 2500); // 2.5 seconds fake load
   };
 
-  const handleGenerateOtp = () => {
+  const [isApiLoading, setIsApiLoading] = useState(false);
+  const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
+  const [isEmailApiLoading, setIsEmailApiLoading] = useState(false);
+  const [isVerifyingEmailOtp, setIsVerifyingEmailOtp] = useState(false);
+
+  const handleGenerateOtp = async () => {
     if (mobileNumber.length >= 10) {
-      setShowOtp(true);
+      setIsApiLoading(true);
+      try {
+        const response = await onboardingService.generateOtp(mobileNumber, email);
+        
+        // Always try to capture IDs if returned, as they might be needed for other retries
+        if (response.applicationNumber) setApplicationNumber(response.applicationNumber);
+        if (response.externalAppRefNumber) setExternalAppRefNumber(response.externalAppRefNumber);
+
+        if (response.status === "SUCCESS") {
+          setShowOtp(true);
+        } else {
+          alert(response.message || "Failed to generate mobile OTP. Please try again.");
+        }
+      } catch (error) {
+        alert(error.message || "An error occurred while generating OTP.");
+      } finally {
+        setIsApiLoading(false);
+      }
     } else {
       alert("Please enter a valid mobile number.");
+    }
+  };
+
+  const handleVerifyMobileOtp = async (otp) => {
+    setIsVerifyingOtp(true);
+    try {
+      const response = await onboardingService.verifyOtp({
+        applicationNumber,
+        externalAppRefNumber,
+        otp,
+        mobileNumber,
+      });
+
+      if (response.status === "SUCCESS") {
+        setIsMobileVerified(true);
+      } else {
+        alert(response.message || "Invalid OTP. Please try again.");
+      }
+    } catch (error) {
+      alert(error.message || "An error occurred while verifying OTP.");
+    } finally {
+      setIsVerifyingOtp(false);
+    }
+  };
+
+  const handleSendEmailOtp = async () => {
+    if (!applicationNumber) {
+      alert("Please generate mobile OTP first to start the application.");
+      return;
+    }
+    if (email.length > 0) {
+      setIsEmailApiLoading(true);
+      try {
+        const response = await onboardingService.sendEmailOtp({
+          emailId: email,
+          applicationNumber,
+          externalAppRefNumber,
+        });
+
+        if (response.status === "SUCCESS") {
+          setShowEmailOtp(true);
+        } else {
+          alert(response.message || "Failed to send email OTP. Please try again.");
+        }
+      } catch (error) {
+        alert(error.message || "An error occurred while sending email OTP.");
+      } finally {
+        setIsEmailApiLoading(false);
+      }
+    }
+  };
+
+  const handleVerifyEmailOtp = async (otp) => {
+    setIsVerifyingEmailOtp(true);
+    try {
+      console.log("DEBUG: Verifying Email OTP", { 
+        otp, 
+        emailId: email, 
+        mobileNumber,
+        applicationNumber, 
+        externalAppRefNumber 
+      });
+      const response = await onboardingService.verifyEmailOtp({
+        otp,
+        emailId: email,
+        mobileNumber,
+        applicationNumber,
+        externalAppRefNumber,
+      });
+
+      if (response.status === "SUCCESS") {
+        setIsEmailVerified(true);
+      } else {
+        alert(response.message || "Invalid Email OTP. Please try again.");
+      }
+    } catch (error) {
+      alert(error.message || "An error occurred while verifying email OTP.");
+    } finally {
+      setIsVerifyingEmailOtp(false);
+    }
+  };
+
+  const handleResendMobileOtp = async () => {
+    setIsApiLoading(true);
+    try {
+      const response = await onboardingService.resendOtp({
+        applicationNumber,
+      });
+
+      if (response.status === "SUCCESS") {
+        alert("Mobile OTP resent successfully.");
+      } else {
+        alert(response.message || "Failed to resend OTP. Please try again.");
+      }
+    } catch (error) {
+      alert(error.message || "An error occurred while resending OTP.");
+    } finally {
+      setIsApiLoading(false);
+    }
+  };
+
+  const handleResendEmailOtp = async () => {
+    setIsEmailApiLoading(true);
+    try {
+      console.log("DEBUG: Resending Email OTP", { email, mobileNumber, applicationNumber });
+      const response = await onboardingService.resendEmailOtp({
+        emailId: email,
+        mobileNumber,
+        applicationNumber,
+        externalAppRefNumber,
+      });
+
+      if (response.status === "SUCCESS") {
+        alert("Email OTP resent successfully.");
+      } else {
+        alert(response.message || "Failed to resend email OTP. Please try again.");
+      }
+    } catch (error) {
+      alert(error.message || "An error occurred while resending email OTP.");
+    } finally {
+      setIsEmailApiLoading(false);
     }
   };
 
@@ -174,12 +322,19 @@ const OnboardingTab = ({
         isMobileVerified={isMobileVerified}
         setIsMobileVerified={setIsMobileVerified}
         showEmailOtp={showEmailOtp}
-        handleGenerateEmailOtp={() => {
-          if (email.length > 0) setShowEmailOtp(true);
-        }}
         isEmailVerified={isEmailVerified}
         setIsEmailVerified={setIsEmailVerified}
         onProceed={() => setIsVerificationComplete(true)}
+        isApiLoading={isApiLoading}
+        isVerifyingOtp={isVerifyingOtp}
+        handleVerifyMobileOtp={handleVerifyMobileOtp}
+        isEmailApiLoading={isEmailApiLoading}
+        handleGenerateEmailOtp={handleSendEmailOtp}
+        isVerifyingEmailOtp={isVerifyingEmailOtp}
+        handleVerifyEmailOtp={handleVerifyEmailOtp}
+        handleResendMobileOtp={handleResendMobileOtp}
+        handleResendEmailOtp={handleResendEmailOtp}
+        applicationNumber={applicationNumber}
       />
     );
   }

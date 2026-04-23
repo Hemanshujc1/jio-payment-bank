@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import ProceedButton from "../../common/ProceedButton";
 import OtpVerification from "../../common/OtpVerification";
 import { IoMdCheckmarkCircle } from "react-icons/io";
@@ -17,7 +17,58 @@ const MobileOtpSection = ({
   isEmailVerified,
   setIsEmailVerified,
   onProceed,
+  isApiLoading,
+  isVerifyingOtp,
+  handleVerifyMobileOtp,
+  isEmailApiLoading,
+  isVerifyingEmailOtp,
+  handleVerifyEmailOtp,
+  handleResendMobileOtp,
+  handleResendEmailOtp,
+  applicationNumber,
 }) => {
+  const [mobileTimer, setMobileTimer] = useState(0);
+  const [emailTimer, setEmailTimer] = useState(0);
+
+  useEffect(() => {
+    let interval;
+    if (showMobileOtp && !isMobileVerified && mobileTimer > 0) {
+      interval = setInterval(() => {
+        setMobileTimer((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [showMobileOtp, isMobileVerified, mobileTimer]);
+
+  useEffect(() => {
+    let interval;
+    if (showEmailOtp && !isEmailVerified && emailTimer > 0) {
+      interval = setInterval(() => {
+        setEmailTimer((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [showEmailOtp, isEmailVerified, emailTimer]);
+
+  // Reset timers when OTP is generated
+  useEffect(() => {
+    if (showMobileOtp) setMobileTimer(30);
+  }, [showMobileOtp]);
+
+  useEffect(() => {
+    if (showEmailOtp) setEmailTimer(30);
+  }, [showEmailOtp]);
+
+  const onResendMobile = () => {
+    handleResendMobileOtp();
+    setMobileTimer(30);
+  };
+
+  const onResendEmail = () => {
+    handleResendEmailOtp();
+    setEmailTimer(30);
+  };
+
   // Regex for basic email format
   const isValidEmail = email.length === 0 || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
@@ -62,23 +113,52 @@ const MobileOtpSection = ({
             {!isMobileVerified && !showMobileOtp && (
               <button
                 onClick={handleGenerateMobileOtp}
-                disabled={mobileNumber.length < 10}
-                className="mt-4 w-full h-11 bg-sand-500 text-sand-350 border border-brown-700 font-bold rounded-lg hover:bg-brown-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-[14px]"
+                disabled={mobileNumber.length < 10 || isApiLoading}
+                className="mt-4 w-full h-11 bg-sand-500 text-sand-350 border border-brown-700 font-bold rounded-lg hover:bg-brown-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-[14px] flex items-center justify-center gap-2"
               >
-                Generate OTP
+                {isApiLoading ? (
+                  <>
+                    <span className="w-4 h-4 border-2 border-sand-350 border-t-transparent rounded-full animate-spin"></span>
+                    Generating...
+                  </>
+                ) : (
+                  "Generate OTP"
+                )}
               </button>
             )}
 
             {showMobileOtp && !isMobileVerified && (
-              <div className="mt-4 w-full bg-sand-200/40 rounded-xl p-3 border border-sand-300 relative">
-                <p className="text-[13px] text-sand-900 font-medium mb-1">Enter OTP sent to <span className="text-brown-700 font-bold">{mobileNumber}</span></p>
-                <OtpVerification
-                  length={6}
-                  onComplete={(code) => {
-                    console.log("Mobile OTP Completed:", code);
-                    setIsMobileVerified(true);
-                  }}
-                />
+              <div className={`mt-4 w-full bg-sand-200/40 rounded-xl p-3 border border-sand-300 relative ${isVerifyingOtp ? 'opacity-60 pointer-events-none' : ''}`}>
+                <div className="flex flex-col gap-3">
+                  <p className="text-[13px] text-sand-900 font-medium">Enter OTP sent to <span className="text-brown-700 font-bold">{mobileNumber}</span></p>
+                  
+                  <OtpVerification
+                    length={6}
+                    onComplete={handleVerifyMobileOtp}
+                  />
+
+                  <div className="flex justify-end items-center mt-1">
+                    {mobileTimer > 0 ? (
+                      <span className="text-[12px] text-sand-500 font-bold bg-sand-200/50 px-2 py-0.5 rounded-md">
+                        Resend in 00:{mobileTimer < 10 ? `0${mobileTimer}` : mobileTimer}
+                      </span>
+                    ) : (
+                      <button 
+                        onClick={onResendMobile}
+                        disabled={isApiLoading}
+                        className="text-[13px] text-brown-700 font-bold hover:underline flex items-center gap-1 transition-all"
+                      >
+                        Resend OTP
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {isVerifyingOtp && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-sand-100/20 backdrop-blur-[1px] rounded-xl">
+                    <span className="w-6 h-6 border-3 border-brown-700 border-t-transparent rounded-full animate-spin"></span>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -105,9 +185,17 @@ const MobileOtpSection = ({
             {!isEmailVerified && !showEmailOtp && email.length > 0 && isValidEmail && (
               <button
                 onClick={handleGenerateEmailOtp}
-                className="mt-4 w-full h-11 bg-sand-500 text-sand-350 border border-brown-700 font-bold rounded-lg hover:bg-brown-800 transition-colors text-[14px]"
+                disabled={isEmailApiLoading || !applicationNumber}
+                className="mt-4 w-full h-11 bg-sand-500 text-sand-350 border border-brown-700 font-bold rounded-lg hover:bg-brown-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-[14px] flex items-center justify-center gap-2"
               >
-                Generate OTP
+                {isEmailApiLoading ? (
+                  <>
+                    <span className="w-4 h-4 border-2 border-sand-350 border-t-transparent rounded-full animate-spin"></span>
+                    Sending...
+                  </>
+                ) : (
+                  "Generate OTP"
+                )}
               </button>
             )}
 
@@ -116,15 +204,37 @@ const MobileOtpSection = ({
             )}
 
             {showEmailOtp && !isEmailVerified && (
-              <div className="mt-4 w-full bg-sand-200/40 rounded-xl p-3 border border-sand-300 relative">
-                <p className="text-[13px] text-sand-900 font-medium mb-1">Enter OTP sent to <span className="text-brown-700 font-bold">{email}</span></p>
-                <OtpVerification
-                  length={6}
-                  onComplete={(code) => {
-                    console.log("Email OTP Completed:", code);
-                    setIsEmailVerified(true);
-                  }}
-                />
+              <div className={`mt-4 w-full bg-sand-200/40 rounded-xl p-3 border border-sand-300 relative ${isVerifyingEmailOtp ? 'opacity-60 pointer-events-none' : ''}`}>
+                <div className="flex flex-col gap-3">
+                  <p className="text-[13px] text-sand-900 font-medium">Enter OTP sent to <span className="text-brown-700 font-bold">{email}</span></p>
+                  
+                  <OtpVerification
+                    length={6}
+                    onComplete={handleVerifyEmailOtp}
+                  />
+
+                  <div className="flex justify-end items-center mt-1">
+                    {emailTimer > 0 ? (
+                      <span className="text-[12px] text-sand-500 font-bold bg-sand-200/50 px-2 py-0.5 rounded-md">
+                        Resend in 00:{emailTimer < 10 ? `0${emailTimer}` : emailTimer}
+                      </span>
+                    ) : (
+                      <button 
+                        onClick={onResendEmail}
+                        disabled={isEmailApiLoading}
+                        className="text-[13px] text-brown-700 font-bold hover:underline flex items-center gap-1 transition-all"
+                      >
+                        Resend OTP
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {isVerifyingEmailOtp && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-sand-100/20 backdrop-blur-[1px] rounded-xl">
+                    <span className="w-6 h-6 border-3 border-brown-700 border-t-transparent rounded-full animate-spin"></span>
+                  </div>
+                )}
               </div>
             )}
           </div>

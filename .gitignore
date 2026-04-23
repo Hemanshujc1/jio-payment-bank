@@ -25,3 +25,7 @@ dist.zip/
 *.njsproj
 *.sln
 *.sw?
+
+.env
+.env.production
+ Jio Customer Onboarding APi List.json

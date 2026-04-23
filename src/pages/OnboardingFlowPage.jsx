@@ -33,7 +33,8 @@ const OnboardingFlowPage = () => {
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [showEmailOtp, setShowEmailOtp] = useState(false);
 
-  const [applicationNumber] = useState(() => Math.floor(100000000000 + Math.random() * 900000000000).toString());
+  const [applicationNumber, setApplicationNumber] = useState("");
+  const [externalAppRefNumber, setExternalAppRefNumber] = useState("");
 
   const methods = useForm({
     resolver: zodResolver(onboardingSchema),
@@ -101,7 +102,22 @@ const OnboardingFlowPage = () => {
       <HorizontalLinearAlternativeLabelStepper
         activeStep={currentStep - 1}
         steps={STEPS}
-        onStepClick={setCurrentStep}
+        onStepClick={(step) => {
+          // Allow going back to any previous step
+          if (step < currentStep) {
+            setCurrentStep(step);
+            return;
+          }
+          
+          // Prevent going forward if OTP is not verified
+          if (!isMobileVerified || (email.length > 0 && !isEmailVerified)) {
+            alert("Please verify your OTP to proceed to this step.");
+            return;
+          }
+
+          // If verified, allow navigation
+          setCurrentStep(step);
+        }}
       />
 
       <FormProvider {...methods}>
@@ -122,6 +138,10 @@ const OnboardingFlowPage = () => {
             setIsEmailVerified={setIsEmailVerified}
             showEmailOtp={showEmailOtp}
             setShowEmailOtp={setShowEmailOtp}
+            applicationNumber={applicationNumber}
+            externalAppRefNumber={externalAppRefNumber}
+            setApplicationNumber={setApplicationNumber}
+            setExternalAppRefNumber={setExternalAppRefNumber}
           />
         )}
         {currentStep === 2 && <AadhaarDetailsTab onNext={next} />}

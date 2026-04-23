@@ -2,14 +2,13 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import VariantCard from "../components/common/VariantCard";
 import debitcardimg from "../assets/debit-card-img.webp";
-
-import ScreenWrapper from "../components/common/ScreenWrapper";
+// import ScreenWrapper from "../components/common/ScreenWrapper";
 
 const SavingsVariantPage = () => {
   const navigate = useNavigate();
 
   return (
-    <ScreenWrapper>
+    // <ScreenWrapper>
       <div className="w-full flex-col px-4 md:px-8 py-1 items-center justify-center flex text-black font-sans">
         {/* Page Title */}
         <h2 className="font-bold text-xl md:text-[22px] tracking-tight mb-8 [@media(max-height:700px)]:mb-4 text-center">
@@ -64,7 +63,7 @@ const SavingsVariantPage = () => {
           />
         </div>
       </div>
-    </ScreenWrapper>
+    // </ScreenWrapper>
   );
 };
 
