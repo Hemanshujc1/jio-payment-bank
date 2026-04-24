@@ -125,7 +125,7 @@ const AddressForm = ({ prefix, title, mockAadhaarAddress }) => {
               </span>
               <input
                 {...register(`${prefix}.addressDetails.addressLine1`)}
-                maxLength={50}
+                maxLength={100}
                 className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${
                   error?.addressDetails?.addressLine1
                     ? "border-red-500"
@@ -140,7 +140,7 @@ const AddressForm = ({ prefix, title, mockAadhaarAddress }) => {
               <span className="font-bold text-[13px] sm:text-[14px] text-gray-700 ml-0.5">Address Line 2 (Optional)</span>
               <input
                 {...register(`${prefix}.addressDetails.addressLine2`)}
-                maxLength={50}
+                maxLength={100}
                 className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${
                   error?.addressDetails?.addressLine2
                     ? "border-red-500"
@@ -148,6 +148,7 @@ const AddressForm = ({ prefix, title, mockAadhaarAddress }) => {
                 } text-[14px] font-medium text-gray-900`}
                 placeholder="Address Line 2"
               />
+              {error?.addressDetails?.addressLine2 && <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-1">{error.addressDetails.addressLine2.message}</span>}
             </div>
             
             <div className="flex flex-col gap-1.5">
@@ -156,7 +157,7 @@ const AddressForm = ({ prefix, title, mockAadhaarAddress }) => {
               </span>
               <input
                 {...register(`${prefix}.addressDetails.addressLine3`)}
-                maxLength={50}
+                maxLength={100}
                 className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${
                   error?.addressDetails?.addressLine3
                     ? "border-red-500"
@@ -164,6 +165,7 @@ const AddressForm = ({ prefix, title, mockAadhaarAddress }) => {
                 } text-[14px] font-medium text-gray-900`}
                 placeholder="Address Line 3"
               />
+              {error?.addressDetails?.addressLine3 && <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-1">{error.addressDetails.addressLine3.message}</span>}
             </div>
             
             <div className="flex flex-col gap-1.5">

@@ -22,7 +22,7 @@ const FinancialDetails = () => {
               control={control}
               render={({ field }) => (
                 <CustomDropdown 
-                  options={['Retired', 'Salaried', 'Business']} 
+                  options={['Private Sector Service', 'Public Sector Service', 'Government Sector Service', 'Business', 'Professional', 'Self Employed', 'Retired', 'Homemaker', 'Student', 'Farmer', 'Others']} 
                   value={field.value} 
                   onChange={field.onChange} 
                   className="w-full"
@@ -43,7 +43,7 @@ const FinancialDetails = () => {
               control={control}
               render={({ field }) => (
                 <CustomDropdown 
-                  options={['Savings', 'Salary', 'Business']} 
+                  options={['Salary', 'Business', 'Professional Fees', 'Agriculture', 'Savings', 'Family Wealth', 'Inheritance', 'Others']} 
                   value={field.value} 
                   onChange={field.onChange} 
                   className="w-full"
@@ -64,7 +64,7 @@ const FinancialDetails = () => {
               control={control}
               render={({ field }) => (
                 <CustomDropdown 
-                  options={['5 Lakhs - 25 lakhs', '26 Lakhs - 50 lakhs', '51 Lakhs - 1 Crore']} 
+                  options={['Upto 50K', '50K – 1 lakh', '50K – 1 lakh', '1 lakh – 5 lakhs', '5 lakhs – 25 lakhs', '25 lakhs – 1 crore', 'Above 1 crore']} 
                   value={field.value} 
                   onChange={field.onChange} 
                   className="w-full"

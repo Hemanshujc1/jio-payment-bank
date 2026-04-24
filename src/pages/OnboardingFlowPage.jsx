@@ -29,7 +29,7 @@ const OnboardingFlowPage = () => {
   const [isMobileVerified, setIsMobileVerified] = useState(false);
   const [showOtp, setShowOtp] = useState(false);
   const [mobileNumber, setMobileNumber] = useState("");
-  const [email, setEmail] = useState("");
+  const [emailId, setEmail] = useState("");
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [showEmailOtp, setShowEmailOtp] = useState(false);
 
@@ -109,11 +109,11 @@ const OnboardingFlowPage = () => {
             return;
           }
           
-          // Prevent going forward if OTP is not verified
-          if (!isMobileVerified || (email.length > 0 && !isEmailVerified)) {
-            alert("Please verify your OTP to proceed to this step.");
-            return;
-          }
+          // // Prevent going forward if OTP is not verified
+          // if (!isMobileVerified || (emailId.length > 0 && !isEmailVerified)) {
+          //   alert("Please verify your OTP to proceed to this step.");
+          //   return;
+          // }
 
           // If verified, allow navigation
           setCurrentStep(step);
@@ -132,7 +132,7 @@ const OnboardingFlowPage = () => {
             setShowOtp={setShowOtp}
             mobileNumber={mobileNumber}
             setMobileNumber={setMobileNumber}
-            email={email}
+            emailId={emailId}
             setEmail={setEmail}
             isEmailVerified={isEmailVerified}
             setIsEmailVerified={setIsEmailVerified}

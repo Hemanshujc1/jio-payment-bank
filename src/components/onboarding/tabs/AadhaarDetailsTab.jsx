@@ -4,16 +4,16 @@ import ProceedButton from "../../common/ProceedButton";
 import AadhaarFieldGrid from "../sections/AadhaarFieldGrid";
 import AadhaarAddressSection from "../sections/AadhaarAddressSection";
 
-const AadhaarDetailsTab = ({ onNext }) => {
-  const MOCK_AADHAAR_ADDRESS = {
-    addressLine1: "A/1001, FakeVilla Apartment",
-    addressLine2: "XYZ Buliding",
-    addressLine3: "150 Road",
-    city: "Mumbai",
-    state: "Maharashtra",
-    pincode: "400013",
-  };
+const MOCK_AADHAAR_ADDRESS = {
+  addressLine1: "A/1001, FakeVilla Apartment",
+  addressLine2: "XYZ Buliding",
+  addressLine3: "150 Road",
+  city: "Mumbai",
+  state: "Maharashtra",
+  pincode: "400013",
+};
 
+const AadhaarDetailsTab = ({ onNext }) => {
   const { trigger, setValue } = useFormContext();
 
   React.useEffect(() => {
@@ -31,7 +31,7 @@ const AadhaarDetailsTab = ({ onNext }) => {
       "applicant.lastName",
       "applicant.gender",
       "applicant.dob",
-      "applicant.email",
+      "applicant.emailId",
       "applicant.communicationAddress",
     ]);
     if (isValid) {

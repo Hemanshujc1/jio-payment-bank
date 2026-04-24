@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useFormContext } from "react-hook-form";
 
 const AadhaarAddressSection = ({ mockAadhaarAddress }) => {
@@ -9,6 +9,7 @@ const AadhaarAddressSection = ({ mockAadhaarAddress }) => {
     formState: { errors },
   } = useFormContext();
   const sameAsAadhaar = watch("applicant.sameAsAadhaar");
+  const prevSameAsAadhaar = useRef(sameAsAadhaar);
 
   useEffect(() => {
     if (sameAsAadhaar && mockAadhaarAddress) {
@@ -33,7 +34,7 @@ const AadhaarAddressSection = ({ mockAadhaarAddress }) => {
         "applicant.communicationAddress.pincode",
         mockAadhaarAddress.pincode
       );
-    } else if (!sameAsAadhaar) {
+    } else if (!sameAsAadhaar && prevSameAsAadhaar.current === true) {
       // Clear fields when unchecked
       setValue("applicant.communicationAddress.addressLine1", "");
       setValue("applicant.communicationAddress.addressLine2", "");
@@ -42,6 +43,7 @@ const AadhaarAddressSection = ({ mockAadhaarAddress }) => {
       setValue("applicant.communicationAddress.state", "");
       setValue("applicant.communicationAddress.pincode", "");
     }
+    prevSameAsAadhaar.current = sameAsAadhaar;
   }, [sameAsAadhaar, mockAadhaarAddress, setValue]);
 
   return (
@@ -70,7 +72,7 @@ const AadhaarAddressSection = ({ mockAadhaarAddress }) => {
           </span>
           <input
             {...register("applicant.communicationAddress.addressLine1")}
-            maxLength={50}
+            maxLength={100}
             className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${
               errors.applicant?.communicationAddress?.addressLine1
                 ? "border-red-500"
@@ -88,7 +90,7 @@ const AadhaarAddressSection = ({ mockAadhaarAddress }) => {
           </span>
           <input
             {...register("applicant.communicationAddress.addressLine2")}
-            maxLength={50}
+            maxLength={100}
             className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${
               errors.applicant?.communicationAddress?.addressLine2
                 ? "border-red-500"
@@ -96,6 +98,7 @@ const AadhaarAddressSection = ({ mockAadhaarAddress }) => {
             } text-[14px]`}
             placeholder="Address Line 2"
           />
+          {errors.applicant?.communicationAddress?.addressLine2 && <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-1">{errors.applicant.communicationAddress.addressLine2.message}</span>}
         </div>
 
         {/* Address Line 3 */}
@@ -105,7 +108,7 @@ const AadhaarAddressSection = ({ mockAadhaarAddress }) => {
           </span>
           <input
             {...register("applicant.communicationAddress.addressLine3")}
-            maxLength={50}
+            maxLength={100}
             className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${
               errors.applicant?.communicationAddress?.addressLine3
                 ? "border-red-500"
@@ -113,6 +116,7 @@ const AadhaarAddressSection = ({ mockAadhaarAddress }) => {
             } text-[14px]`}
             placeholder="Address Line 3"
           />
+          {errors.applicant?.communicationAddress?.addressLine3 && <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-1">{errors.applicant.communicationAddress.addressLine3.message}</span>}
         </div>
 
         {/* Pincode */}

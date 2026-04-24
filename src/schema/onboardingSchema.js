@@ -34,16 +34,17 @@ const optionalLastNameField = z.string()
 
 const addressSchema = z.object({
   addressLine1: z.string()
-    .min(10, "Address Line 1 must be at least 10 characters")
-    .max(50, "Address Line 1 cannot exceed 50 characters"),
+    .min(5, "Address Line 1 must be at least 5 characters")
+    .max(100, "Address Line 1 cannot exceed 100 characters")
+    .regex(/^[a-zA-Z0-9\s,\-\/]+$/, "Only A-Z, a-z, 0-9, space, ',', '-', '/' are allowed"),
   addressLine2: z.string()
-    .max(50, "Address Line 2 cannot exceed 50 characters")
     .optional()
-    .or(z.literal("")),
+    .or(z.literal(""))
+    .refine(val => !val || /^[a-zA-Z0-9\s]{5,100}$/.test(val), "Must be 5-100 characters, only A-Z, a-z, 0-9, space allowed"),
   addressLine3: z.string()
-    .max(50, "Address Line 3 cannot exceed 50 characters")
     .optional()
-    .or(z.literal("")),
+    .or(z.literal(""))
+    .refine(val => !val || /^[a-zA-Z\s]{5,100}$/.test(val), "Must be 5-100 characters, only A-Z, a-z, space allowed"),
   city: z.string()
     .min(4, "City must be at least 4 characters")
     .max(20, "City cannot exceed 20 characters"),
@@ -52,7 +53,7 @@ const addressSchema = z.object({
     .max(20, "State cannot exceed 20 characters"),
   pincode: z.string()
     .length(6, "Pincode must be 6 digits")
-    .regex(/^\d+$/, "Pincode must be numeric"),
+    .regex(/^[0-9]{6}$/, "Pincode must be exactly 6 digits"),
 });
 
 const personSchema = z.object({
@@ -92,7 +93,7 @@ export const  onboardingSchema = z.object({
         return age >= 18;
       }, "Applicant must be at least 18 years old"),
     maritalStatus: z.enum(["Married", "Unmarried"]),
-    email: z.string().optional().or(z.literal("")),
+    emailId: z.string().optional().or(z.literal("")),
     communicationAddress: addressSchema,
   }),
   family: z.object({

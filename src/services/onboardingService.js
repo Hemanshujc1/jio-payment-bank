@@ -48,7 +48,7 @@ const onboardingService = {
 
   /**
    * Verifies the email OTP.
-   * @param {Object} payload { otp, emailId, mobileNumber, applicationNumber, externalAppRefNumber }
+   * @param {Object} payload { otp, emailId, applicationNumber, externalAppRefNumber }
    */
   verifyEmailOtp: async (payload) => {
     try {
@@ -74,7 +74,7 @@ const onboardingService = {
 
   /**
    * Resends email OTP.
-   * @param {Object} payload { emailId, mobileNumber, applicationNumber, externalAppRefNumber }
+   * @param {Object} payload { emailId, applicationNumber, externalAppRefNumber }
    */
   resendEmailOtp: async (payload) => {
     try {
@@ -85,7 +85,31 @@ const onboardingService = {
     }
   },
 
-  // Future API implementations will go here
+  /**
+   * Verifies PAN and Aadhaar.
+   * @param {Object} payload { applicationNumber, externalAppRefNumber, panNo, aadharNo, bioMetricData, consents }
+   */
+  panAadhaarVerify: async (payload) => {
+    try {
+      const response = await apiClient.post('/pan-aadhar-verify', payload);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  /**
+   * Fetches the savings account variants (subscriptions).
+   */
+  getAccountSubscriptions: async () => {
+    try {
+      const baseURL = import.meta.env.VITE_API_BASE_URL.replace('/customer', '');
+      const response = await apiClient.get('/common/account-sub', { baseURL });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 
 export default onboardingService;

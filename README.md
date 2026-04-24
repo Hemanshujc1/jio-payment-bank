@@ -53,3 +53,4 @@ Once a variant is selected, Agent proceed through a 5-step guided stepper:
 *   **Dynamic UI**: Real-time generation of Application Numbers once verification is complete.
 *   **Robust Validation**: Integrated Zod schemas to ensure data integrity across all forms.
 *   **Modern Design**: Premium aesthetics with smooth transitions and responsive layouts.
+

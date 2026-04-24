@@ -4,7 +4,7 @@ import ReviewRow from './ReviewRow';
 const ReviewAadhaarDetails = ({ onEdit }) => {
   const dummyApplicant = {
     phoneNumber:"9876543210",
-    emailid:"customer@example.com",
+    emailId:"customer@example.com",
     panNumber:"ABCDE1234F",
     aadharNumber:"XXXX XXXX 9012",
     firstName: "Test",
@@ -53,7 +53,7 @@ const ReviewAadhaarDetails = ({ onEdit }) => {
           </div>
           
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-2 gap-6 lg:gap-x-12 px-1">
-            <ReviewRow label="Email" value={applicant.emailid} labelWidth="sm:w-auto" />
+            <ReviewRow label="Email" value={applicant.emailId} labelWidth="sm:w-auto" />
             <ReviewRow label="Phone" value={applicant.phoneNumber} labelWidth="sm:w-auto" />
             <ReviewRow label="PAN" value={applicant.panNumber} labelWidth="sm:w-auto" />
             <ReviewRow label="Aadhaar" value={applicant.aadharNumber} labelWidth="sm:w-auto" />

@@ -21,7 +21,7 @@ const OnboardingTab = ({
   setShowOtp,
   mobileNumber,
   setMobileNumber,
-  email,
+  emailId,
   setEmail,
   isEmailVerified,
   setIsEmailVerified,
@@ -57,6 +57,7 @@ const OnboardingTab = ({
   const [isBiometricLoading, setIsBiometricLoading] = useState(false);
   const [isBiometricVerified, setIsBiometricVerified] = useState(false);
   const [panFile, setPanFile] = useState(null);
+  const [isVerifyingDocuments, setIsVerifyingDocuments] = useState(false);
 
   const VERIFIED_AADHAAR = "123412341234";
   const VERIFIED_PAN = "ABCDE1234F";
@@ -89,7 +90,7 @@ const OnboardingTab = ({
     if (mobileNumber.length >= 10) {
       setIsApiLoading(true);
       try {
-        const response = await onboardingService.generateOtp(mobileNumber, email);
+        const response = await onboardingService.generateOtp(mobileNumber, emailId);
         
         // Always try to capture IDs if returned, as they might be needed for other retries
         if (response.applicationNumber) setApplicationNumber(response.applicationNumber);
@@ -137,11 +138,11 @@ const OnboardingTab = ({
       alert("Please generate mobile OTP first to start the application.");
       return;
     }
-    if (email.length > 0) {
+    if (emailId.length > 0) {
       setIsEmailApiLoading(true);
       try {
         const response = await onboardingService.sendEmailOtp({
-          emailId: email,
+          emailId: emailId,
           applicationNumber,
           externalAppRefNumber,
         });
@@ -164,15 +165,13 @@ const OnboardingTab = ({
     try {
       console.log("DEBUG: Verifying Email OTP", { 
         otp, 
-        emailId: email, 
-        mobileNumber,
+        emailId: emailId, 
         applicationNumber, 
         externalAppRefNumber 
       });
       const response = await onboardingService.verifyEmailOtp({
         otp,
-        emailId: email,
-        mobileNumber,
+        emailId: emailId,
         applicationNumber,
         externalAppRefNumber,
       });
@@ -211,10 +210,9 @@ const OnboardingTab = ({
   const handleResendEmailOtp = async () => {
     setIsEmailApiLoading(true);
     try {
-      console.log("DEBUG: Resending Email OTP", { email, mobileNumber, applicationNumber });
+      console.log("DEBUG: Resending Email OTP", { emailId, applicationNumber });
       const response = await onboardingService.resendEmailOtp({
-        emailId: email,
-        mobileNumber,
+        emailId: emailId,
         applicationNumber,
         externalAppRefNumber,
       });
@@ -306,7 +304,44 @@ const OnboardingTab = ({
 
     const isValid = await trigger("onboarding");
     if (isValid && isBiometricVerified) {
-      onNext();
+      setIsVerifyingDocuments(true);
+      try {
+        const payload = {
+          applicationNumber,
+          externalAppRefNumber,
+          panNo: pan,
+          aadharNo: aadhaar,
+          bioMetricData: "Finger print XML", // Placeholder for biometric data
+          consents: [
+            {
+              consent: "Hello, I verify for all of the mentioned B88",
+              code: "B88",
+              version: "1",
+              method: "checkbox"
+            },
+            {
+              consent: "Hello, I verify for all of the mentioned C50",
+              code: "C50",
+              version: "1",
+              method: "checkbox"
+            }
+          ]
+        };
+
+        const response = await onboardingService.panAadhaarVerify(payload);
+
+        if (response.status === "SUCCESS") {
+          // If the backend returned a new application/external ref number, we should probably update it,
+          // but we'll stick to our current ones unless needed.
+          onNext();
+        } else {
+          alert(response.message || "Document verification failed. Please try again.");
+        }
+      } catch (error) {
+        alert(error.message || "An error occurred during document verification.");
+      } finally {
+        setIsVerifyingDocuments(false);
+      }
     }
   };
 
@@ -315,7 +350,7 @@ const OnboardingTab = ({
       <MobileOtpSection
         mobileNumber={mobileNumber}
         setMobileNumber={setMobileNumber}
-        email={email}
+        email={emailId}
         setEmail={setEmail}
         showMobileOtp={showOtp}
         handleGenerateMobileOtp={handleGenerateOtp}
@@ -402,7 +437,7 @@ const OnboardingTab = ({
         <ProceedButton
           onClick={handleProceed}
           disabled={
-            !isBiometricVerified || (documentStatus === "mismatch" && !panFile)
+            !isBiometricVerified || (documentStatus === "mismatch" && !panFile) || isVerifyingDocuments
           }
           className="w-fit shadow-xl hover:scale-105 active:scale-95 transition-all duration-200"
         />

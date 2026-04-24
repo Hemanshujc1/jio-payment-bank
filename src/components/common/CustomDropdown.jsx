@@ -51,7 +51,7 @@ const CustomDropdown = ({ options, value, onChange, className = "", error = fals
            <IoIosArrowDown/>
           </div>
 
-          <div className="px-3 pb-1">
+          <div className="px-3 pb-0 max-h-30 overflow-y-auto overscroll-contain scrollbar-hide">
             {options.map((opt, idx) => (
               <div 
                 key={idx}
