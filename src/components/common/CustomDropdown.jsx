@@ -23,7 +23,6 @@ const CustomDropdown = ({ options, value, onChange, className = "", error = fals
   return (
     <div className={`relative ${className}`} ref={dropdownRef}>
       
-      {/* Closed State Trigger */}
       <div 
         onClick={() => setIsOpen(!isOpen)}
         className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all flex items-center justify-between cursor-pointer focus:outline-none min-h-11.5 grow min-w-35 ${
@@ -36,11 +35,9 @@ const CustomDropdown = ({ options, value, onChange, className = "", error = fals
        <IoIosArrowDown className="text-gray-400 text-lg" />
       </div>
 
-      {/* Expanded Menu Popup */}
       {isOpen && (
         <div className="absolute -top-1 md:-top-1.5 -left-1 md:-left-1.5 w-[calc(100%+8px)] md:w-[calc(100%+12px)] bg-[#fdfdfd] rounded-[10px] shadow-2xl border border-gray-200 z-50 flex flex-col animate-in fade-in duration-100">
           
-          {/* Header row mirroring the trigger, styled exactly like the mockup */}
           <div 
             onClick={() => setIsOpen(false)}
             className="flex items-center justify-between px-5 pt-4 pb-2 cursor-pointer bg-white rounded-t-[10px]"

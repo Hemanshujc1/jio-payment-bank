@@ -16,8 +16,8 @@ const ScreenWrapper = ({ children }) => {
         setTimeout(() => {
           setShowSplash(false);
           sessionStorage.setItem("onboarding_splash_shown", "true");
-        }, 800); // Duration of fade-out animation
-      }, 3000); // Duration splash is fully visible
+        }, 800);
+      }, 3000); 
 
       return () => clearTimeout(timer);
     }
