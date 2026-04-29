@@ -25,16 +25,48 @@ const OnboardingFlowPage = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [currentStep]);
 
-  const [isVerificationComplete, setIsVerificationComplete] = useState(false);
-  const [isMobileVerified, setIsMobileVerified] = useState(false);
+  const [isVerificationComplete, setIsVerificationComplete] = useState(
+    sessionStorage.getItem("isVerificationComplete") === "true"
+  );
+  const [isMobileVerified, setIsMobileVerified] = useState(
+    sessionStorage.getItem("isMobileVerified") === "true"
+  );
   const [showOtp, setShowOtp] = useState(false);
-  const [mobileNumber, setMobileNumber] = useState("");
-  const [emailId, setEmail] = useState("");
-  const [isEmailVerified, setIsEmailVerified] = useState(false);
+  const [mobileNumber, setMobileNumber] = useState(
+    sessionStorage.getItem("mobileNumber") || ""
+  );
+  const [emailId, setEmail] = useState(
+    sessionStorage.getItem("emailId") || ""
+  );
+  const [isEmailVerified, setIsEmailVerified] = useState(
+    sessionStorage.getItem("isEmailVerified") === "true"
+  );
   const [showEmailOtp, setShowEmailOtp] = useState(false);
 
-  const [applicationNumber, setApplicationNumber] = useState("");
-  const [externalAppRefNumber, setExternalAppRefNumber] = useState("");
+  const [applicationNumber, setApplicationNumber] = useState(
+    sessionStorage.getItem("applicationNumber") || ""
+  );
+  const [externalAppRefNumber, setExternalAppRefNumber] = useState(
+    sessionStorage.getItem("externalAppRefNumber") || ""
+  );
+
+  useEffect(() => {
+    sessionStorage.setItem("isVerificationComplete", isVerificationComplete);
+    sessionStorage.setItem("isMobileVerified", isMobileVerified);
+    sessionStorage.setItem("mobileNumber", mobileNumber);
+    sessionStorage.setItem("emailId", emailId);
+    sessionStorage.setItem("isEmailVerified", isEmailVerified);
+    sessionStorage.setItem("applicationNumber", applicationNumber);
+    sessionStorage.setItem("externalAppRefNumber", externalAppRefNumber);
+  }, [
+    isVerificationComplete,
+    isMobileVerified,
+    mobileNumber,
+    emailId,
+    isEmailVerified,
+    applicationNumber,
+    externalAppRefNumber,
+  ]);
 
   const methods = useForm({
     resolver: zodResolver(onboardingSchema),

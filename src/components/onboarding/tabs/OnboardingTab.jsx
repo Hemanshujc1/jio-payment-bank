@@ -132,6 +132,12 @@ const OnboardingTab = ({
     }
   };
 
+  useEffect(() => {
+    if (isMobileVerified && (emailId.length === 0 || isEmailVerified)) {
+      setIsVerificationComplete(true);
+    }
+  }, [isMobileVerified, isEmailVerified, emailId, setIsVerificationComplete]);
+
   const [isApiLoading, setIsApiLoading] = useState(false);
   const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
   const [isEmailApiLoading, setIsEmailApiLoading] = useState(false);
