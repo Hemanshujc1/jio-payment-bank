@@ -104,7 +104,7 @@ const onboardingService = {
   getAccountSubscriptions: async () => {
     try {
       const baseURL = import.meta.env.VITE_API_BASE_URL.replace('/customer', '');
-      const response = await apiClient.get('/common/account-sub', { baseURL });
+      const response = await apiClient.post('/common/account-sub', {}, { baseURL });
       return response.data;
     } catch (error) {
       throw error;

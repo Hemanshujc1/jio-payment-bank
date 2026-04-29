@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { IoMdCloseCircle } from "react-icons/io";
 import VariantCard from "../components/common/VariantCard";
 import debitcardimg from "../assets/debit-card-img.webp"; 
 import onboardingService from "../services/onboardingService";
@@ -9,6 +10,37 @@ const SavingsVariantPage = () => {
   const [variants, setVariants] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  
+  const [locationStatus, setLocationStatus] = useState("loading");
+  const [locationErrorMsg, setLocationErrorMsg] = useState("");
+
+  useEffect(() => {
+    if (!("geolocation" in navigator)) {
+      setLocationStatus("error");
+      setLocationErrorMsg("Geolocation is not supported by your browser.");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        localStorage.setItem("latitude", position.coords.latitude.toString().substring(0, 6));
+        localStorage.setItem("longitude", position.coords.longitude.toString().substring(0, 6));
+        // Forcefully set VKID so it overwrites the old cached value
+        localStorage.setItem("vkid", "RJ2903071");
+        
+        setLocationStatus("success");
+      },
+      (error) => {
+        console.error("Error getting location:", error);
+        setLocationStatus("error");
+        if (error.code === error.PERMISSION_DENIED) {
+          setLocationErrorMsg("Location permission was denied. Please allow location access to proceed.");
+        } else {
+          setLocationErrorMsg("Failed to retrieve location. Please try again.");
+        }
+      }
+    );
+  }, []);
 
   useEffect(() => {
     const fetchVariants = async () => {
@@ -30,6 +62,29 @@ const SavingsVariantPage = () => {
 
     fetchVariants();
   }, []);
+
+  if (locationStatus === "loading") {
+    return (
+      <div className="w-full h-screen min-h-100 flex flex-col items-center justify-center animate-in fade-in duration-500">
+        <span className="w-10 h-10 border-4 border-brown-700 border-t-transparent rounded-full animate-spin mb-4"></span>
+        <p className="text-sand-900 font-bold text-lg">Requesting location access...</p>
+        <p className="text-sand-500 mt-2 text-sm max-w-md text-center">We need your location to securely start the process.</p>
+      </div>
+    );
+  }
+
+  if (locationStatus === "error") {
+    return (
+      <div className="w-full h-screen min-h-100 flex flex-col items-center justify-center px-4 animate-in fade-in duration-500">
+        <div className="bg-red-50 text-red-600 p-8 rounded-2xl border border-red-200 text-center max-w-md shadow-sm">
+          <IoMdCloseCircle className="text-5xl mx-auto mb-4 text-red-500" />
+          <h3 className="font-extrabold text-2xl mb-2 text-red-700">Location Required</h3>
+          <p className="font-medium text-red-600">{locationErrorMsg}</p>
+          <p className="mt-4 text-sm text-red-500">Please enable location access in your browser settings and refresh the page to continue.</p>
+        </div>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
