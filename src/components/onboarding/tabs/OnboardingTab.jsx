@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 import ProceedButton from "../../common/ProceedButton";
 import MobileOtpSection from "../sections/MobileOtpSection";
@@ -9,7 +9,6 @@ import IdentityInputs from "../sections/IdentityInputs";
 import ConsentsSection from "../sections/ConsentsSection";
 import LanguageSelection from "../sections/LanguageSelection";
 import BiometricSection from "../sections/BiometricSection";
-import ManualVerificationSection from "../sections/ManualVerificationSection";
 
 const OnboardingTab = ({
   onNext,
@@ -41,12 +40,7 @@ const OnboardingTab = ({
   } = useFormContext();
 
   const productType = watch("onboarding.productType");
-  const aepsConsent = watch("onboarding.aepsConsent");
   const language = watch("onboarding.language");
-  const agreeTerms = watch("onboarding.agreeTerms");
-  const agreeAeps = watch("onboarding.agreeAeps");
-  const agreeSweep = watch("onboarding.agreeSweep");
-  const fatcaDeclared = watch("onboarding.fatcaDeclared");
   const pan = watch("onboarding.pan") || "";
   const aadhaar = watch("onboarding.aadhaar") || "";
 
@@ -56,29 +50,86 @@ const OnboardingTab = ({
   const [documentStatus, setDocumentStatus] = useState("idle"); // idle, success, mismatch
   const [isBiometricLoading, setIsBiometricLoading] = useState(false);
   const [isBiometricVerified, setIsBiometricVerified] = useState(false);
-  const [panFile, setPanFile] = useState(null);
   const [isVerifyingDocuments, setIsVerifyingDocuments] = useState(false);
+  
+  const [consentsList, setConsentsList] = useState([]);
+  const [selectedConsents, setSelectedConsents] = useState({});
+  const [panAadhaarFailed, setPanAadhaarFailed] = useState(false);
+  const [panAadhaarSuccess, setPanAadhaarSuccess] = useState(false);
+  const [verificationErrorMessage, setVerificationErrorMessage] = useState("");
 
-  const VERIFIED_AADHAAR = "123412341234";
-  const VERIFIED_PAN = "ABCDE1234F";
-
-  const captureBiometric = () => {
-    setIsBiometricLoading(true);
-    setTimeout(() => {
-      setIsBiometricLoading(false);
-      setIsBiometricVerified(true);
-
-      // Auto verify after biometric
-      if (aadhaar.length === 12 && pan.length === 10) {
-        if (aadhaar === VERIFIED_AADHAAR && pan === VERIFIED_PAN) {
-          setDocumentStatus("success");
-        } else {
-          setDocumentStatus("mismatch");
+  useEffect(() => {
+    const fetchConsents = async () => {
+      try {
+        const langCode = language === "Hindi" ? "oth" : "eng";
+        const res = await onboardingService.getConsents(langCode);
+        if (res.status === "SUCCESS" && res.response?.consents) {
+          setConsentsList(res.response.consents);
+          const initial = {};
+          res.response.consents.forEach(c => {
+            initial[c.consentTextCode] = false;
+          });
+          setSelectedConsents(initial);
         }
-      } else {
-        setDocumentStatus("mismatch");
+      } catch (err) {
+        console.error("Failed to fetch consents", err);
       }
-    }, 2500); // 2.5 seconds fake load
+    };
+    fetchConsents();
+  }, [language]);
+
+  const isAllConsentsSelected = consentsList.length > 0 && consentsList.every(c => selectedConsents[c.consentTextCode]);
+
+  const captureBiometric = async () => {
+    setIsBiometricLoading(true);
+    setPanAadhaarFailed(false);
+    setPanAadhaarSuccess(false);
+    setVerificationErrorMessage("");
+
+    try {
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      const payload = {
+        applicationNumber,
+        externalAppRefNumber,
+        panNo: pan,
+        aadharNo: aadhaar,
+        bioMetricData: "Finger print XML", // Placeholder for biometric data
+        consents: consentsList
+          .filter(c => selectedConsents[c.consentTextCode])
+          .map(c => ({
+            consent: c.text1,
+            code: c.consentTextCode,
+            // version: "1",
+            method: "checkbox"
+          }))
+      };
+
+      console.log("🚀 DEBUG: /pan-aadhar-verify Request Payload", JSON.stringify(payload, null, 2));
+      
+      const response = await onboardingService.panAadhaarVerify(payload);
+      
+      console.log("✅ DEBUG: /pan-aadhar-verify Response", JSON.stringify(response, null, 2));
+
+      if (response.status === "SUCCESS") {
+        setIsBiometricVerified(true);
+        setDocumentStatus("success");
+        setPanAadhaarSuccess(true);
+      } else {
+        setIsBiometricVerified(false);
+        setDocumentStatus("mismatch");
+        setPanAadhaarFailed(true);
+        setVerificationErrorMessage(response.message || "Identity verification failed.");
+      }
+    } catch (error) {
+      console.error("❌ DEBUG: /pan-aadhar-verify Error", error);
+      setIsBiometricVerified(false);
+      setDocumentStatus("mismatch");
+      setPanAadhaarFailed(true);
+      setVerificationErrorMessage(error.message || "An error occurred during verification.");
+    } finally {
+      setIsBiometricLoading(false);
+    }
   };
 
   const [isApiLoading, setIsApiLoading] = useState(false);
@@ -236,10 +287,8 @@ const OnboardingTab = ({
     if (showAadhaar) {
       chars = val.replace(/[^0-9]/g, "").slice(0, 12);
     } else {
-      // Logic for masked input: detect added/removed digits
       const maskedVal = formatAadhaar(aadhaar).replace(/[0-9]/g, "X");
       if (val.length > maskedVal.length) {
-        // User added a character (likely at the end)
         const added = val.slice(-1);
         if (/[0-9]/.test(added)) {
           chars = (aadhaar + added).slice(0, 12);
@@ -247,7 +296,6 @@ const OnboardingTab = ({
           chars = aadhaar;
         }
       } else if (val.length < maskedVal.length) {
-        // User deleted a character
         chars = aadhaar.slice(0, -1);
       } else {
         chars = aadhaar;
@@ -255,6 +303,11 @@ const OnboardingTab = ({
     }
     setValue("onboarding.aadhaar", chars, { shouldValidate: false });
     if (documentStatus !== "idle") setDocumentStatus("idle");
+    if (panAadhaarFailed || panAadhaarSuccess) {
+      setPanAadhaarFailed(false);
+      setPanAadhaarSuccess(false);
+      setVerificationErrorMessage("");
+    }
   };
 
   const handlePanChange = (e) => {
@@ -262,6 +315,11 @@ const OnboardingTab = ({
     const chars = val.replace(/[^A-Z0-9]/g, "");
     setValue("onboarding.pan", chars.slice(0, 10), { shouldValidate: false });
     if (documentStatus !== "idle") setDocumentStatus("idle");
+    if (panAadhaarFailed || panAadhaarSuccess) {
+      setPanAadhaarFailed(false);
+      setPanAadhaarSuccess(false);
+      setVerificationErrorMessage("");
+    }
   };
 
   const handleBlur = (field) => {
@@ -282,68 +340,19 @@ const OnboardingTab = ({
 
   const languages = [
     "English",
-    "Hindi",
-    "Marathi",
-    "Bengali",
-    "Kannada",
-    "Telugu",
-    "Tamil",
-    "Malayalam",
+    "Hindi"
   ];
 
   const handleProceed = async () => {
-    if (documentStatus === "idle") {
-      alert("Please capture your biometric first to verify documents.");
-      return;
-    }
-
-    if (documentStatus === "mismatch" && !panFile) {
-      alert("Please upload your PAN Document to proceed.");
-      return;
-    }
-
     const isValid = await trigger("onboarding");
-    if (isValid && isBiometricVerified) {
-      setIsVerifyingDocuments(true);
-      try {
-        const payload = {
-          applicationNumber,
-          externalAppRefNumber,
-          panNo: pan,
-          aadharNo: aadhaar,
-          bioMetricData: "Finger print XML", // Placeholder for biometric data
-          consents: [
-            {
-              consent: "Hello, I verify for all of the mentioned B88",
-              code: "B88",
-              version: "1",
-              method: "checkbox"
-            },
-            {
-              consent: "Hello, I verify for all of the mentioned C50",
-              code: "C50",
-              version: "1",
-              method: "checkbox"
-            }
-          ]
-        };
-
-        const response = await onboardingService.panAadhaarVerify(payload);
-
-        if (response.status === "SUCCESS") {
-          // If the backend returned a new application/external ref number, we should probably update it,
-          // but we'll stick to our current ones unless needed.
-          onNext();
-        } else {
-          alert(response.message || "Document verification failed. Please try again.");
-        }
-      } catch (error) {
-        alert(error.message || "An error occurred during document verification.");
-      } finally {
-        setIsVerifyingDocuments(false);
-      }
+    if (isValid && panAadhaarSuccess) {
+      onNext();
+    } else if (!panAadhaarSuccess) {
+      alert("Please complete biometric verification successfully first.");
     }
   };
+
+
 
   if (!isVerificationComplete) {
     return (
@@ -395,18 +404,12 @@ const OnboardingTab = ({
         displayAadhaar={displayAadhaar}
         pan={pan}
         errors={errors.onboarding}
-        disabled={documentStatus !== "idle"}
       />
 
       <ConsentsSection
-        agreeTerms={agreeTerms}
-        setAgreeTerms={(val) => setValue("onboarding.agreeTerms", val)}
-        agreeAeps={agreeAeps}
-        setAgreeAeps={(val) => setValue("onboarding.agreeAeps", val)}
-        agreeSweep={agreeSweep}
-        setAgreeSweep={(val) => setValue("onboarding.agreeSweep", val)}
-        fatcaDeclared={fatcaDeclared}
-        setFatcaDeclared={(val) => setValue("onboarding.fatcaDeclared", val)}
+        consents={consentsList}
+        selectedConsents={selectedConsents}
+        setSelectedConsents={setSelectedConsents}
         errors={errors.onboarding}
       />
 
@@ -424,20 +427,48 @@ const OnboardingTab = ({
         aadhaar={aadhaar}
         pan={pan}
         documentStatus={documentStatus}
+        disabled={!isAllConsentsSelected}
       />
 
-      {/* Verification Logic Block */}
-      <ManualVerificationSection
-        documentStatus={documentStatus}
-        setPanFile={setPanFile}
-      />
+      {/* Aadhaar/PAN API Verification Status */}
+      {panAadhaarFailed && (
+        <div className="w-full max-w-4xl mx-auto mt-4 px-4 py-3 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
+          <div className="flex items-center justify-center w-6 h-6 rounded-full bg-red-500 text-white shrink-0 font-bold text-sm mt-0.5">
+            !
+          </div>
+          <div className="flex flex-col">
+            <p className="text-red-800 font-bold text-[15px]">
+              Verification Failed
+            </p>
+            <p className="text-red-600 text-[13.5px] mt-0.5">
+              {verificationErrorMessage || "The details provided do not match our records."}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {panAadhaarSuccess && (
+        <div className="w-full max-w-4xl mx-auto mt-4 px-4 py-3 bg-green-50 border border-green-200 rounded-xl flex items-start gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
+          <div className="flex items-center justify-center w-6 h-6 rounded-full bg-green-500 text-white shrink-0 font-bold text-sm mt-0.5">
+            ✓
+          </div>
+          <div className="flex flex-col">
+            <p className="text-green-800 font-bold text-[15px]">
+              Verification Passed
+            </p>
+            <p className="text-green-600 text-[13.5px] mt-0.5">
+              Aadhaar and PAN details have been successfully verified.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Final Proceed */}
       <div className="flex justify-center w-full mt-2 mb-5 py-3 sm:mt-4">
         <ProceedButton
           onClick={handleProceed}
           disabled={
-            !isBiometricVerified || (documentStatus === "mismatch" && !panFile) || isVerifyingDocuments
+            !panAadhaarSuccess || isVerifyingDocuments || !isAllConsentsSelected
           }
           className="w-fit shadow-xl hover:scale-105 active:scale-95 transition-all duration-200"
         />

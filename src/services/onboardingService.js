@@ -110,6 +110,20 @@ const onboardingService = {
       throw error;
     }
   },
+
+  /**
+   * Fetches dynamic consents based on language
+   * @param {string} language "eng" or "oth"
+   */
+  getConsents: async (language) => {
+    try {
+      const baseURL = import.meta.env.VITE_API_BASE_URL.replace('/customer', '');
+      const response = await apiClient.post('/common/get-consents', { language }, { baseURL });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 
 export default onboardingService;
