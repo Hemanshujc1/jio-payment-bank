@@ -103,7 +103,7 @@ const onboardingService = {
    */
   getAccountSubscriptions: async () => {
     try {
-      const baseURL = import.meta.env.VITE_API_BASE_URL.replace('/customer', '');
+      const baseURL = import.meta.env.VITE_CUSTOMER_API_BASE_URL.replace('/customer', '');
       const response = await apiClient.post('/common/account-sub', {}, { baseURL });
       return response.data;
     } catch (error) {
@@ -117,8 +117,23 @@ const onboardingService = {
    */
   getConsents: async (language) => {
     try {
-      const baseURL = import.meta.env.VITE_API_BASE_URL.replace('/customer', '');
+      const baseURL = import.meta.env.VITE_CUSTOMER_API_BASE_URL.replace('/customer', '');
       const response = await apiClient.post('/common/get-consents', { language }, { baseURL });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  /**
+   * Fetches city and state details based on pincode.
+   * @param {string} pincode 
+   */
+  getPincodeDetails: async (pincode) => {
+    try {
+      const response = await apiClient.post('/pin-code', { pincode }, { 
+        baseURL: import.meta.env.VITE_COMMON_API_BASE_URL 
+      });
       return response.data;
     } catch (error) {
       throw error;

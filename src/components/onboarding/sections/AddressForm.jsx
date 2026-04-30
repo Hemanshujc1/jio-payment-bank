@@ -1,5 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
+import onboardingService from "../../../services/onboardingService";
 import { parseDate } from "../../../utils/validationUtils";
 
 const AddressForm = ({ prefix, title, mockAadhaarAddress }) => {
@@ -7,8 +8,12 @@ const AddressForm = ({ prefix, title, mockAadhaarAddress }) => {
     register,
     watch,
     setValue,
+    clearErrors,
+    setError,
     formState: { errors },
   } = useFormContext();
+
+  const [isPincodeLoading, setIsPincodeLoading] = useState(false);
 
   const addressType = watch(`${prefix}.address`);
   const currentAddress = watch(`${prefix}.addressDetails`);
@@ -42,6 +47,42 @@ const AddressForm = ({ prefix, title, mockAadhaarAddress }) => {
       }
     }
   }, [addressType, applicantAddress, mockAadhaarAddress, setValue, prefix, currentAddress]);
+
+  const pincode = watch(`${prefix}.addressDetails.pincode`);
+
+// Pincode logic
+  useEffect(() => {
+    const lookupPincode = async () => {
+      if (pincode?.length === 6 && addressType === "Others") {
+        setIsPincodeLoading(true);
+        try {
+          const res = await onboardingService.getPincodeDetails(pincode);
+          if (res.cityName && res.stateName) {
+            setValue(`${prefix}.addressDetails.city`, res.cityName, { shouldValidate: true });
+            setValue(`${prefix}.addressDetails.state`, res.stateName, { shouldValidate: true });
+            clearErrors(`${prefix}.addressDetails.pincode`);
+          } else if (res.error) {
+            setError(`${prefix}.addressDetails.pincode`, {
+              type: "manual",
+              message: res.error.message || "Pin code not found",
+            });
+            setValue(`${prefix}.addressDetails.city`, "");
+            setValue(`${prefix}.addressDetails.state`, "");
+          }
+        } catch (err) {
+          console.error("Pincode lookup failed", err);
+          setError(`${prefix}.addressDetails.pincode`, {
+            type: "manual",
+            message: "Failed to fetch location details",
+          });
+        } finally {
+          setIsPincodeLoading(false);
+        }
+      }
+    };
+
+    lookupPincode();
+  }, [pincode, addressType, setValue, setError, clearErrors, prefix]);
 
   const error = getError(prefix);
 
@@ -93,7 +134,6 @@ const AddressForm = ({ prefix, title, mockAadhaarAddress }) => {
             </span>
           )}
 
-          {/* Read-only Address Preview */}
           {addressType && addressType !== "Others" &&
             (currentAddress?.addressLine1 ||
               currentAddress?.city ||
@@ -116,7 +156,7 @@ const AddressForm = ({ prefix, title, mockAadhaarAddress }) => {
             )}
         </div>
 
-        {/* Conditional Address Details for "Others" */}
+        {/* "Others" */}
         {addressType === "Others" && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-5 sm:p-6 rounded-2xl items-start">
             <div className="flex flex-col gap-1.5">
@@ -172,17 +212,24 @@ const AddressForm = ({ prefix, title, mockAadhaarAddress }) => {
               <span className="font-bold text-[13px] sm:text-[14px] text-gray-700 ml-0.5">
                 Pincode<span className="text-red-500">*</span>
               </span>
-              <input
-                {...register(`${prefix}.addressDetails.pincode`)}
-                maxLength={6}
-                onInput={(e) => { e.target.value = e.target.value.replace(/[^0-9]/g, ""); }}
-                className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${
-                  error?.addressDetails?.pincode
-                    ? "border-red-500"
-                    : "border-neutral-light focus-within:border-gray-900"
-                } text-[14px] font-medium text-gray-900`}
-                placeholder="6-digit Pincode"
-              />
+              <div className="relative">
+                <input
+                  {...register(`${prefix}.addressDetails.pincode`)}
+                  maxLength={6}
+                  onInput={(e) => { e.target.value = e.target.value.replace(/[^0-9]/g, ""); }}
+                  className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all w-full focus:outline-none ${
+                    error?.addressDetails?.pincode
+                      ? "border-red-500"
+                      : "border-neutral-light focus-within:border-gray-900"
+                  } text-[14px] font-medium text-gray-900`}
+                  placeholder="6-digit Pincode"
+                />
+                {isPincodeLoading && (
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                    <div className="w-4 h-4 border-2 border-brown-700 border-t-transparent rounded-full animate-spin"></div>
+                  </div>
+                )}
+              </div>
               {error?.addressDetails?.pincode && <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-1">{error.addressDetails.pincode.message}</span>}
             </div>
             
@@ -193,11 +240,12 @@ const AddressForm = ({ prefix, title, mockAadhaarAddress }) => {
               <input
                 {...register(`${prefix}.addressDetails.city`)}
                 maxLength={20}
-                className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${
+                readOnly
+                className={`bg-gray-100 rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${
                   error?.addressDetails?.city
                     ? "border-red-500"
-                    : "border-neutral-light focus-within:border-gray-900"
-                } text-[14px] font-medium text-gray-900`}
+                    : "border-neutral-light"
+                } text-[14px] font-medium text-gray-500 cursor-not-allowed`}
                 placeholder="City"
               />
               {error?.addressDetails?.city && <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-1">{error.addressDetails.city.message}</span>}
@@ -210,11 +258,12 @@ const AddressForm = ({ prefix, title, mockAadhaarAddress }) => {
               <input
                 {...register(`${prefix}.addressDetails.state`)}
                 maxLength={20}
-                className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${
+                readOnly
+                className={`bg-gray-100 rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${
                   error?.addressDetails?.state
                     ? "border-red-500"
-                    : "border-neutral-light focus-within:border-gray-900"
-                } text-[14px] font-medium text-gray-900`}
+                    : "border-neutral-light"
+                } text-[14px] font-medium text-gray-500 cursor-not-allowed`}
                 placeholder="State"
               />
               {error?.addressDetails?.state && <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-1">{error.addressDetails.state.message}</span>}

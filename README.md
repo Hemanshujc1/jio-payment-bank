@@ -70,7 +70,7 @@ To connect the frontend application to the backend API services, you must config
 1. Create a new file named `.env` in the root directory of the `jiopayment` project (where `package.json` and `vite.config.js` are located).
 2. Add the following line to the `.env` file to set the base URL for the API endpoints:
 ```env
-VITE_API_BASE_URL=/api/customer
+VITE_CUSTOMER_API_BASE_URL=/api/customer
 ```
 > **Note:** Adjust `/api/customer` to the actual base URL of your backend if you are running it on a different domain or port locally (e.g., `http://localhost:8080/api/customer`).
 
@@ -88,7 +88,7 @@ This project uses `axios` for HTTP requests, configured via a central API client
 
 ### Step 1: Understand the API Client (`src/utils/apiClient.js`)
 All API requests flow through a customized Axios instance in `apiClient.js`. 
-- It automatically attaches the `VITE_API_BASE_URL` from your `.env` file.
+- It automatically attaches the `VITE_CUSTOMER_API_BASE_URL` from your `.env` file.
 - It includes request and response interceptors to log activity and handle errors globally.
 - You do not need to import `axios` directly in your components.
 
@@ -111,8 +111,8 @@ const myCustomService = {
    */
   getUserProfile: async (userId) => {
     try {
-      // apiClient will automatically prepend VITE_API_BASE_URL
-      // So this calls: <VITE_API_BASE_URL>/profile/${userId}
+      // apiClient will automatically prepend VITE_CUSTOMER_API_BASE_URL
+      // So this calls: <VITE_CUSTOMER_API_BASE_URL>/profile/${userId}
       const response = await apiClient.get(`/profile/${userId}`);
       return response.data;
     } catch (error) {
