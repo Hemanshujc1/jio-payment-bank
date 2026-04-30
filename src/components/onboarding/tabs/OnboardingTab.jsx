@@ -81,6 +81,8 @@ const OnboardingTab = ({
   const isAllConsentsSelected = consentsList.length > 0 && consentsList.every(c => selectedConsents[c.consentTextCode]);
 
   const captureBiometric = async () => {
+
+    //kushal
     setIsBiometricLoading(true);
     setPanAadhaarFailed(false);
     setPanAadhaarSuccess(false);
