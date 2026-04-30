@@ -82,7 +82,6 @@ const OnboardingTab = ({
 
   const captureBiometric = async () => {
 
-    //kushal
     setIsBiometricLoading(true);
     setPanAadhaarFailed(false);
     setPanAadhaarSuccess(false);
