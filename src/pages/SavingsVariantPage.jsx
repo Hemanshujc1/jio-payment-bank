@@ -67,6 +67,13 @@ const SavingsVariantPage = () => {
     fetchVariants();
   }, []);
 
+
+  const parseAmount = (amt) => {
+    if (typeof amt === "number") return amt;
+    if (!amt) return 0;
+    return parseFloat(amt.toString().replace(/[^\d.]/g, ""));
+  };
+
   if (locationStatus === "loading") {
     return (
       <div className="w-full h-screen min-h-100 flex flex-col items-center justify-center animate-in fade-in duration-500">
@@ -132,6 +139,14 @@ const SavingsVariantPage = () => {
             imageAlt={`${variant.cardType} Card`}
             benefits={variant.display?.benefits || []}
             onPayClick={() => {
+              const currentBalance = localStorage.getItem("walletBalance") || "₹ 0.00";
+              const balanceNum = parseAmount(currentBalance);
+              const feeNum = parseAmount(variant.issuanceFee);
+
+              if (balanceNum < feeNum) {
+                alert(`Insufficient balance in Vakrangee Wallet. Available: ${currentBalance}, Required: ₹ ${feeNum.toFixed(2)}`);
+                return;
+              }
               navigate("/onboarding-flow");
             }}
           />

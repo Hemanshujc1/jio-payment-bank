@@ -105,11 +105,11 @@ const OnboardingTab = ({
           }))
       };
 
-      console.log("🚀 DEBUG: /pan-aadhar-verify Request Payload", JSON.stringify(payload, null, 2));
+      console.log("DEBUG: /pan-aadhar-verify Request Payload", JSON.stringify(payload, null, 2));
       
       const response = await onboardingService.panAadhaarVerify(payload);
       
-      console.log("✅ DEBUG: /pan-aadhar-verify Response", JSON.stringify(response, null, 2));
+      console.log("DEBUG: /pan-aadhar-verify Response", JSON.stringify(response, null, 2));
 
       if (response.status === "SUCCESS") {
         setIsBiometricVerified(true);
@@ -122,7 +122,7 @@ const OnboardingTab = ({
         setVerificationErrorMessage(response.message || "Identity verification failed.");
       }
     } catch (error) {
-      console.error("❌ DEBUG: /pan-aadhar-verify Error", error);
+      console.error("DEBUG: /pan-aadhar-verify Error", error);
       setIsBiometricVerified(false);
       setDocumentStatus("mismatch");
       setPanAadhaarFailed(true);

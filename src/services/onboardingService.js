@@ -153,6 +153,22 @@ const onboardingService = {
       throw error;
     }
   },
+
+  /**
+   * Fetches the agent's wallet balance.
+   * @param {string} vkid 
+   */
+  getWalletBalance: async (vkid) => {
+    try {
+      const response = await apiClient.get("/wallet-balance", {
+        params: { userId: vkid },
+        baseURL: import.meta.env.VITE_WALLET_API_BASE_URL,
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 
 export default onboardingService;
