@@ -55,61 +55,61 @@ const BiometricSection = ({
     }
 
     try {
-  // ✅ DEFINE URL
-  const captureUrl = "http://127.0.0.1:11100/rd/capture";
+      // ✅ DEFINE URL
+      const captureUrl = "http://127.0.0.1:11100/rd/capture";
 
-  // ✅ DEFINE XML REQUEST (WITH CORRECT ENV)
-  const xmlRequest = `
-    <PidOptions ver="1.0">
-      <Opts 
-        fCount="1" 
-        fType="2" 
-        iCount="0" 
-        format="0" 
-        pidVer="2.0" 
-        timeout="20000" 
-        env="P"
-      />
-    </PidOptions>
-  `;
+      // ✅ DEFINE XML REQUEST (WITH CORRECT ENV)
+      const xmlRequest = `
+        <PidOptions ver="1.0">
+          <Opts 
+            fCount="1" 
+            fType="2" 
+            iCount="0" 
+            format="0" 
+            pidVer="2.0" 
+            timeout="20000" 
+            env="P"
+          />
+        </PidOptions>
+      `;
 
-  const response = await fetch(captureUrl, {
-    method: "POST",
-    headers: {
-      "Content-Type": "text/xml",
-    },
-    body: xmlRequest,
-  });
+      const response = await fetch(captureUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "text/xml",
+        },
+        body: xmlRequest,
+      });
 
-  const result = await response.text();
-  console.log("RD RESULT:", result);
+      const result = await response.text();
+      console.log("RD RESULT:", result);
 
-  const parser = new DOMParser();
-  const xml = parser.parseFromString(result, "text/xml");
+      const parser = new DOMParser();
+      const xml = parser.parseFromString(result, "text/xml");
 
-  const resp = xml.getElementsByTagName("Resp")[0];
-  const errCode = resp?.getAttribute("errCode");
-  const errInfo = resp?.getAttribute("errInfo");
+      const resp = xml.getElementsByTagName("Resp")[0];
+      const errCode = resp?.getAttribute("errCode");
+      const errInfo = resp?.getAttribute("errInfo");
 
-  if (errCode === "0") {
-    setIsBiometricVerified(true);
-  } else {
-    setRdError({
-      show: true,
-      message: errInfo || "Fingerprint capture failed",
-    });
-  }
-} catch (err) {
-  console.error("CAPTURE ERROR:", err);
-
-  setRdError({
-    show: true,
-    message:
-      "Unable to capture fingerprint. Please check device connection.",
-  });
-}
-
-    setIsBiometricLoading(false);
+      if (errCode === "0") {
+        if (captureBiometricVerify) {
+          await captureBiometricVerify(result);
+        }
+      } else {
+        setRdError({
+          show: true,
+          message: errInfo || "Fingerprint capture failed",
+        });
+      }
+    } catch (err) {
+      console.error("CAPTURE ERROR:", err);
+      setRdError({
+        show: true,
+        message: "Unable to capture fingerprint. Please check device connection.",
+      });
+    } finally {
+      setIsBiometricLoading(false);
+    }
   };
 
   return (

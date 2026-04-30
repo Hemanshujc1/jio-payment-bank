@@ -80,7 +80,7 @@ const OnboardingTab = ({
 
   const isAllConsentsSelected = consentsList.length > 0 && consentsList.every(c => selectedConsents[c.consentTextCode]);
 
-  const captureBiometric = async () => {
+  const captureBiometric = async (biometricXml) => {
 
     setIsBiometricLoading(true);
     setPanAadhaarFailed(false);
@@ -88,14 +88,13 @@ const OnboardingTab = ({
     setVerificationErrorMessage("");
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
       
       const payload = {
         applicationNumber,
         externalAppRefNumber,
         panNo: pan,
         aadharNo: aadhaar,
-        bioMetricData: "Finger print XML", // Placeholder for biometric data
+        bioMetricData: biometricXml,
         consents: consentsList
           .filter(c => selectedConsents[c.consentTextCode])
           .map(c => ({
