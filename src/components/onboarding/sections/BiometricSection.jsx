@@ -8,7 +8,7 @@ const BiometricSection = ({
   aadhaar,
   pan,
   documentStatus,
-  captureBiometricVerify
+  onCaptureSuccess,
 }) => {
   const [showDeviceModal, setShowDeviceModal] = useState(false);
   const [isBiometricLoading, setIsBiometricLoading] = useState(false);
@@ -38,79 +38,95 @@ const BiometricSection = ({
     }
   };
 
-  // ✅ CAPTURE FUNCTION
-  const captureBiometric = async (deviceType) => {
-    setShowDeviceModal(false);
-    setIsBiometricLoading(true);
+const captureBiometric = async (deviceType) => {
+  setShowDeviceModal(false);
+  setIsBiometricLoading(true);
 
-    const rdCheck = await checkRDService(deviceType);
+  const rdCheck = await checkRDService(deviceType);
 
-    if (!rdCheck.status) {
-      setIsBiometricLoading(false);
-      setRdError({
-        show: true,
-        message: `${deviceType} RD Service is not running. Please connect the device and start RD service.`,
-      });
-      return;
-    }
+  if (!rdCheck.status) {
+    setIsBiometricLoading(false);
+    setRdError({
+      show: true,
+      message: `${deviceType} RD Service is not running.`,
+    });
+    return;
+  }
 
-    try {
-      // ✅ DEFINE URL
-      const captureUrl = "http://127.0.0.1:11100/rd/capture";
+  try {
+    const url = "http://127.0.0.1:11100/rd/capture";
 
-      // ✅ DEFINE XML REQUEST (WITH CORRECT ENV)
-      const xmlRequest = `
-        <PidOptions ver="1.0">
-          <Opts 
-            fCount="1" 
-            fType="2" 
-            iCount="0" 
-            format="0" 
-            pidVer="2.0" 
-            timeout="20000" 
-            env="P"
-          />
-        </PidOptions>
-      `;
+    const xmlRequest = `
+      <PidOptions ver="1.0">
+        <Opts 
+          fCount="1" 
+          fType="2" 
+          iCount="0" 
+          format="0" 
+          pidVer="2.0" 
+          timeout="20000" 
+          env="PP"
+        />
+      </PidOptions>
+    `;
 
-      const response = await fetch(captureUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "text/xml",
-        },
-        body: xmlRequest,
-      });
+    const xhr = new XMLHttpRequest();
+    xhr.open("CAPTURE", url, true);
 
-      const result = await response.text();
-      console.log("RD RESULT:", result);
+    xhr.onload = function () {
+      if (xhr.status === 200) {
+        const result = xhr.responseText;
+        console.log("RD RESULT:", result);
 
-      const parser = new DOMParser();
-      const xml = parser.parseFromString(result, "text/xml");
+        const parser = new DOMParser();
+        const xml = parser.parseFromString(result, "text/xml");
 
-      const resp = xml.getElementsByTagName("Resp")[0];
-      const errCode = resp?.getAttribute("errCode");
-      const errInfo = resp?.getAttribute("errInfo");
+        const resp = xml.getElementsByTagName("Resp")[0];
+        const errCode = resp?.getAttribute("errCode");
+        const errInfo = resp?.getAttribute("errInfo");
 
-      if (errCode === "0") {
-        if (captureBiometricVerify) {
-          await captureBiometricVerify(result);
+        if (errCode === "0") {
+          if (onCaptureSuccess) {
+              onCaptureSuccess(result); // 👈 THIS IS IMPORTANT
+          }
+
+        } else {
+          setRdError({
+            show: true,
+            message: errInfo || "Fingerprint capture failed",
+          });
         }
       } else {
         setRdError({
           show: true,
-          message: errInfo || "Fingerprint capture failed",
+          message: "RD service not responding properly.",
         });
       }
-    } catch (err) {
-      console.error("CAPTURE ERROR:", err);
+
+      setIsBiometricLoading(false);
+    };
+
+    xhr.onerror = function () {
       setRdError({
         show: true,
-        message: "Unable to capture fingerprint. Please check device connection.",
+        message:
+          "Unable to connect to RD service. Please ensure device is connected.",
       });
-    } finally {
       setIsBiometricLoading(false);
-    }
-  };
+    };
+
+    xhr.send(xmlRequest);
+  } catch (err) {
+    console.error("CAPTURE ERROR:", err);
+
+    setRdError({
+      show: true,
+      message: "Something went wrong during capture.",
+    });
+
+    setIsBiometricLoading(false);
+  }
+};
 
   return (
     <>

@@ -51,7 +51,7 @@ const OnboardingTab = ({
   const [isBiometricLoading, setIsBiometricLoading] = useState(false);
   const [isBiometricVerified, setIsBiometricVerified] = useState(false);
   const [isVerifyingDocuments, setIsVerifyingDocuments] = useState(false);
-  
+
   const [consentsList, setConsentsList] = useState([]);
   const [selectedConsents, setSelectedConsents] = useState({});
   const [panAadhaarFailed, setPanAadhaarFailed] = useState(false);
@@ -66,7 +66,7 @@ const OnboardingTab = ({
         if (res.status === "SUCCESS" && res.response?.consents) {
           setConsentsList(res.response.consents);
           const initial = {};
-          res.response.consents.forEach(c => {
+          res.response.consents.forEach((c) => {
             initial[c.consentTextCode] = false;
           });
           setSelectedConsents(initial);
@@ -78,17 +78,17 @@ const OnboardingTab = ({
     fetchConsents();
   }, [language]);
 
-  const isAllConsentsSelected = consentsList.length > 0 && consentsList.every(c => selectedConsents[c.consentTextCode]);
+  const isAllConsentsSelected =
+    consentsList.length > 0 &&
+    consentsList.every((c) => selectedConsents[c.consentTextCode]);
 
   const captureBiometric = async (biometricXml) => {
-
     setIsBiometricLoading(true);
     setPanAadhaarFailed(false);
     setPanAadhaarSuccess(false);
     setVerificationErrorMessage("");
 
     try {
-      
       const payload = {
         applicationNumber,
         externalAppRefNumber,
@@ -96,20 +96,26 @@ const OnboardingTab = ({
         aadharNo: aadhaar,
         bioMetricData: biometricXml,
         consents: consentsList
-          .filter(c => selectedConsents[c.consentTextCode])
-          .map(c => ({
+          .filter((c) => selectedConsents[c.consentTextCode])
+          .map((c) => ({
             consent: c.text1,
             code: c.consentTextCode,
             // version: "1",
-            method: "checkbox"
-          }))
+            method: "checkbox",
+          })),
       };
 
-      console.log("DEBUG: /pan-aadhar-verify Request Payload", JSON.stringify(payload, null, 2));
-      
+      console.log(
+        "DEBUG: /pan-aadhar-verify Request Payload",
+        JSON.stringify(payload, null, 2),
+      );
+
       const response = await onboardingService.panAadhaarVerify(payload);
-      
-      console.log("DEBUG: /pan-aadhar-verify Response", JSON.stringify(response, null, 2));
+
+      console.log(
+        "DEBUG: /pan-aadhar-verify Response",
+        JSON.stringify(response, null, 2),
+      );
 
       if (response.status === "SUCCESS") {
         setIsBiometricVerified(true);
@@ -119,19 +125,22 @@ const OnboardingTab = ({
         setIsBiometricVerified(false);
         setDocumentStatus("mismatch");
         setPanAadhaarFailed(true);
-        setVerificationErrorMessage(response.message || "Identity verification failed.");
+        setVerificationErrorMessage(
+          response.message || "Identity verification failed.",
+        );
       }
     } catch (error) {
       console.error("DEBUG: /pan-aadhar-verify Error", error);
       setIsBiometricVerified(false);
       setDocumentStatus("mismatch");
       setPanAadhaarFailed(true);
-      setVerificationErrorMessage(error.message || "An error occurred during verification.");
+      setVerificationErrorMessage(
+        error.message || "An error occurred during verification.",
+      );
     } finally {
       setIsBiometricLoading(false);
     }
   };
-
 
   const [isApiLoading, setIsApiLoading] = useState(false);
   const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
@@ -142,16 +151,24 @@ const OnboardingTab = ({
     if (mobileNumber.length >= 10) {
       setIsApiLoading(true);
       try {
-        const response = await onboardingService.generateOtp(mobileNumber, emailId);
-        
+        const response = await onboardingService.generateOtp(
+          mobileNumber,
+          emailId,
+        );
+
         // Always try to capture IDs if returned, as they might be needed for other retries
-        if (response.applicationNumber) setApplicationNumber(response.applicationNumber);
-        if (response.externalAppRefNumber) setExternalAppRefNumber(response.externalAppRefNumber);
+        if (response.applicationNumber)
+          setApplicationNumber(response.applicationNumber);
+        if (response.externalAppRefNumber)
+          setExternalAppRefNumber(response.externalAppRefNumber);
 
         if (response.status === "SUCCESS") {
           setShowOtp(true);
         } else {
-          alert(response.message || "Failed to generate mobile OTP. Please try again.");
+          alert(
+            response.message ||
+              "Failed to generate mobile OTP. Please try again.",
+          );
         }
       } catch (error) {
         alert(error.message || "An error occurred while generating OTP.");
@@ -202,7 +219,9 @@ const OnboardingTab = ({
         if (response.status === "SUCCESS") {
           setShowEmailOtp(true);
         } else {
-          alert(response.message || "Failed to send email OTP. Please try again.");
+          alert(
+            response.message || "Failed to send email OTP. Please try again.",
+          );
         }
       } catch (error) {
         alert(error.message || "An error occurred while sending email OTP.");
@@ -215,11 +234,11 @@ const OnboardingTab = ({
   const handleVerifyEmailOtp = async (otp) => {
     setIsVerifyingEmailOtp(true);
     try {
-      console.log("DEBUG: Verifying Email OTP", { 
-        otp, 
-        emailId: emailId, 
-        applicationNumber, 
-        externalAppRefNumber 
+      console.log("DEBUG: Verifying Email OTP", {
+        otp,
+        emailId: emailId,
+        applicationNumber,
+        externalAppRefNumber,
       });
       const response = await onboardingService.verifyEmailOtp({
         otp,
@@ -272,7 +291,9 @@ const OnboardingTab = ({
       if (response.status === "SUCCESS") {
         alert("Email OTP resent successfully.");
       } else {
-        alert(response.message || "Failed to resend email OTP. Please try again.");
+        alert(
+          response.message || "Failed to resend email OTP. Please try again.",
+        );
       }
     } catch (error) {
       alert(error.message || "An error occurred while resending email OTP.");
@@ -339,10 +360,7 @@ const OnboardingTab = ({
       ? formatAadhaar(aadhaar).replace(/[0-9]/g, "X")
       : "";
 
-  const languages = [
-    "English",
-    "Hindi"
-  ];
+  const languages = ["English", "Hindi"];
 
   const handleProceed = async () => {
     const isValid = await trigger("onboarding");
@@ -352,8 +370,6 @@ const OnboardingTab = ({
       alert("Please complete biometric verification successfully first.");
     }
   };
-
-
 
   if (!isVerificationComplete) {
     return (
@@ -423,12 +439,11 @@ const OnboardingTab = ({
       {/* Biometric Integration Step */}
       <BiometricSection
         isBiometricVerified={isBiometricVerified}
-        captureBiometric={captureBiometric}
-        isBiometricLoading={isBiometricLoading}
+        setIsBiometricVerified={setIsBiometricVerified} // ✅ ADD THIS
         aadhaar={aadhaar}
         pan={pan}
         documentStatus={documentStatus}
-        disabled={!isAllConsentsSelected}
+        onCaptureSuccess={captureBiometric}
       />
 
       {/* Aadhaar/PAN API Verification Status */}
@@ -442,7 +457,8 @@ const OnboardingTab = ({
               Verification Failed
             </p>
             <p className="text-red-600 text-[13.5px] mt-0.5">
-              {verificationErrorMessage || "The details provided do not match our records."}
+              {verificationErrorMessage ||
+                "The details provided do not match our records."}
             </p>
           </div>
         </div>
