@@ -1,9 +1,9 @@
-import apiClient from '../utils/apiClient';
+import apiClient from "../utils/apiClient";
 
 const onboardingService = {
   /**
    * Generates OTP for mobile number.
-   * @param {string} mobileNumber 
+   * @param {string} mobileNumber
    * @param {string} emailId (Optional)
    */
   generateOtp: async (mobileNumber, emailId = "") => {
@@ -12,8 +12,8 @@ const onboardingService = {
       if (emailId) {
         payload.emailId = emailId;
       }
-      
-      const response = await apiClient.post('/generate-otp', payload);
+
+      const response = await apiClient.post("/generate-otp", payload);
       return response.data;
     } catch (error) {
       throw error;
@@ -26,7 +26,7 @@ const onboardingService = {
    */
   verifyOtp: async (payload) => {
     try {
-      const response = await apiClient.post('/verify-otp', payload);
+      const response = await apiClient.post("/verify-otp", payload);
       return response.data;
     } catch (error) {
       throw error;
@@ -39,7 +39,7 @@ const onboardingService = {
    */
   sendEmailOtp: async (payload) => {
     try {
-      const response = await apiClient.post('/send-email', payload);
+      const response = await apiClient.post("/send-email", payload);
       return response.data;
     } catch (error) {
       throw error;
@@ -52,7 +52,7 @@ const onboardingService = {
    */
   verifyEmailOtp: async (payload) => {
     try {
-      const response = await apiClient.post('/verify-email', payload);
+      const response = await apiClient.post("/verify-email", payload);
       return response.data;
     } catch (error) {
       throw error;
@@ -65,7 +65,7 @@ const onboardingService = {
    */
   resendOtp: async (payload) => {
     try {
-      const response = await apiClient.post('/resend-otp', payload);
+      const response = await apiClient.post("/resend-otp", payload);
       return response.data;
     } catch (error) {
       throw error;
@@ -78,7 +78,7 @@ const onboardingService = {
    */
   resendEmailOtp: async (payload) => {
     try {
-      const response = await apiClient.post('/resend-email', payload);
+      const response = await apiClient.post("/resend-email", payload);
       return response.data;
     } catch (error) {
       throw error;
@@ -91,7 +91,7 @@ const onboardingService = {
    */
   panAadhaarVerify: async (payload) => {
     try {
-      const response = await apiClient.post('/pan-aadhar-verify', payload);
+      const response = await apiClient.post("/pan-aadhar-verify", payload);
       return response.data;
     } catch (error) {
       throw error;
@@ -103,8 +103,13 @@ const onboardingService = {
    */
   getAccountSubscriptions: async () => {
     try {
-      const baseURL = import.meta.env.VITE_CUSTOMER_API_BASE_URL.replace('/customer', '');
-      const response = await apiClient.post('/common/account-sub', {}, { baseURL });
+      const response = await apiClient.post(
+        "/account-sub",
+        {},
+        {
+          baseURL: import.meta.env.VITE_COMMON_API_BASE_URL,
+        }
+      );
       return response.data;
     } catch (error) {
       throw error;
@@ -117,8 +122,13 @@ const onboardingService = {
    */
   getConsents: async (language) => {
     try {
-      const baseURL = import.meta.env.VITE_CUSTOMER_API_BASE_URL.replace('/customer', '');
-      const response = await apiClient.post('/common/get-consents', { language }, { baseURL });
+      const response = await apiClient.post(
+        "/get-consents",
+        { language },
+        {
+          baseURL: import.meta.env.VITE_COMMON_API_BASE_URL,
+        }
+      );
       return response.data;
     } catch (error) {
       throw error;
@@ -127,13 +137,17 @@ const onboardingService = {
 
   /**
    * Fetches city and state details based on pincode.
-   * @param {string} pincode 
+   * @param {string} pincode
    */
   getPincodeDetails: async (pincode) => {
     try {
-      const response = await apiClient.post('/pin-code', { pincode }, { 
-        baseURL: import.meta.env.VITE_COMMON_API_BASE_URL 
-      });
+      const response = await apiClient.post(
+        "/pin-code",
+        { pincode },
+        {
+          baseURL: import.meta.env.VITE_COMMON_API_BASE_URL,
+        }
+      );
       return response.data;
     } catch (error) {
       throw error;
