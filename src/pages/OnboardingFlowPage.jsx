@@ -50,6 +50,8 @@ const OnboardingFlowPage = () => {
     sessionStorage.getItem("externalAppRefNumber") || ""
   );
 
+  const [kycData, setKycData] = useState(null);
+
   useEffect(() => {
     sessionStorage.setItem("isVerificationComplete", isVerificationComplete);
     sessionStorage.setItem("isMobileVerified", isMobileVerified);
@@ -156,6 +158,7 @@ const OnboardingFlowPage = () => {
         {currentStep === 1 && (
           <OnboardingTab
             onNext={next}
+            setKycData={setKycData}
             isVerificationComplete={isVerificationComplete}
             setIsVerificationComplete={setIsVerificationComplete}
             isMobileVerified={isMobileVerified}
@@ -176,7 +179,7 @@ const OnboardingFlowPage = () => {
             setExternalAppRefNumber={setExternalAppRefNumber}
           />
         )}
-        {currentStep === 2 && <AadhaarDetailsTab onNext={next} />}
+        {currentStep === 2 && <AadhaarDetailsTab onNext={next}  kycData={kycData} />}
         {currentStep === 3 && <FamilyFinancialDetailsTab onNext={next} />}
         {currentStep === 4 && <NomineeDetailsTab onNext={next} />}
         {currentStep === 5 && (

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 const NameFields = ({ prefix, label, error, register }) => (
@@ -37,7 +37,7 @@ const NameFields = ({ prefix, label, error, register }) => (
 );
 
 const FamilyDetails = () => {
-  const { register, watch, formState: { errors } } = useFormContext();
+  const { register, watch, setValue, formState: { errors } } = useFormContext();
   const maritalStatus = watch("applicant.maritalStatus");
 
   return (

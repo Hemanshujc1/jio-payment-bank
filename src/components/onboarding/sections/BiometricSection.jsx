@@ -66,6 +66,7 @@ const captureBiometric = async (deviceType) => {
           pidVer="2.0" 
           timeout="20000" 
           env="PP"
+          wadh="E0jzJ/P8UopUHAieZn8CKqS4WPMi5ZSYXgfnlfkWjrc="
         />
       </PidOptions>
     `;
@@ -87,7 +88,7 @@ const captureBiometric = async (deviceType) => {
 
         if (errCode === "0") {
           if (onCaptureSuccess) {
-              onCaptureSuccess(result); // 👈 THIS IS IMPORTANT
+              onCaptureSuccess(result); 
           }
 
         } else {

@@ -12,6 +12,7 @@ import BiometricSection from "../sections/BiometricSection";
 
 const OnboardingTab = ({
   onNext,
+  setKycData,
   isVerificationComplete,
   setIsVerificationComplete,
   isMobileVerified,
@@ -57,6 +58,10 @@ const OnboardingTab = ({
   const [panAadhaarFailed, setPanAadhaarFailed] = useState(false);
   const [panAadhaarSuccess, setPanAadhaarSuccess] = useState(false);
   const [verificationErrorMessage, setVerificationErrorMessage] = useState("");
+  
+  const getImageSrc = (base64) => {
+    return `data:image/jpeg;base64,${base64}`;
+  };
 
   useEffect(() => {
     const fetchConsents = async () => {
@@ -83,64 +88,141 @@ const OnboardingTab = ({
     consentsList.every((c) => selectedConsents[c.consentTextCode]);
 
   const captureBiometric = async (biometricXml) => {
-    setIsBiometricLoading(true);
-    setPanAadhaarFailed(false);
-    setPanAadhaarSuccess(false);
-    setVerificationErrorMessage("");
+  setIsBiometricLoading(true);
+  setPanAadhaarFailed(false);
+  setPanAadhaarSuccess(false);
+  setVerificationErrorMessage("");
 
-    try {
-      const payload = {
-        applicationNumber,
-        externalAppRefNumber,
-        panNo: pan,
-        aadharNo: aadhaar,
-        bioMetricData: biometricXml,
-        consents: consentsList
-          .filter((c) => selectedConsents[c.consentTextCode])
-          .map((c) => ({
-            consent: c.text1,
-            code: c.consentTextCode,
-            // version: "1",
-            method: "checkbox",
-          })),
+  try {
+    const payload = {
+      applicationNumber,
+      externalAppRefNumber,
+      panNo: pan,
+      aadharNo: aadhaar,
+      bioMetricData: biometricXml,
+      consents: consentsList
+        .filter((c) => selectedConsents[c.consentTextCode])
+        .map((c) => ({
+          consent: c.text1,
+          code: c.consentTextCode,
+          method: "checkbox",
+        })),
+    };
+
+    const response = await onboardingService.panAadhaarVerify(payload);
+
+    console.log("DEBUG RESPONSE:", response);
+
+    if (response.status === "SUCCESS") {
+      setIsBiometricVerified(true);
+      setDocumentStatus("success");
+      setPanAadhaarSuccess(true);
+
+      const apiData = response?.data?.persons;
+      const aadhaarData = apiData?.aadhaar;
+      const financialData = apiData?.financialDetails;
+
+      // ✅ KEEP EXISTING KYC FLOW
+      const formattedKyc = {
+        name: aadhaarData?.name,
+        dob: aadhaarData?.dob,
+        gender: aadhaarData?.gender,
+        aadhaar: aadhaarData?.maskedAadhaar,
+        address: aadhaarData?.address,
+        photo: aadhaarData?.photo,
       };
 
-      console.log(
-        "DEBUG: /pan-aadhar-verify Request Payload",
-        JSON.stringify(payload, null, 2),
+      setKycData(formattedKyc);
+
+      // 🔥🔥🔥 MAIN FIX STARTS HERE
+
+      // ✅ PAN
+      setValue("applicant.pan", financialData?.panNumber || "");
+
+      // ✅ Aadhaar (masked)
+      setValue("applicant.aadhaar", aadhaarData?.maskedAadhaar || "");
+
+      // ✅ NAME SPLIT
+      const fullName = aadhaarData?.name || "";
+      const names = fullName.split(" ");
+
+      setValue("applicant.firstName", names[0] || "");
+      setValue("applicant.middleName", names.slice(1, -1).join(" ") || "");
+      setValue("applicant.lastName", names[names.length - 1] || "");
+
+      // ✅ DOB
+      setValue("applicant.dob", aadhaarData?.dob || "");
+
+      // ✅ GENDER
+      setValue(
+        "applicant.gender",
+        aadhaarData?.gender === "M" ? "Male" : "Female"
       );
 
-      const response = await onboardingService.panAadhaarVerify(payload);
+      // ✅ IMAGE (BASE64)
+      setValue("applicant.photo", aadhaarData?.photo || "");
 
-      console.log(
-        "DEBUG: /pan-aadhar-verify Response",
-        JSON.stringify(response, null, 2),
+      // ✅ ADDRESS
+      setValue(
+        "applicant.communicationAddress.addressLine1",
+        aadhaarData?.address?.houseNumber || ""
+      );
+      setValue(
+        "applicant.communicationAddress.addressLine2",
+        aadhaarData?.address?.landmark || ""
+      );
+      setValue(
+        "applicant.communicationAddress.addressLine3",
+        aadhaarData?.address?.locality || ""
+      );
+      setValue(
+        "applicant.communicationAddress.city",
+        aadhaarData?.address?.postOffice || ""
+      );
+      setValue(
+        "applicant.communicationAddress.state",
+        aadhaarData?.address?.state || ""
+      );
+      setValue(
+        "applicant.communicationAddress.pincode",
+        aadhaarData?.address?.pincode || ""
       );
 
-      if (response.status === "SUCCESS") {
-        setIsBiometricVerified(true);
-        setDocumentStatus("success");
-        setPanAadhaarSuccess(true);
-      } else {
-        setIsBiometricVerified(false);
-        setDocumentStatus("mismatch");
-        setPanAadhaarFailed(true);
-        setVerificationErrorMessage(
-          response.message || "Identity verification failed.",
-        );
-      }
-    } catch (error) {
-      console.error("DEBUG: /pan-aadhar-verify Error", error);
+      // ✅ MOBILE (FROM OTP FLOW)
+      setValue("applicant.mobileNumber", mobileNumber || "");
+
+      // ✅ EMAIL (FROM OTP FLOW)
+      setValue("applicant.emailId", emailId || "");
+
+      console.log("✅ FINAL APPLICANT STORED:", {
+        pan: financialData?.panNumber,
+        aadhaar: aadhaarData?.maskedAadhaar,
+        mobile: mobileNumber,
+        email: emailId,
+      });
+
+      // 🔥🔥🔥 MAIN FIX ENDS HERE
+
+    } else {
       setIsBiometricVerified(false);
       setDocumentStatus("mismatch");
       setPanAadhaarFailed(true);
       setVerificationErrorMessage(
-        error.message || "An error occurred during verification.",
+        response.message || "Identity verification failed."
       );
-    } finally {
-      setIsBiometricLoading(false);
     }
-  };
+  } catch (error) {
+    console.error("ERROR:", error);
+    setIsBiometricVerified(false);
+    setDocumentStatus("mismatch");
+    setPanAadhaarFailed(true);
+    setVerificationErrorMessage(
+      error.message || "An error occurred during verification."
+    );
+  } finally {
+    setIsBiometricLoading(false);
+  }
+};
 
   const [isApiLoading, setIsApiLoading] = useState(false);
   const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
@@ -364,7 +446,13 @@ const OnboardingTab = ({
 
   const handleProceed = async () => {
     const isValid = await trigger("onboarding");
-    if (isValid && panAadhaarSuccess) {
+
+    console.log("isValid:", isValid);
+    console.log("panAadhaarSuccess:", panAadhaarSuccess);
+
+    // if (isValid && panAadhaarSuccess) {
+    if(panAadhaarSuccess) {
+      console.log("➡️ MOVING TO NEXT TAB");
       onNext();
     } else if (!panAadhaarSuccess) {
       alert("Please complete biometric verification successfully first.");

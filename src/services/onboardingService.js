@@ -1,4 +1,5 @@
 import apiClient from "../utils/apiClient";
+import axios from "axios";
 
 const onboardingService = {
   /**
@@ -92,6 +93,7 @@ const onboardingService = {
   panAadhaarVerify: async (payload) => {
     try {
       const response = await apiClient.post("/pan-aadhar-verify", payload);
+      //const response = await axios.post("http://192.168.200.173:8090/customer/pan-aadhar-verify", payload);
       return response.data;
     } catch (error) {
       throw error;
@@ -164,6 +166,21 @@ const onboardingService = {
         params: { userId: vkid },
         baseURL: import.meta.env.VITE_WALLET_API_BASE_URL,
       });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+
+  /**
+   * For Final Customer Application Submission
+   * @Param {Object} payload whole details
+   */
+  submitApplication: async (payload) => {
+    try {
+      const response = await apiClient.post("/submit-application", payload);
+      //const response = await axios.post("http://192.168.200.173:8090/customer/submit-application", payload);
       return response.data;
     } catch (error) {
       throw error;
