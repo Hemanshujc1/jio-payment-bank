@@ -20,7 +20,9 @@ const ApplicationReviewTab = ({ goToStep }) => {
 
   const [showBiometricConsent, setShowBiometricConsent] = useState(false);
   const [biometricConsentAccepted, setBiometricConsentAccepted] = useState(false);
-  const [isBiometricLoading, setIsBiometricLoading] = useState(false);
+  
+  // This loading state will now be used while the final application is submitting
+  const [isBiometricLoading, setIsBiometricLoading] = useState(false); 
   const [isBiometricVerified, setIsBiometricVerified] = useState(false);
 
   // ✅ Divider
@@ -173,9 +175,9 @@ const ApplicationReviewTab = ({ goToStep }) => {
     setShowBiometricConsent(true);
   };
 
-  const handleCaptureBiometric = async () => {
-    if (!biometricConsentAccepted) return;
-
+  // ✅ AUTOMATIC FINAL SUBMISSION
+  // This is triggered ONLY when the Modal successfully verifies the biometric
+  const handleFinalSubmit = async () => {
     setIsBiometricLoading(true);
 
     try {
@@ -185,18 +187,20 @@ const ApplicationReviewTab = ({ goToStep }) => {
       const res = await onboardingService.submitApplication(payload);
 
       if (res.status === "SUCCESS") {
+        // Show success checkmark in the modal
         setIsBiometricVerified(true);
 
+        // Wait 1.5 seconds so the user can see the green checkmark, then show final success overlay
         setTimeout(() => {
           setIsSuccess(true);
           setShowBiometricConsent(false);
         }, 1500);
       } else {
-        alert(res.message || "Submission failed");
+        alert(res.message || "Application submission failed. Please try again.");
       }
     } catch (err) {
-      console.error(err);
-      alert("Something went wrong");
+      console.error("Submission Error:", err);
+      alert("Something went wrong during final submission.");
     } finally {
       setIsBiometricLoading(false);
     }
@@ -229,6 +233,7 @@ const ApplicationReviewTab = ({ goToStep }) => {
 
       <ReviewNomineeDetails
         data={formData.nominee}
+        guardian={formData.guardian}
         onEdit={() => goToStep(4)}
       />
       <Divider />
@@ -247,14 +252,23 @@ const ApplicationReviewTab = ({ goToStep }) => {
         setChargeCollected={setChargeCollected}
       />
 
+      {/* ✅ UPDATED MODAL PROPS */}
       <BiometricVerificationModal
         isOpen={showBiometricConsent}
         onClose={() => setShowBiometricConsent(false)}
         isVerified={isBiometricVerified}
-        isLoading={isBiometricLoading}
-        onCapture={handleCaptureBiometric}
+        isLoading={isBiometricLoading} // Spans the button while final payload submits
         consentAccepted={biometricConsentAccepted}
         setConsentAccepted={setBiometricConsentAccepted}
+        
+        // 1. Pass the IDs the modal needs for the customerBioAuth verification
+        apiPayloadData={{
+          applicationNumber: sessionStorage.getItem("applicationNumber"),
+          externalAppRefNumber: sessionStorage.getItem("externalAppRefNumber")
+        }}
+
+        // 2. Once verified, trigger the final submission
+        onCaptureSuccess={handleFinalSubmit} 
       />
 
       {isSuccess && <SuccessOverlay />}

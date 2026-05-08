@@ -92,8 +92,8 @@ const onboardingService = {
    */
   panAadhaarVerify: async (payload) => {
     try {
-      const response = await apiClient.post("/pan-aadhar-verify", payload);
-      //const response = await axios.post("http://192.168.200.173:8090/customer/pan-aadhar-verify", payload);
+      //const response = await apiClient.post("/pan-aadhar-verify", payload);
+      const response = await axios.post("http://192.168.200.173:8090/customer/pan-aadhar-verify", payload);
       return response.data;
     } catch (error) {
       throw error;
@@ -172,6 +172,19 @@ const onboardingService = {
     }
   },
 
+  /**
+   * For Customer E-Auth Submission
+   * @Param {Object} payload { applicationNumber, externalAppRefNumber, latitude, longitude, vkid, aadharNo, bioMetricData, consents[]}
+   */
+  customerBioAuth: async (payload) => {
+    try{
+      //const response = await apiClient.post("/customer-auth", payload);
+      const response = await axios.post("http://192.168.200.173:8090/customer/customer-auth", payload);
+      return response.data;
+    } catch(error){
+      throw error;
+    }
+  },
 
   /**
    * For Final Customer Application Submission
@@ -179,8 +192,8 @@ const onboardingService = {
    */
   submitApplication: async (payload) => {
     try {
-      const response = await apiClient.post("/submit-application", payload);
-      //const response = await axios.post("http://192.168.200.173:8090/customer/submit-application", payload);
+      //const response = await apiClient.post("/submit-application", payload);
+      const response = await axios.post("http://192.168.200.173:8090/customer/submit-application", payload);
       return response.data;
     } catch (error) {
       throw error;

@@ -1,33 +1,196 @@
-import React from "react";
+import React, { useState } from "react";
 import { FaFingerprint } from "react-icons/fa";
+import onboardingService from "../../../services/onboardingService";
 
 const BiometricVerificationModal = ({
   isOpen,
   onClose,
   isVerified,
   isLoading,
-  onCapture,
+  onCaptureSuccess,
   consentAccepted,
   setConsentAccepted,
+  apiPayloadData,
 }) => {
+  const [selectedDevice, setSelectedDevice] = useState("mantra");
+  const [statusMessage, setStatusMessage] = useState("");
+  const [localLoading, setLocalLoading] = useState(false);
+
   if (!isOpen) return null;
+
+  const handleCaptureClick = async () => {
+    setLocalLoading(true);
+    setStatusMessage(`Checking ${selectedDevice} RD Service...`);
+    let devicePort = null;
+
+    // 1. Scan for RD Service
+    for (let port = 11100; port <= 11105; port++) {
+      try {
+        const response = await fetch(`http://127.0.0.1:${port}/rd/info`, {
+          method: "RDSERVICE",
+        });
+        if (response.ok) {
+          const text = await response.text();
+          if (selectedDevice === "mantra" && text.toLowerCase().includes("mantra")) {
+            devicePort = port;
+            break;
+          } else if (
+            selectedDevice === "morpho" &&
+            (text.toLowerCase().includes("morpho") || text.toLowerCase().includes("scl"))
+          ) {
+            devicePort = port;
+            break;
+          }
+        }
+      } catch (error) {
+        // Port not active, loop continues
+      }
+    }
+
+    if (!devicePort) {
+      setStatusMessage(`Error: ${selectedDevice.charAt(0).toUpperCase() + selectedDevice.slice(1)} RD Service is not running or device is disconnected.`);
+      setLocalLoading(false);
+      return;
+    }
+
+    setStatusMessage("Device ready. Please place your finger on the scanner...");
+
+    const pidOptions = `<PidOptions ver="1.0">
+      <Opts fCount="1" fType="0" iCount="0" pCount="0" format="0" pidVer="2.0" timeout="10000" wadh="E0jzJ/P8UopUHAieZn8CKqS4WPMi5ZSYXgfnlfkWjrc=" env="PP" />
+    </PidOptions>`;
+
+    // 2. Capture Biometric Data
+    try {
+      const captureResponse = await fetch(`http://127.0.0.1:${devicePort}/rd/capture`, {
+        method: "CAPTURE",
+        headers: {
+          Accept: "text/xml",
+          "Content-Type": "text/xml",
+        },
+        body: pidOptions,
+      });
+
+      if (captureResponse.ok) {
+        const captureXml = await captureResponse.text();
+
+        // 3. Check for success code in XML (errCode="0")
+        if (captureXml.includes('errCode="0"')) {
+          setStatusMessage("Biometric captured! Authenticating with server...");
+          
+          // ========================================================
+          // 4. API CALL WITH SPECIFIED PAYLOAD FORMAT
+          // ========================================================
+          try {
+            const payload = {
+              applicationNumber: sessionStorage.getItem("applicationNumber"),
+              externalAppRefNumber: sessionStorage.getItem("externalAppRefNumber"),
+              latitude: "19.118027857360293", // Hardcoded
+              longitude: "72.8733474523108",  // Hardcoded
+              vkid: "RJ2903071",              // Hardcoded
+              bioMetricData: captureXml,
+              consents: [                     // Hardcoded
+                {
+                    consent: "Hello, I verify for all of the mentioned B88",
+                    code: "B88",
+                    version: "1",
+                    method: "checkbox"
+                },
+                {
+                    consent: "Hello, I verify for all of the mentioned C50",
+                    code: "C50",
+                    version: "1",
+                    method: "checkbox"
+                }
+              ]
+            };
+
+            const apiResponse = await onboardingService.customerBioAuth(payload);
+
+            if(apiResponse.status === "SUCCESS") {
+              setStatusMessage("Biometric Verified Successfully!");
+              if (onCaptureSuccess) {
+              onCaptureSuccess(apiResponse); 
+            }
+            } else{
+              setStatusMessage("Biometric Verification Failed!");
+            }
+
+          } catch (apiError) {
+            console.error("API Authentication Failed:", apiError);
+            setStatusMessage("Authentication Error: Failed to verify biometric data on the server.");
+          }
+          
+        } else {
+          const errorMatch = captureXml.match(/errInfo="([^"]+)"/);
+          const errorMsg = errorMatch ? errorMatch[1] : "Capture failed. Please try again.";
+          setStatusMessage(`Capture Error: ${errorMsg}`);
+        }
+      } else {
+        setStatusMessage("Error: Failed to communicate with the capture service.");
+      }
+    } catch (error) {
+      setStatusMessage("Error: Capture service unreachable.");
+    }
+
+    setLocalLoading(false);
+  };
+
+  const isButtonDisabled = !consentAccepted || isLoading || localLoading;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 animate-in fade-in duration-200">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-xl p-6 md:p-8 flex flex-col items-center gap-6 relative animate-in zoom-in-95 duration-200">
+      <div className="bg-white rounded-xl shadow-xl w-full max-w-xl max-h-[90vh] overflow-y-auto p-6 md:p-8 flex flex-col items-center gap-6 relative animate-in zoom-in-95 duration-200">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-900 transition-colors font-bold text-lg p-2"
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-900 transition-colors font-bold text-lg p-2 bg-white rounded-full"
           aria-label="Close modal"
         >
           ✕
         </button>
 
         <h2 className="font-bold text-[20px] md:text-[22px] tracking-wide text-center mt-2">
-        Disclaimer
+          Biometric Verification
         </h2>
 
-        <div className="flex items-start gap-3 w-full bg-gray-50 border border-gray-200 p-4 rounded-lg">
+        <div className="w-full bg-gray-50 border border-gray-200 p-4 rounded-lg flex flex-col gap-3 shrink-0">
+          <label className="font-bold text-[14px] text-gray-800">Select Fingerprint Device:</label>
+          <div className="flex gap-6">
+            <label className="flex items-center gap-2 cursor-pointer text-[14px] font-medium">
+              <input
+                type="radio"
+                name="device"
+                value="mantra"
+                checked={selectedDevice === "mantra"}
+                onChange={(e) => {
+                  setSelectedDevice(e.target.value);
+                  setStatusMessage(""); 
+                }}
+                className="w-4 h-4 accent-black cursor-pointer"
+              />
+              Mantra
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer text-[14px] font-medium">
+              <input
+                type="radio"
+                name="device"
+                value="morpho"
+                checked={selectedDevice === "morpho"}
+                onChange={(e) => {
+                  setSelectedDevice(e.target.value);
+                  setStatusMessage(""); 
+                }}
+                className="w-4 h-4 accent-black cursor-pointer"
+              />
+              Morpho
+            </label>
+          </div>
+        </div>
+
+        <h2 className="font-bold text-[18px] md:text-[20px] tracking-wide text-center mt-2 shrink-0">
+          Disclaimer
+        </h2>
+
+        <div className="flex items-start gap-3 w-full bg-gray-50 border border-gray-200 p-4 rounded-lg shrink-0">
           <input
             type="checkbox"
             id="final-biometric-consent"
@@ -62,23 +225,29 @@ const BiometricVerificationModal = ({
           </label>
         </div>
 
-        <div className="flex justify-center w-full mt-4 min-w-22.5">
+        {statusMessage && (
+          <div className={`w-full text-center text-[13.5px] font-bold p-2 rounded-lg shrink-0 ${statusMessage.includes("Error") ? "text-red-600 bg-red-50" : "text-blue-600 bg-blue-50"}`}>
+            {statusMessage}
+          </div>
+        )}
+
+        <div className="flex justify-center w-full mt-2 min-w-22.5 shrink-0 mb-4">
           {!isVerified ? (
             <button
               type="button"
-              onClick={onCapture}
-              disabled={!consentAccepted || isLoading}
+              onClick={handleCaptureClick}
+              disabled={isButtonDisabled}
               className={`w-full max-w-70 h-14 flex items-center justify-center gap-3 font-extrabold text-[15px] rounded-xl transition-all shadow-md
                 ${
-                  !consentAccepted || isLoading
+                  isButtonDisabled
                     ? "bg-gray-300 text-gray-500 cursor-not-allowed shadow-none"
                     : "bg-sand-500 text-sand-350 border border-brown-700 hover:bg-brown-800"
                 }`}
             >
-              {isLoading ? (
+              {isLoading || localLoading ? (
                 <>
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  Capturing Biometric...
+                  Processing...
                 </>
               ) : (
                 <>
@@ -90,19 +259,8 @@ const BiometricVerificationModal = ({
           ) : (
             <div className="flex flex-col items-center animate-in zoom-in-50 duration-500">
               <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center text-white mb-3 shadow-lg shadow-green-500/30">
-                <svg
-                  className="w-8 h-8"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="3"
-                    d="M5 13l4 4L19 7"
-                  ></path>
+                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path>
                 </svg>
               </div>
               <p className="text-green-700 font-black text-[17px] tracking-wide">

@@ -32,25 +32,45 @@ const AddressForm = ({ prefix, title, mockAadhaarAddress }) => {
   useEffect(() => {
     let targetAddress = null;
 
-    if (addressType === "Same as my communication address" && applicantAddress) {
+    if (
+      addressType === "Same as my communication address" &&
+      applicantAddress
+    ) {
       targetAddress = applicantAddress;
-    } else if (addressType === "Same as my Aadhaar address" && mockAadhaarAddress) {
+    } else if (
+      addressType === "Same as my Aadhaar address" &&
+      mockAadhaarAddress
+    ) {
       targetAddress = mockAadhaarAddress;
     }
 
     if (targetAddress) {
       const currentJSON = JSON.stringify(currentAddress || {});
       const targetJSON = JSON.stringify(targetAddress || {});
-      
+
       if (currentJSON !== targetJSON) {
         setValue(`${prefix}.addressDetails`, targetAddress);
+
+        setValue(`${prefix}.addressLine1`, targetAddress?.addressLine1 || "");
+        setValue(`${prefix}.addressLine2`, targetAddress?.addressLine2 || "");
+        setValue(`${prefix}.addressLine3`, targetAddress?.addressLine3 || "");
+        setValue(`${prefix}.city`, targetAddress?.city || "");
+        setValue(`${prefix}.state`, targetAddress?.state || "");
+        setValue(`${prefix}.pincode`, targetAddress?.pincode || "");
       }
     }
-  }, [addressType, applicantAddress, mockAadhaarAddress, setValue, prefix, currentAddress]);
+  }, [
+    addressType,
+    applicantAddress,
+    mockAadhaarAddress,
+    setValue,
+    prefix,
+    currentAddress,
+  ]);
 
   const pincode = watch(`${prefix}.addressDetails.pincode`);
 
-// Pincode logic
+  // Pincode logic
   useEffect(() => {
     const lookupPincode = async () => {
       if (pincode?.length === 6 && addressType === "Others") {
@@ -58,8 +78,12 @@ const AddressForm = ({ prefix, title, mockAadhaarAddress }) => {
         try {
           const res = await onboardingService.getPincodeDetails(pincode);
           if (res.cityName && res.stateName) {
-            setValue(`${prefix}.addressDetails.city`, res.cityName, { shouldValidate: true });
-            setValue(`${prefix}.addressDetails.state`, res.stateName, { shouldValidate: true });
+            setValue(`${prefix}.addressDetails.city`, res.cityName, {
+              shouldValidate: true,
+            });
+            setValue(`${prefix}.addressDetails.state`, res.stateName, {
+              shouldValidate: true,
+            });
             clearErrors(`${prefix}.addressDetails.pincode`);
           } else if (res.error) {
             setError(`${prefix}.addressDetails.pincode`, {
@@ -89,7 +113,8 @@ const AddressForm = ({ prefix, title, mockAadhaarAddress }) => {
   return (
     <div className="flex flex-col gap-4 mt-2 sm:mt-4">
       <span className="font-bold text-[14px] sm:text-[15px] text-gray-800 ml-0.5">
-        {title}<span className="text-red-500 ml-0.5">*</span>
+        {title}
+        <span className="text-red-500 ml-0.5">*</span>
       </span>
       <div className="flex flex-col gap-6 w-full">
         <div className="flex flex-col gap-5 sm:gap-6">
@@ -134,12 +159,15 @@ const AddressForm = ({ prefix, title, mockAadhaarAddress }) => {
             </span>
           )}
 
-          {addressType && addressType !== "Others" &&
+          {addressType &&
+            addressType !== "Others" &&
             (currentAddress?.addressLine1 ||
               currentAddress?.city ||
               currentAddress?.pincode) && (
               <div className="text-[13px] sm:text-[14px] text-gray-600 max-w-3xl leading-relaxed">
-                <span className="font-bold text-gray-800">Selected Address: </span>
+                <span className="font-bold text-gray-800">
+                  Selected Address:{" "}
+                </span>
                 <span className="font-medium">
                   {[
                     currentAddress?.addressLine1,
@@ -150,7 +178,9 @@ const AddressForm = ({ prefix, title, mockAadhaarAddress }) => {
                   ]
                     .filter(Boolean)
                     .join(", ")}
-                  {currentAddress?.pincode ? ` - ${currentAddress.pincode}` : ""}
+                  {currentAddress?.pincode
+                    ? ` - ${currentAddress.pincode}`
+                    : ""}
                 </span>
               </div>
             )}
@@ -173,11 +203,17 @@ const AddressForm = ({ prefix, title, mockAadhaarAddress }) => {
                 } text-[14px] font-medium text-gray-900`}
                 placeholder="Address Line 1"
               />
-              {error?.addressDetails?.addressLine1 && <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-1">{error.addressDetails.addressLine1.message}</span>}
+              {error?.addressDetails?.addressLine1 && (
+                <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-1">
+                  {error.addressDetails.addressLine1.message}
+                </span>
+              )}
             </div>
-            
+
             <div className="flex flex-col gap-1.5">
-              <span className="font-bold text-[13px] sm:text-[14px] text-gray-700 ml-0.5">Address Line 2 (Optional)</span>
+              <span className="font-bold text-[13px] sm:text-[14px] text-gray-700 ml-0.5">
+                Address Line 2 (Optional)
+              </span>
               <input
                 {...register(`${prefix}.addressDetails.addressLine2`)}
                 maxLength={100}
@@ -188,9 +224,13 @@ const AddressForm = ({ prefix, title, mockAadhaarAddress }) => {
                 } text-[14px] font-medium text-gray-900`}
                 placeholder="Address Line 2"
               />
-              {error?.addressDetails?.addressLine2 && <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-1">{error.addressDetails.addressLine2.message}</span>}
+              {error?.addressDetails?.addressLine2 && (
+                <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-1">
+                  {error.addressDetails.addressLine2.message}
+                </span>
+              )}
             </div>
-            
+
             <div className="flex flex-col gap-1.5">
               <span className="font-bold text-[13px] sm:text-[14px] text-gray-700 ml-0.5">
                 Address Line 3 (Optional)
@@ -205,9 +245,13 @@ const AddressForm = ({ prefix, title, mockAadhaarAddress }) => {
                 } text-[14px] font-medium text-gray-900`}
                 placeholder="Address Line 3"
               />
-              {error?.addressDetails?.addressLine3 && <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-1">{error.addressDetails.addressLine3.message}</span>}
+              {error?.addressDetails?.addressLine3 && (
+                <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-1">
+                  {error.addressDetails.addressLine3.message}
+                </span>
+              )}
             </div>
-            
+
             <div className="flex flex-col gap-1.5">
               <span className="font-bold text-[13px] sm:text-[14px] text-gray-700 ml-0.5">
                 Pincode<span className="text-red-500">*</span>
@@ -216,7 +260,9 @@ const AddressForm = ({ prefix, title, mockAadhaarAddress }) => {
                 <input
                   {...register(`${prefix}.addressDetails.pincode`)}
                   maxLength={6}
-                  onInput={(e) => { e.target.value = e.target.value.replace(/[^0-9]/g, ""); }}
+                  onInput={(e) => {
+                    e.target.value = e.target.value.replace(/[^0-9]/g, "");
+                  }}
                   className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all w-full focus:outline-none ${
                     error?.addressDetails?.pincode
                       ? "border-red-500"
@@ -230,9 +276,13 @@ const AddressForm = ({ prefix, title, mockAadhaarAddress }) => {
                   </div>
                 )}
               </div>
-              {error?.addressDetails?.pincode && <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-1">{error.addressDetails.pincode.message}</span>}
+              {error?.addressDetails?.pincode && (
+                <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-1">
+                  {error.addressDetails.pincode.message}
+                </span>
+              )}
             </div>
-            
+
             <div className="flex flex-col gap-1.5">
               <span className="font-bold text-[13px] sm:text-[14px] text-gray-700 ml-0.5">
                 City<span className="text-red-500">*</span>
@@ -248,9 +298,13 @@ const AddressForm = ({ prefix, title, mockAadhaarAddress }) => {
                 } text-[14px] font-medium text-gray-500 cursor-not-allowed`}
                 placeholder="City"
               />
-              {error?.addressDetails?.city && <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-1">{error.addressDetails.city.message}</span>}
+              {error?.addressDetails?.city && (
+                <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-1">
+                  {error.addressDetails.city.message}
+                </span>
+              )}
             </div>
-            
+
             <div className="flex flex-col gap-1.5">
               <span className="font-bold text-[13px] sm:text-[14px] text-gray-700 ml-0.5">
                 State<span className="text-red-500">*</span>
@@ -266,7 +320,11 @@ const AddressForm = ({ prefix, title, mockAadhaarAddress }) => {
                 } text-[14px] font-medium text-gray-500 cursor-not-allowed`}
                 placeholder="State"
               />
-              {error?.addressDetails?.state && <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-1">{error.addressDetails.state.message}</span>}
+              {error?.addressDetails?.state && (
+                <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-1">
+                  {error.addressDetails.state.message}
+                </span>
+              )}
             </div>
           </div>
         )}

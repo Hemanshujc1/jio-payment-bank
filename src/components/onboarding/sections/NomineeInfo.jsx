@@ -4,33 +4,60 @@ import CustomDropdown from "../../common/CustomDropdown";
 import CustomDatePicker from "../../common/CustomDatePicker";
 import AddressForm from "./AddressForm";
 const MOCK_AADHAAR_ADDRESS = {
-    addressLine1: "401, XYZ House",
-    addressLine2: "Fake Street",
-    addressLine3: "150 Road",
-    city: "Mumbai",
-    state: "Maharashtra",
-    pincode: "400059",
+  addressLine1: "401, XYZ House",
+  addressLine2: "Fake Street",
+  addressLine3: "150 Road",
+  city: "Mumbai",
+  state: "Maharashtra",
+  pincode: "400059",
 };
 
 const NomineeInfo = () => {
-  const { register, control, setValue, formState: { errors } } = useFormContext();
+  const {
+    register,
+    control,
+    setValue,
+    formState: { errors },
+  } = useFormContext();
 
   const applicant = useWatch({ name: "applicant", control });
   const family = useWatch({ name: "family", control });
   const relationship = useWatch({ name: "nominee.relationship", control });
 
+  const applicantAddress = useWatch({
+    name: "applicant.communicationAddress",
+    control,
+  });
+
   const relationshipOptions = [
-    "Sister", "Brother", "Mother", "Father", "Spouse", "Son", "Daughter", "Husband", "Wife"
-  ].filter(opt => {
+    "Sister",
+    "Brother",
+    "Mother",
+    "Father",
+    "Spouse",
+    "Son",
+    "Daughter",
+    "Husband",
+    "Wife",
+  ].filter((opt) => {
     if (applicant.gender === "Male" && opt === "Husband") return false;
     if (applicant.gender === "Female" && opt === "Wife") return false;
-    if (applicant.maritalStatus === "Unmarried" && (opt === "Husband" || opt === "Wife" || opt === "Spouse")) return false;
+    if (
+      applicant.maritalStatus === "Unmarried" &&
+      (opt === "Husband" || opt === "Wife" || opt === "Spouse")
+    )
+      return false;
     if (applicant.maritalStatus !== "Married" && opt === "Spouse") return false;
     return true;
   });
 
-  const isAutoPopulated = ["Father", "Mother", "Spouse", "Husband", "Wife"].includes(relationship);
-
+  const isAutoPopulated = [
+    "Father",
+    "Mother",
+    "Spouse",
+    "Husband",
+    "Wife",
+  ].includes(relationship);
 
   useEffect(() => {
     if (relationship === "Father") {
@@ -48,6 +75,20 @@ const NomineeInfo = () => {
     }
   }, [relationship, family, setValue]);
 
+  useEffect(() => {
+    // 👉 You need a flag from AddressForm (explained below)
+    const sameAsApplicant = control._formValues?.nominee?.sameAsApplicant;
+
+    if (sameAsApplicant && applicantAddress) {
+      setValue("nominee.addressLine1", applicantAddress.addressLine1 || "");
+      setValue("nominee.addressLine2", applicantAddress.addressLine2 || "");
+      setValue("nominee.addressLine3", applicantAddress.addressLine3 || "");
+      setValue("nominee.city", applicantAddress.city || "");
+      setValue("nominee.state", applicantAddress.state || "");
+      setValue("nominee.pincode", applicantAddress.pincode || "");
+    }
+  }, [applicantAddress, setValue, control]);
+
   return (
     <div className="flex flex-col gap-8">
       {/* Nominee Name */}
@@ -62,9 +103,13 @@ const NomineeInfo = () => {
               type="text"
               placeholder="First Name"
               readOnly={isAutoPopulated}
-              className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${errors.nominee?.firstName ? 'border-red-500' : 'border-neutral-light focus-within:border-gray-900'} placeholder:text-gray-400 text-[14px] font-medium ${isAutoPopulated ? 'bg-gray-100 cursor-not-allowed text-gray-400' : 'text-gray-900'}`}
+              className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${errors.nominee?.firstName ? "border-red-500" : "border-neutral-light focus-within:border-gray-900"} placeholder:text-gray-400 text-[14px] font-medium ${isAutoPopulated ? "bg-gray-100 cursor-not-allowed text-gray-400" : "text-gray-900"}`}
             />
-            {errors.nominee?.firstName && <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-1">{errors.nominee.firstName.message}</span>}
+            {errors.nominee?.firstName && (
+              <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-1">
+                {errors.nominee.firstName.message}
+              </span>
+            )}
           </div>
           <div className="flex flex-col gap-1.5">
             <input
@@ -72,9 +117,13 @@ const NomineeInfo = () => {
               type="text"
               placeholder="Middle Name (Optional)"
               readOnly={isAutoPopulated}
-              className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${errors.nominee?.middleName ? 'border-red-500' : 'border-neutral-light focus-within:border-gray-900'} placeholder:text-gray-400 text-[14px] font-medium ${isAutoPopulated ? 'bg-gray-100 cursor-not-allowed text-gray-400' : 'text-gray-900'}`}
+              className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${errors.nominee?.middleName ? "border-red-500" : "border-neutral-light focus-within:border-gray-900"} placeholder:text-gray-400 text-[14px] font-medium ${isAutoPopulated ? "bg-gray-100 cursor-not-allowed text-gray-400" : "text-gray-900"}`}
             />
-            {errors.nominee?.middleName && <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-1">{errors.nominee.middleName.message}</span>}
+            {errors.nominee?.middleName && (
+              <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-1">
+                {errors.nominee.middleName.message}
+              </span>
+            )}
           </div>
           <div className="flex flex-col gap-1.5">
             <input
@@ -82,9 +131,13 @@ const NomineeInfo = () => {
               type="text"
               placeholder="Last Name"
               readOnly={isAutoPopulated}
-              className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${errors.nominee?.lastName ? 'border-red-500' : 'border-neutral-light focus-within:border-gray-900'} placeholder:text-gray-400 text-[14px] font-medium ${isAutoPopulated ? 'bg-gray-100 cursor-not-allowed text-gray-400' : 'text-gray-900'}`}
+              className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${errors.nominee?.lastName ? "border-red-500" : "border-neutral-light focus-within:border-gray-900"} placeholder:text-gray-400 text-[14px] font-medium ${isAutoPopulated ? "bg-gray-100 cursor-not-allowed text-gray-400" : "text-gray-900"}`}
             />
-            {errors.nominee?.lastName && <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-1">{errors.nominee.lastName.message}</span>}
+            {errors.nominee?.lastName && (
+              <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-1">
+                {errors.nominee.lastName.message}
+              </span>
+            )}
           </div>
         </div>
       </div>
@@ -111,7 +164,11 @@ const NomineeInfo = () => {
               )}
             />
           </div>
-          {errors.nominee?.relationship && <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-1">{errors.nominee.relationship.message}</span>}
+          {errors.nominee?.relationship && (
+            <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-1">
+              {errors.nominee.relationship.message}
+            </span>
+          )}
         </div>
 
         {/* DOB */}
@@ -126,10 +183,10 @@ const NomineeInfo = () => {
       </div>
 
       {/* Nominee Communication Address */}
-      <AddressForm 
-        prefix="nominee" 
-        title="Nominee Communication Address" 
-        mockAadhaarAddress={MOCK_AADHAAR_ADDRESS} 
+      <AddressForm
+        prefix="nominee"
+        title="Nominee Communication Address"
+        mockAadhaarAddress={MOCK_AADHAAR_ADDRESS}
       />
     </div>
   );

@@ -134,8 +134,6 @@ const OnboardingTab = ({
 
       setKycData(formattedKyc);
 
-      // 🔥🔥🔥 MAIN FIX STARTS HERE
-
       // ✅ PAN
       setValue("applicant.pan", financialData?.panNumber || "");
 
@@ -200,8 +198,6 @@ const OnboardingTab = ({
         mobile: mobileNumber,
         email: emailId,
       });
-
-      // 🔥🔥🔥 MAIN FIX ENDS HERE
 
     } else {
       setIsBiometricVerified(false);
