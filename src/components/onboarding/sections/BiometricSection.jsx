@@ -146,7 +146,7 @@ const captureBiometric = async (deviceType) => {
                 aadhaar?.length !== 12 ||
                 pan?.length !== 10
                   ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                  : "bg-gradient-to-r from-red-500 to-pink-500 text-white hover:scale-[1.02] hover:shadow-lg"
+                  : "bg-linear-to-r from-red-500 to-pink-500 text-white hover:scale-[1.02] hover:shadow-lg"
               }`}
           >
             {isBiometricLoading ? (
@@ -268,7 +268,7 @@ const captureBiometric = async (deviceType) => {
                   setRdError({ show: false, message: "" });
                   setShowDeviceModal(true);
                 }}
-                className="flex-1 py-2 rounded-lg bg-gradient-to-r from-red-500 to-pink-500 text-white font-semibold"
+                className="flex-1 py-2 rounded-lg bg-linear-to-r from-red-500 to-pink-500 text-white font-semibold"
               >
                 Retry
               </button>
