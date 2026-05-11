@@ -82,11 +82,12 @@ const BiometricVerificationModal = ({
           // ========================================================
           try {
             const payload = {
+              vkid: localStorage.getItem("vkid") || "RJ2903071",
               applicationNumber: sessionStorage.getItem("applicationNumber"),
               externalAppRefNumber: sessionStorage.getItem("externalAppRefNumber"),
               latitude: "19.118027857360293", // Hardcoded
               longitude: "72.8733474523108",  // Hardcoded
-              vkid: "RJ2903071",              // Hardcoded
+              // vkid: "RJ2903071",              // Hardcoded
               bioMetricData: captureXml,
               consents: [                     // Hardcoded
                 {

@@ -58,7 +58,7 @@ const OnboardingTab = ({
   const [panAadhaarFailed, setPanAadhaarFailed] = useState(false);
   const [panAadhaarSuccess, setPanAadhaarSuccess] = useState(false);
   const [verificationErrorMessage, setVerificationErrorMessage] = useState("");
-  
+
   const getImageSrc = (base64) => {
     return `data:image/jpeg;base64,${base64}`;
   };
@@ -88,137 +88,176 @@ const OnboardingTab = ({
     consentsList.every((c) => selectedConsents[c.consentTextCode]);
 
   const captureBiometric = async (biometricXml) => {
-  setIsBiometricLoading(true);
-  setPanAadhaarFailed(false);
-  setPanAadhaarSuccess(false);
-  setVerificationErrorMessage("");
+    setIsBiometricLoading(true);
+    setPanAadhaarFailed(false);
+    setPanAadhaarSuccess(false);
+    setVerificationErrorMessage("");
 
-  try {
-    const payload = {
-      applicationNumber,
-      externalAppRefNumber,
-      panNo: pan,
-      aadharNo: aadhaar,
-      bioMetricData: biometricXml,
-      consents: consentsList
-        .filter((c) => selectedConsents[c.consentTextCode])
-        .map((c) => ({
-          consent: c.text1,
-          code: c.consentTextCode,
-          method: "checkbox",
-        })),
-    };
-
-    const response = await onboardingService.panAadhaarVerify(payload);
-
-    console.log("DEBUG RESPONSE:", response);
-
-    if (response.status === "SUCCESS") {
-      setIsBiometricVerified(true);
-      setDocumentStatus("success");
-      setPanAadhaarSuccess(true);
-
-      const apiData = response?.data?.persons;
-      const aadhaarData = apiData?.aadhaar;
-      const financialData = apiData?.financialDetails;
-
-      // ✅ KEEP EXISTING KYC FLOW
-      const formattedKyc = {
-        name: aadhaarData?.name,
-        dob: aadhaarData?.dob,
-        gender: aadhaarData?.gender,
-        aadhaar: aadhaarData?.maskedAadhaar,
-        address: aadhaarData?.address,
-        photo: aadhaarData?.photo,
+    try {
+      const payload = {
+        applicationNumber,
+        externalAppRefNumber,
+        panNo: pan,
+        aadharNo: aadhaar,
+        bioMetricData: biometricXml,
+        consents: consentsList
+          .filter((c) => selectedConsents[c.consentTextCode])
+          .map((c) => ({
+            consent: c.text1,
+            code: c.consentTextCode,
+            method: "checkbox",
+          })),
       };
 
-      setKycData(formattedKyc);
+      const response = await onboardingService.panAadhaarVerify(payload);
 
-      // ✅ PAN
-      setValue("applicant.pan", financialData?.panNumber || "");
+      console.log("DEBUG RESPONSE:", response);
 
-      // ✅ Aadhaar (masked)
-      setValue("applicant.aadhaar", aadhaarData?.maskedAadhaar || "");
+      if (response.status === "SUCCESS") {
+        setIsBiometricVerified(true);
+        setDocumentStatus("success");
+        setPanAadhaarSuccess(true);
 
-      // ✅ NAME SPLIT
-      const fullName = aadhaarData?.name || "";
-      const names = fullName.split(" ");
+        const apiData = response?.data?.persons;
+        const aadhaarData = apiData?.aadhaar;
+        const financialData = apiData?.financialDetails;
 
-      setValue("applicant.firstName", names[0] || "");
-      setValue("applicant.middleName", names.slice(1, -1).join(" ") || "");
-      setValue("applicant.lastName", names[names.length - 1] || "");
+        // ✅ KEEP EXISTING KYC FLOW
+        const formattedKyc = {
+          name: aadhaarData?.name,
+          dob: aadhaarData?.dob,
+          gender: aadhaarData?.gender,
+          aadhaar: aadhaarData?.maskedAadhaar,
+          address: aadhaarData?.address,
+          photo: aadhaarData?.photo,
+        };
 
-      // ✅ DOB
-      setValue("applicant.dob", aadhaarData?.dob || "");
+        setKycData(formattedKyc);
 
-      // ✅ GENDER
-      setValue(
-        "applicant.gender",
-        aadhaarData?.gender === "M" ? "Male" : "Female"
-      );
+        // ✅ PAN
+        setValue("applicant.pan", financialData?.panNumber || "");
 
-      // ✅ IMAGE (BASE64)
-      setValue("applicant.photo", aadhaarData?.photo || "");
+        // ✅ Aadhaar (masked)
+        setValue("applicant.aadhaar", aadhaarData?.maskedAadhaar || "");
 
-      // ✅ ADDRESS
-      setValue(
-        "applicant.communicationAddress.addressLine1",
-        aadhaarData?.address?.houseNumber || ""
-      );
-      setValue(
-        "applicant.communicationAddress.addressLine2",
-        aadhaarData?.address?.landmark || ""
-      );
-      setValue(
-        "applicant.communicationAddress.addressLine3",
-        aadhaarData?.address?.locality || ""
-      );
-      setValue(
-        "applicant.communicationAddress.city",
-        aadhaarData?.address?.postOffice || ""
-      );
-      setValue(
-        "applicant.communicationAddress.state",
-        aadhaarData?.address?.state || ""
-      );
-      setValue(
-        "applicant.communicationAddress.pincode",
-        aadhaarData?.address?.pincode || ""
-      );
+        // ✅ NAME SPLIT
+        const fullName = aadhaarData?.name || "";
+        const names = fullName.split(" ");
 
-      // ✅ MOBILE (FROM OTP FLOW)
-      setValue("applicant.mobileNumber", mobileNumber || "");
+        setValue("applicant.firstName", names[0] || "");
+        setValue("applicant.middleName", names.slice(1, -1).join(" ") || "");
+        setValue("applicant.lastName", names[names.length - 1] || "");
 
-      // ✅ EMAIL (FROM OTP FLOW)
-      setValue("applicant.emailId", emailId || "");
+        // ✅ DOB
+        setValue("applicant.dob", aadhaarData?.dob || "");
 
-      console.log("✅ FINAL APPLICANT STORED:", {
-        pan: financialData?.panNumber,
-        aadhaar: aadhaarData?.maskedAadhaar,
-        mobile: mobileNumber,
-        email: emailId,
-      });
+        // ✅ GENDER
+        setValue(
+          "applicant.gender",
+          aadhaarData?.gender === "M" ? "Male" : "Female",
+        );
 
-    } else {
+        // ✅ IMAGE (BASE64)
+        setValue("applicant.photo", aadhaarData?.photo || "");
+
+        setValue(
+          "applicant.aadhaarAddress.addressLine1",
+          aadhaarData?.address?.houseNumber || "",
+        );
+
+        setValue(
+          "applicant.aadhaarAddress.addressLine2",
+          aadhaarData?.address?.landmark || "",
+        );
+
+        setValue(
+          "applicant.aadhaarAddress.addressLine3",
+          aadhaarData?.address?.locality || "",
+        );
+
+        setValue(
+          "applicant.aadhaarAddress.city",
+          aadhaarData?.address?.postOffice || "",
+        );
+
+        setValue(
+          "applicant.aadhaarAddress.state",
+          aadhaarData?.address?.state || "",
+        );
+
+        setValue(
+          "applicant.aadhaarAddress.pincode",
+          aadhaarData?.address?.pincode || "",
+        );
+
+        setValue(
+          "applicant.aadhaarAddress.district",
+          aadhaarData?.address?.district || "",
+        );
+
+        setValue(
+          "applicant.aadhaarAddress.landmark",
+          aadhaarData?.address?.landmark || "",
+        );
+
+        // ✅ ADDRESS
+        setValue(
+          "applicant.communicationAddress.addressLine1",
+          aadhaarData?.address?.houseNumber || "",
+        );
+        setValue(
+          "applicant.communicationAddress.addressLine2",
+          aadhaarData?.address?.landmark || "",
+        );
+        setValue(
+          "applicant.communicationAddress.addressLine3",
+          aadhaarData?.address?.locality || "",
+        );
+        setValue(
+          "applicant.communicationAddress.city",
+          aadhaarData?.address?.postOffice || "",
+        );
+        setValue(
+          "applicant.communicationAddress.state",
+          aadhaarData?.address?.state || "",
+        );
+        setValue(
+          "applicant.communicationAddress.pincode",
+          aadhaarData?.address?.pincode || "",
+        );
+
+        // ✅ MOBILE (FROM OTP FLOW)
+        setValue("applicant.mobileNumber", mobileNumber || "");
+
+        // ✅ EMAIL (FROM OTP FLOW)
+        setValue("applicant.emailId", emailId || "");
+
+        console.log("✅ FINAL APPLICANT STORED:", {
+          pan: financialData?.panNumber,
+          aadhaar: aadhaarData?.maskedAadhaar,
+          mobile: mobileNumber,
+          email: emailId,
+        });
+      } else {
+        setIsBiometricVerified(false);
+        setDocumentStatus("mismatch");
+        setPanAadhaarFailed(true);
+        setVerificationErrorMessage(
+          response.message || "Identity verification failed.",
+        );
+      }
+    } catch (error) {
+      console.error("ERROR:", error);
       setIsBiometricVerified(false);
       setDocumentStatus("mismatch");
       setPanAadhaarFailed(true);
       setVerificationErrorMessage(
-        response.message || "Identity verification failed."
+        error.message || "An error occurred during verification.",
       );
+    } finally {
+      setIsBiometricLoading(false);
     }
-  } catch (error) {
-    console.error("ERROR:", error);
-    setIsBiometricVerified(false);
-    setDocumentStatus("mismatch");
-    setPanAadhaarFailed(true);
-    setVerificationErrorMessage(
-      error.message || "An error occurred during verification."
-    );
-  } finally {
-    setIsBiometricLoading(false);
-  }
-};
+  };
 
   const [isApiLoading, setIsApiLoading] = useState(false);
   const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
@@ -447,7 +486,7 @@ const OnboardingTab = ({
     console.log("panAadhaarSuccess:", panAadhaarSuccess);
 
     // if (isValid && panAadhaarSuccess) {
-    if(panAadhaarSuccess) {
+    if (panAadhaarSuccess) {
       console.log("➡️ MOVING TO NEXT TAB");
       onNext();
     } else if (!panAadhaarSuccess) {

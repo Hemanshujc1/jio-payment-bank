@@ -50,11 +50,69 @@ const ApplicationReviewTab = ({ goToStep }) => {
     guardian: rawData?.guardian || {},
   };
 
+  const buildPersonAddress = () => {
+  const aadhaarAddress = formData.applicant?.aadhaarAddress || {};
+  const communicationAddress =
+    formData.applicant?.communicationAddress || {};
+
+  const mapAddress = (address, type, sameAsPermanent = false) => ({
+    city: address.city || "",
+    line1: [
+      address.addressLine1,
+      address.addressLine2,
+      address.landmark,
+    ]
+      .filter(Boolean)
+      .join(", "),
+
+    line2: [
+      address.addressLine3,
+      address.city,
+      address.district,
+    ]
+      .filter(Boolean)
+      .join(", "),
+
+    line3: [
+      address.state,
+      address.pincode,
+      "India",
+    ]
+      .filter(Boolean)
+      .join(", "),
+
+    state: address.stateCode || "MH",
+    street: address.addressLine2 || "",
+    country: "India",
+    pincode: address.pincode || "",
+    district: address.district || "",
+    landmark: address.landmark || "",
+    locality: address.addressLine3 || "",
+    addressType: type,
+    houseNumber: address.addressLine1 || "",
+    sameAsPermanent,
+  });
+
+  return [
+    // ✅ Aadhaar / Permanent Address
+    mapAddress(aadhaarAddress, "PERMANENT", false),
+
+    // ✅ Communication / Current Address
+    mapAddress(
+      communicationAddress,
+      "CURRENT",
+      JSON.stringify(aadhaarAddress) ===
+        JSON.stringify(communicationAddress)
+    ),
+  ];
+};
+
   // ✅ FINAL PAYLOAD BUILDER
   const buildFinalPayload = () => {
     return {
       applicationNumber: sessionStorage.getItem("applicationNumber"),
       externalAppRefNumber: sessionStorage.getItem("externalAppRefNumber"),
+      personAddress: buildPersonAddress(),
 
       martialStatus:
         formData.applicant.maritalStatus === "Married" ? "2" : "1",
