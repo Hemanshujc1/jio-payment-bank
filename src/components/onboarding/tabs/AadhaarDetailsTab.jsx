@@ -102,7 +102,8 @@ const AadhaarDetailsTab = ({ onNext, kycData }) => {
   const handleProceed = async () => {
     // Check UIDAI address completeness
     const addr = kycData?.address || {};
-    const isMandatoryMissing = !addr.city || !addr.district || !addr.state || !addr.country || !addr.pincode;
+    // const isMandatoryMissing = !addr.city 
+    const isMandatoryMissing = !addr.district || !addr.state || !addr.country || !addr.pincode;
     const isAllLocalMissing = !addr.houseNumber && !addr.locality && !addr.landmark && !addr.street;
 
     if (isMandatoryMissing || isAllLocalMissing) {
