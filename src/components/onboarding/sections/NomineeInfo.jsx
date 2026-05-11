@@ -3,14 +3,6 @@ import { useFormContext, Controller, useWatch } from "react-hook-form";
 import CustomDropdown from "../../common/CustomDropdown";
 import CustomDatePicker from "../../common/CustomDatePicker";
 import AddressForm from "./AddressForm";
-const MOCK_AADHAAR_ADDRESS = {
-  addressLine1: "401, XYZ House",
-  addressLine2: "Fake Street",
-  addressLine3: "150 Road",
-  city: "Mumbai",
-  state: "Maharashtra",
-  pincode: "400059",
-};
 
 const NomineeInfo = () => {
   const {
@@ -24,8 +16,8 @@ const NomineeInfo = () => {
   const family = useWatch({ name: "family", control });
   const relationship = useWatch({ name: "nominee.relationship", control });
 
-  const applicantAddress = useWatch({
-    name: "applicant.communicationAddress",
+  const aadhaarAddress = useWatch({
+    name: "applicant.aadhaarAddress",
     control,
   });
 
@@ -74,20 +66,6 @@ const NomineeInfo = () => {
       setValue("nominee.lastName", family.spouseName?.lastName || "");
     }
   }, [relationship, family, setValue]);
-
-  useEffect(() => {
-    // 👉 You need a flag from AddressForm (explained below)
-    const sameAsApplicant = control._formValues?.nominee?.sameAsApplicant;
-
-    if (sameAsApplicant && applicantAddress) {
-      setValue("nominee.addressLine1", applicantAddress.addressLine1 || "");
-      setValue("nominee.addressLine2", applicantAddress.addressLine2 || "");
-      setValue("nominee.addressLine3", applicantAddress.addressLine3 || "");
-      setValue("nominee.city", applicantAddress.city || "");
-      setValue("nominee.state", applicantAddress.state || "");
-      setValue("nominee.pincode", applicantAddress.pincode || "");
-    }
-  }, [applicantAddress, setValue, control]);
 
   return (
     <div className="flex flex-col gap-8">
@@ -182,11 +160,10 @@ const NomineeInfo = () => {
         </div>
       </div>
 
-      {/* Nominee Communication Address */}
       <AddressForm
         prefix="nominee"
         title="Nominee Communication Address"
-        mockAadhaarAddress={MOCK_AADHAAR_ADDRESS}
+        aadhaarAddress={aadhaarAddress}
       />
     </div>
   );

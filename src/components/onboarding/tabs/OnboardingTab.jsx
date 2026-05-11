@@ -96,19 +96,22 @@ const OnboardingTab = ({
     setVerificationErrorMessage("");
 
     try {
+      const finalConsents = consentsList
+        .filter((c) => selectedConsents[c.consentTextCode])
+        .map((c) => ({
+          consent: c.text1,
+          code: c.consentTextCode,
+          version: "1",
+          method: "checkbox",
+        }));
+
       const payload = {
         applicationNumber,
         externalAppRefNumber,
         panNo: pan,
         aadharNo: aadhaar,
         bioMetricData: biometricXml,
-        consents: consentsList
-          .filter((c) => selectedConsents[c.consentTextCode])
-          .map((c) => ({
-            consent: c.text1,
-            code: c.consentTextCode,
-            method: "checkbox",
-          })),
+        consents: finalConsents,
       };
 
       const response = await onboardingService.panAadhaarVerify(payload);
@@ -158,6 +161,9 @@ const OnboardingTab = ({
           "applicant.gender",
           aadhaarData?.gender === "M" ? "Male" : "Female",
         );
+
+        // ✅ CONSENTS
+        setValue("onboarding.consents", finalConsents);
 
         // ✅ IMAGE (BASE64)
         setValue("applicant.photo", aadhaarData?.photo || "");

@@ -3,7 +3,7 @@ import { useFormContext } from "react-hook-form";
 import onboardingService from "../../../services/onboardingService";
 import { parseDate } from "../../../utils/validationUtils";
 
-const AddressForm = ({ prefix, title, mockAadhaarAddress }) => {
+const AddressForm = ({ prefix, title, aadhaarAddress }) => {
   const {
     register,
     watch,
@@ -39,9 +39,9 @@ const AddressForm = ({ prefix, title, mockAadhaarAddress }) => {
       targetAddress = applicantAddress;
     } else if (
       addressType === "Same as my Aadhaar address" &&
-      mockAadhaarAddress
+      aadhaarAddress
     ) {
-      targetAddress = mockAadhaarAddress;
+      targetAddress = aadhaarAddress;
     }
 
     if (targetAddress) {
@@ -62,7 +62,7 @@ const AddressForm = ({ prefix, title, mockAadhaarAddress }) => {
   }, [
     addressType,
     applicantAddress,
-    mockAadhaarAddress,
+    aadhaarAddress,
     setValue,
     prefix,
     currentAddress,

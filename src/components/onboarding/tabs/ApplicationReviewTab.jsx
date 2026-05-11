@@ -120,12 +120,7 @@ const ApplicationReviewTab = ({ goToStep }) => {
         formData.applicant.maritalStatus === "Married" ? "2" : "1",
 
       consents: Array.isArray(formData.onboarding?.consents)
-        ? formData.onboarding.consents.map((c) => ({
-            consent: c.text1,
-            code: c.consentTextCode,
-            version: "1",
-            method: "checkbox",
-          }))
+        ? formData.onboarding.consents
         : [],
 
       financialDetails: {

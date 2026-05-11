@@ -1,20 +1,16 @@
 import React from "react";
-import { useFormContext, Controller } from "react-hook-form";
+import { useFormContext, Controller, useWatch } from "react-hook-form";
 import CustomDropdown from "../../common/CustomDropdown";
 import CustomDatePicker from "../../common/CustomDatePicker";
 import AddressForm from "./AddressForm";
-const MOCK_AADHAAR_ADDRESS = {
-  addressLine1: "A/1001, FakeVilla Apartment",
-  addressLine2: "XYZ Buliding",
-  addressLine3: "150 Road",
-  city: "Mumbai",
-  state: "Maharashtra",
-  pincode: "400013",
-};
 
 const GuardianInfo = () => {
   const { register, control, formState: { errors } } = useFormContext();
 
+  const aadhaarAddress = useWatch({
+    name: "applicant.aadhaarAddress",
+    control,
+  });
 
   return (
     <div className="flex flex-col gap-8 pb-4">
@@ -102,7 +98,7 @@ const GuardianInfo = () => {
       <AddressForm 
         prefix="guardian" 
         title="Guardian Communication Address" 
-        mockAadhaarAddress={MOCK_AADHAAR_ADDRESS} 
+        aadhaarAddress={aadhaarAddress} 
       />
     </div>
   );

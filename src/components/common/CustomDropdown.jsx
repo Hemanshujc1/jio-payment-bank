@@ -16,9 +16,19 @@ const CustomDropdown = ({ options, value, onChange, className = "", error = fals
   }, []);
 
   const handleSelect = (opt) => {
-    onChange(opt);
+    const val = typeof opt === 'object' && opt !== null ? opt.value : opt;
+    onChange(val);
     setIsOpen(false);
   };
+
+  const selectedOption = options.find(o => {
+    const val = typeof o === 'object' && o !== null ? o.value : o;
+    return val === value;
+  });
+  
+  const displayLabel = selectedOption 
+    ? (typeof selectedOption === 'object' && selectedOption !== null ? selectedOption.label : selectedOption) 
+    : "Select Option";
 
   return (
     <div className={`relative ${className}`} ref={dropdownRef}>
@@ -30,7 +40,7 @@ const CustomDropdown = ({ options, value, onChange, className = "", error = fals
         } ${isOpen ? 'invisible' : 'visible'}`}
       >
         <span className={`${value ? 'text-gray-900' : 'text-gray-400'} font-medium text-[14px] truncate`}>
-          {value || "Select Option"}
+          {displayLabel}
         </span>
        <IoIosArrowDown className="text-gray-400 text-lg" />
       </div>
@@ -43,21 +53,25 @@ const CustomDropdown = ({ options, value, onChange, className = "", error = fals
             className="flex items-center justify-between px-5 pt-4 pb-2 cursor-pointer bg-white rounded-t-[10px]"
           >
             <span className="font-bold text-black text-[14px] tracking-wide">
-              {value}
+              {displayLabel !== "Select Option" ? displayLabel : ""}
             </span>
            <IoIosArrowDown/>
           </div>
 
           <div className="px-3 pb-0 max-h-30 overflow-y-auto overscroll-contain scrollbar-hide">
-            {options.map((opt, idx) => (
-              <div 
-                key={idx}
-                onClick={() => handleSelect(opt)}
-                className={`py-2 cursor-pointer text-[12px] font-semibold tracking-wide text-[#555] hover:text-[#222] transition-colors ${idx !== options.length - 1 ? 'border-b border-[#3e3e3e]' : ''}`}
-              >
-                {opt}
-              </div>
-            ))}
+            {options.map((opt, idx) => {
+              const label = typeof opt === 'object' && opt !== null ? opt.label : opt;
+              return (
+                <div 
+                  key={idx}
+                  onClick={() => handleSelect(opt)}
+                  className={`py-2 cursor-pointer text-[12px] font-semibold tracking-wide text-[#555] hover:text-[#222] transition-colors ${idx !== options.length - 1 ? 'border-b border-[#3e3e3e]' : ''}`}
+                >
+                  {label}
+                </div>
+              );
+            })}
+
           </div>
 
         </div>

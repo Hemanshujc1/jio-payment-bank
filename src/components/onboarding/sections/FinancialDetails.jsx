@@ -2,6 +2,40 @@ import React from 'react';
 import { useFormContext, Controller } from 'react-hook-form';
 import CustomDropdown from '../../common/CustomDropdown';
 
+const occupationOptions = [
+  { label: 'Private Sector Service', value: 'JP1' },
+  { label: 'Public Sector Service', value: 'JP2' },
+  { label: 'Government Sector Service', value: 'JP3' },
+  { label: 'Business', value: 'JP4' },
+  { label: 'Professional', value: 'JP5' },
+  { label: 'Self Employed', value: 'JP6' },
+  { label: 'Retired', value: 'JP7' },
+  { label: 'Homemaker', value: 'JP8' },
+  { label: 'Student', value: 'JP9' },
+  { label: 'Farmer', value: 'JP10' },
+  { label: 'Others', value: 'JP11' },
+];
+
+const sourceOfIncomeOptions = [
+  { label: 'Salary', value: 'A01' },
+  { label: 'Business', value: 'A02' },
+  { label: 'Professional Fees', value: 'A03' },
+  { label: 'Agriculture', value: 'A04' },
+  { label: 'Savings', value: 'A05' },
+  { label: 'Family Wealth', value: 'A06' },
+  { label: 'Inheritance', value: 'A07' },
+  { label: 'Others', value: 'A08' },
+];
+
+const annualIncomeOptions = [
+  { label: 'Upto 50K', value: '1' },
+  { label: '50K – 1 lakh', value: '2' },
+  { label: '1 lakh – 5 lakhs', value: '3' },
+  { label: '5 lakhs – 25 lakhs', value: '4' },
+  { label: '25 lakhs – 1 crore', value: '5' },
+  { label: 'Above 1 crore', value: '6' },
+];
+
 const FinancialDetails = () => {
   const { register, control, formState: { errors } } = useFormContext();
   
@@ -22,7 +56,7 @@ const FinancialDetails = () => {
               control={control}
               render={({ field }) => (
                 <CustomDropdown 
-                  options={['Private Sector Service', 'Public Sector Service', 'Government Sector Service', 'Business', 'Professional', 'Self Employed', 'Retired', 'Homemaker', 'Student', 'Farmer', 'Others']} 
+                  options={occupationOptions} 
                   value={field.value} 
                   onChange={field.onChange} 
                   className="w-full"
@@ -43,7 +77,7 @@ const FinancialDetails = () => {
               control={control}
               render={({ field }) => (
                 <CustomDropdown 
-                  options={['Salary', 'Business', 'Professional Fees', 'Agriculture', 'Savings', 'Family Wealth', 'Inheritance', 'Others']} 
+                  options={sourceOfIncomeOptions} 
                   value={field.value} 
                   onChange={field.onChange} 
                   className="w-full"
@@ -64,7 +98,7 @@ const FinancialDetails = () => {
               control={control}
               render={({ field }) => (
                 <CustomDropdown 
-                  options={['Upto 50K', '50K – 1 lakh', '50K – 1 lakh', '1 lakh – 5 lakhs', '5 lakhs – 25 lakhs', '25 lakhs – 1 crore', 'Above 1 crore']} 
+                  options={annualIncomeOptions} 
                   value={field.value} 
                   onChange={field.onChange} 
                   className="w-full"
@@ -78,8 +112,6 @@ const FinancialDetails = () => {
 
       </div>
 
-
-      
     </section>
   );
 };

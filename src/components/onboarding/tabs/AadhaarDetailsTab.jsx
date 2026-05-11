@@ -3,9 +3,11 @@ import { useFormContext } from "react-hook-form";
 import ProceedButton from "../../common/ProceedButton";
 import AadhaarFieldGrid from "../sections/AadhaarFieldGrid";
 import AadhaarAddressSection from "../sections/AadhaarAddressSection";
+import { useToast } from "../../ui/Toast";
 
 const AadhaarDetailsTab = ({ onNext, kycData }) => {
   const { trigger, setValue } = useFormContext();
+  const toast = useToast();
 
   const [sameAsAadhaar, setSameAsAadhaar] = React.useState(true);
 
@@ -78,7 +80,7 @@ const AadhaarDetailsTab = ({ onNext, kycData }) => {
 
     if (checked && kycData?.address) {
       const addr = kycData.address;
-
+       
       setValue("applicant.communicationAddress.addressLine1", addr.houseNumber || "");
       setValue("applicant.communicationAddress.addressLine2", addr.landmark || "");
       setValue("applicant.communicationAddress.addressLine3", addr.locality || "");
@@ -98,6 +100,16 @@ const AadhaarDetailsTab = ({ onNext, kycData }) => {
 
   // ✅ Proceed validation
   const handleProceed = async () => {
+    // Check UIDAI address completeness
+    const addr = kycData?.address || {};
+    const isMandatoryMissing = !addr.city || !addr.district || !addr.state || !addr.country || !addr.pincode;
+    const isAllLocalMissing = !addr.houseNumber && !addr.locality && !addr.landmark && !addr.street;
+
+    if (isMandatoryMissing || isAllLocalMissing) {
+      toast.error("Incomplete address details. Cannot proceed further.");
+      return;
+    }
+
     const isValid = await trigger([
       "applicant.firstName",
       "applicant.lastName",
