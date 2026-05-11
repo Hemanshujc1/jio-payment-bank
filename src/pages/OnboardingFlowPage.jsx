@@ -84,6 +84,13 @@ const OnboardingFlowPage = () => {
         pan: "",
         aadhaar: "",
         fatcaDeclared: false,
+        subscriptionId: localStorage.getItem("selectedSubscriptionId") || "",
+        schemeCode: localStorage.getItem("selectedSchemeCode") || "",
+        network: localStorage.getItem("selectedNetwork") || "",
+        region: localStorage.getItem("selectedRegion") || "",
+        cardType: localStorage.getItem("selectedCardType") || "",
+        tierType: localStorage.getItem("selectedTierType") || "",
+        issuanceFee: localStorage.getItem("selectedIssuanceFee") || "",
       },
       applicant: {
         firstName: "",

@@ -9,9 +9,11 @@ import SuccessOverlay from "../ui/SuccessOverlay";
 import ChargeVerificationModal from "../review/ChargeVerificationModal";
 import BiometricVerificationModal from "../review/BiometricVerificationModal";
 import onboardingService from "../../../services/onboardingService";
+import { useToast } from "../../ui/Toast";
 
 const ApplicationReviewTab = ({ goToStep }) => {
   const { getValues } = useFormContext();
+  const toast = useToast();
 
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -204,12 +206,12 @@ const ApplicationReviewTab = ({ goToStep }) => {
       },
 
       addOn: {
-        subscriptionId: "1000",
-        schemeCode: "2042",
-        network: "DUMMY",
-        region: "DOMESTIC",
-        cardType: "VIRTUAL",
-        tierType: "TRGWFEE",
+        subscriptionId: formData.onboarding?.subscriptionId || "1000",
+        schemeCode: formData.onboarding?.schemeCode || "2042",
+        network: formData.onboarding?.network || "DUMMY",
+        region: formData.onboarding?.region || "DOMESTIC",
+        cardType: formData.onboarding?.cardType || "VIRTUAL",
+        tierType: formData.onboarding?.tierType || "TRGWFEE",
       },
     };
   };
@@ -217,7 +219,7 @@ const ApplicationReviewTab = ({ goToStep }) => {
   // ✅ SUBMIT FLOW
   const handleSubmit = () => {
     if (!termsAccepted) {
-      alert("Please accept Terms & Conditions");
+      toast.warning("Please accept Terms & Conditions");
       return;
     }
     setShowChargeVerification(true);
@@ -226,7 +228,7 @@ const ApplicationReviewTab = ({ goToStep }) => {
 
   const handleFinalProceed = () => {
     if (!chargeCollected) {
-      alert("Please confirm charge collection");
+      toast.warning("Please confirm charge collection");
       return;
     }
     setShowChargeVerification(false);
@@ -254,11 +256,11 @@ const ApplicationReviewTab = ({ goToStep }) => {
           setShowBiometricConsent(false);
         }, 1500);
       } else {
-        alert(res.message || "Application submission failed. Please try again.");
+        toast.error(res.message || "Application submission failed. Please try again.");
       }
     } catch (err) {
       console.error("Submission Error:", err);
-      alert("Something went wrong during final submission.");
+      toast.error("Something went wrong during final submission.");
     } finally {
       setIsBiometricLoading(false);
     }
@@ -308,6 +310,7 @@ const ApplicationReviewTab = ({ goToStep }) => {
         onProceed={handleFinalProceed}
         chargeCollected={chargeCollected}
         setChargeCollected={setChargeCollected}
+        issuanceFee={formData.onboarding?.issuanceFee}
       />
 
       {/* ✅ UPDATED MODAL PROPS */}

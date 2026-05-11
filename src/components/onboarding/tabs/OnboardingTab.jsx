@@ -9,6 +9,7 @@ import IdentityInputs from "../sections/IdentityInputs";
 import ConsentsSection from "../sections/ConsentsSection";
 import LanguageSelection from "../sections/LanguageSelection";
 import BiometricSection from "../sections/BiometricSection";
+import { useToast } from "../../ui/Toast";
 
 const OnboardingTab = ({
   onNext,
@@ -39,6 +40,7 @@ const OnboardingTab = ({
     setValue,
     formState: { errors },
   } = useFormContext();
+  const toast = useToast();
 
   const productType = watch("onboarding.productType");
   const language = watch("onboarding.language");
@@ -282,18 +284,15 @@ const OnboardingTab = ({
         if (response.status === "SUCCESS") {
           setShowOtp(true);
         } else {
-          alert(
-            response.message ||
-              "Failed to generate mobile OTP. Please try again.",
-          );
+          toast.error(response.message || "Failed to generate mobile OTP. Please try again.");
         }
       } catch (error) {
-        alert(error.message || "An error occurred while generating OTP.");
+        toast.error(error.message || "An error occurred while generating OTP.");
       } finally {
         setIsApiLoading(false);
       }
     } else {
-      alert("Please enter a valid mobile number.");
+      toast.warning("Please enter a valid mobile number.");
     }
   };
 
@@ -310,10 +309,10 @@ const OnboardingTab = ({
       if (response.status === "SUCCESS") {
         setIsMobileVerified(true);
       } else {
-        alert(response.message || "Invalid OTP. Please try again.");
+        toast.error(response.message || "Invalid OTP. Please try again.");
       }
     } catch (error) {
-      alert(error.message || "An error occurred while verifying OTP.");
+      toast.error(error.message || "An error occurred while verifying OTP.");
     } finally {
       setIsVerifyingOtp(false);
     }
@@ -321,7 +320,7 @@ const OnboardingTab = ({
 
   const handleSendEmailOtp = async () => {
     if (!applicationNumber) {
-      alert("Please generate mobile OTP first to start the application.");
+      toast.warning("Please generate mobile OTP first to start the application.");
       return;
     }
     if (emailId.length > 0) {
@@ -336,12 +335,10 @@ const OnboardingTab = ({
         if (response.status === "SUCCESS") {
           setShowEmailOtp(true);
         } else {
-          alert(
-            response.message || "Failed to send email OTP. Please try again.",
-          );
+          toast.error(response.message || "Failed to send email OTP. Please try again.");
         }
       } catch (error) {
-        alert(error.message || "An error occurred while sending email OTP.");
+        toast.error(error.message || "An error occurred while sending email OTP.");
       } finally {
         setIsEmailApiLoading(false);
       }
@@ -367,10 +364,10 @@ const OnboardingTab = ({
       if (response.status === "SUCCESS") {
         setIsEmailVerified(true);
       } else {
-        alert(response.message || "Invalid Email OTP. Please try again.");
+        toast.error(response.message || "Invalid Email OTP. Please try again.");
       }
     } catch (error) {
-      alert(error.message || "An error occurred while verifying email OTP.");
+      toast.error(error.message || "An error occurred while verifying email OTP.");
     } finally {
       setIsVerifyingEmailOtp(false);
     }
@@ -384,12 +381,12 @@ const OnboardingTab = ({
       });
 
       if (response.status === "SUCCESS") {
-        alert("Mobile OTP resent successfully.");
+        toast.success("Mobile OTP resent successfully.");
       } else {
-        alert(response.message || "Failed to resend OTP. Please try again.");
+        toast.error(response.message || "Failed to resend OTP. Please try again.");
       }
     } catch (error) {
-      alert(error.message || "An error occurred while resending OTP.");
+      toast.error(error.message || "An error occurred while resending OTP.");
     } finally {
       setIsApiLoading(false);
     }
@@ -406,19 +403,16 @@ const OnboardingTab = ({
       });
 
       if (response.status === "SUCCESS") {
-        alert("Email OTP resent successfully.");
+        toast.success("Email OTP resent successfully.");
       } else {
-        alert(
-          response.message || "Failed to resend email OTP. Please try again.",
-        );
+        toast.error(response.message || "Failed to resend email OTP. Please try again.");
       }
     } catch (error) {
-      alert(error.message || "An error occurred while resending email OTP.");
+      toast.error(error.message || "An error occurred while resending email OTP.");
     } finally {
       setIsEmailApiLoading(false);
     }
   };
-
   const handleAadhaarChange = (e) => {
     const val = e.target.value;
     let chars = "";
@@ -490,7 +484,7 @@ const OnboardingTab = ({
       console.log("➡️ MOVING TO NEXT TAB");
       onNext();
     } else if (!panAadhaarSuccess) {
-      alert("Please complete biometric verification successfully first.");
+      toast.warning("Please complete biometric verification successfully first.");
     }
   };
 

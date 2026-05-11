@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { IoMdCloseCircle } from "react-icons/io";
 import VariantCard from "../components/common/VariantCard";
+import { useToast } from "../components/ui/Toast";
 import debitcardimg from "../assets/debit-card-img.webp"; 
 import onboardingService from "../services/onboardingService";
 
@@ -13,6 +14,7 @@ const SavingsVariantPage = () => {
   
   const [locationStatus, setLocationStatus] = useState("loading");
   const [locationErrorMsg, setLocationErrorMsg] = useState("");
+  const toast = useToast();
 
   useEffect(() => {
     if (!("geolocation" in navigator)) {
@@ -144,9 +146,19 @@ const SavingsVariantPage = () => {
               const feeNum = parseAmount(variant.issuanceFee);
 
               if (balanceNum < feeNum) {
-                alert(`Insufficient balance in Vakrangee Wallet. Available: ${currentBalance}, Required: ₹ ${feeNum.toFixed(2)}`);
+                toast.error(`Insufficient balance in Vakrangee Wallet. Available: ${currentBalance}, Required: ₹  ${feeNum.toFixed(2)}`);
                 return;
               }
+
+              // Save selected variant details to localStorage
+              localStorage.setItem("selectedSubscriptionId", variant.subscriptionId || "");
+              localStorage.setItem("selectedSchemeCode", variant.schemeCode || "");
+              localStorage.setItem("selectedNetwork", variant.network || "");
+              localStorage.setItem("selectedRegion", variant.region || "");
+              localStorage.setItem("selectedCardType", variant.cardType || "");
+              localStorage.setItem("selectedTierType", variant.tierType || "");
+              localStorage.setItem("selectedIssuanceFee", variant.issuanceFee || "");
+
               navigate("/onboarding-flow");
             }}
           />

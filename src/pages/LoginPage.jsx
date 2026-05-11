@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "../components/ui/Toast";
 import OtpVerification from "../components/OtpVerification";
 import ProceedButton from "../components/ProceedButton";
 import mobileicon from "../assets/mobileicon.svg";
@@ -12,12 +13,13 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const toast = useToast();
 
   const handleLoginClick = () => {
     if (username.trim().length >= 5 && password.length >= 4) {
       setShowOtp(true);
     } else {
-      alert("Please enter a valid username and password.");
+      toast.warning("Please enter a valid username and password.");
     }
   };
 

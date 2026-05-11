@@ -73,6 +73,13 @@ export const  onboardingSchema = z.object({
     pan: z.string().min(1, "PAN Number is required").regex(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/, "Enter Valid PAN Number"),
     aadhaar: z.string().min(1, "Aadhaar Number is required").length(12, "Aadhaar must be 12 digits").regex(/^\d+$/, "Aadhaar must be numeric"),
     fatcaDeclared: z.boolean().refine(val => val === true, "Must declare FATCA status"),
+    subscriptionId: z.string().optional(),
+    schemeCode: z.string().optional(),
+    network: z.string().optional(),
+    region: z.string().optional(),
+    cardType: z.string().optional(),
+    tierType: z.string().optional(),
+    issuanceFee: z.string().optional(),
   }),
   applicant: z.object({
     firstName: nameField(),

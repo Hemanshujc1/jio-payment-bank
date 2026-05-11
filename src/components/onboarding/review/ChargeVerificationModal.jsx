@@ -1,7 +1,7 @@
 import React from 'react';
 import ProceedButton from '../../common/ProceedButton';
 
-const ChargeVerificationModal = ({ isOpen, onClose, onProceed, chargeCollected, setChargeCollected }) => {
+const ChargeVerificationModal = ({ isOpen, onClose, onProceed, chargeCollected, setChargeCollected, issuanceFee }) => {
   if (!isOpen) return null;
 
   return (
@@ -21,7 +21,7 @@ const ChargeVerificationModal = ({ isOpen, onClose, onProceed, chargeCollected, 
 
         <div className="bg-blue-50 border border-blue-200 p-5 md:p-6 rounded-lg w-full">
           <p className="text-[14px] md:text-[15px] font-semibold text-blue-900 leading-relaxed">
-          Please proceed with collecting [Rs. 100/400] from the customer for the account opening charges.
+          Please proceed with collecting ₹ {issuanceFee || "0"} from the customer for the account opening charges.
           </p>
         </div>
 
