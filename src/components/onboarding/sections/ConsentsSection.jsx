@@ -53,7 +53,8 @@ const ConsentsSection = ({
       <div className="w-full max-h-62.5 sm:max-h-75 overflow-y-auto pr-2 sm:pr-4 mb-8 border border-gray-200 rounded-lg p-3 sm:p-5 bg-gray-50/50 shadow-inner">
         {consents.map((consentItem, index) => {
           const isSelected = selectedConsents[consentItem.consentTextCode] || false;
-          const hasError = errors?.consents && !isSelected;
+          const isMandatory = consentItem.mandatory === "Y";
+          const hasError = errors?.consents && isMandatory && !isSelected;
           const isLast = index === consents.length - 1;
 
           return (
@@ -78,6 +79,7 @@ const ConsentsSection = ({
                   onClick={() => toggleConsent(consentItem.consentTextCode)}
                 >
                   {consentItem.text1}
+                  {isMandatory && <span className="text-red-500 text-lg">*</span>}
                 </p>
               </div>
               {hasError && <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-8 sm:ml-9">Please agree to this consent</span>}

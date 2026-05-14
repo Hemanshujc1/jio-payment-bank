@@ -55,7 +55,7 @@ const BiometricVerificationModal = ({
 
   const isAllConsentsSelected =
     consentsList.length > 0 &&
-    consentsList.every((c) => selectedConsents[c.consentTextCode]);
+    consentsList.every((c) => c.mandatory !== "Y" || selectedConsents[c.consentTextCode]);
 
   if (!isOpen) return null;
 
@@ -175,7 +175,7 @@ const BiometricVerificationModal = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 animate-in fade-in duration-200">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-xl max-h-[90vh] overflow-y-auto p-6 md:p-8 flex flex-col items-center gap-6 relative animate-in zoom-in-95 duration-200">
+      <div className="bg-white rounded-xl shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto p-6 md:p-8 flex flex-col items-center gap-6 relative animate-in zoom-in-95 duration-200">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-500 hover:text-gray-900 transition-colors font-bold text-lg p-2 bg-white rounded-full"
@@ -247,7 +247,7 @@ const BiometricVerificationModal = ({
               type="button"
               onClick={handleCaptureClick}
               disabled={isButtonDisabled}
-              className={`w-full max-w-70 h-14 flex items-center justify-center gap-3 font-extrabold text-[15px] rounded-xl transition-all shadow-md
+              className={`w-full max-w-72 h-14 flex items-center justify-center gap-3 font-extrabold text-[15px] rounded-xl transition-all shadow-md
                 ${
                   isButtonDisabled
                     ? "bg-gray-300 text-gray-500 cursor-not-allowed shadow-none"
@@ -256,13 +256,13 @@ const BiometricVerificationModal = ({
             >
               {isLoading || localLoading ? (
                 <>
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                   Processing...
                 </>
               ) : (
                 <>
                   <FaFingerprint className="text-xl" />
-                  CAPTURE BIOMETRIC
+                  Customer Biometric Verification
                 </>
               )}
             </button>

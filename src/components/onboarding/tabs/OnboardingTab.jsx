@@ -98,7 +98,7 @@ const OnboardingTab = ({
 
   const isAllConsentsSelected =
     consentsList.length > 0 &&
-    consentsList.every((c) => selectedConsents[c.consentTextCode]);
+    consentsList.every((c) => c.mandatory !== "Y" || selectedConsents[c.consentTextCode]);
 
   const captureBiometric = async (biometricXml) => {
     setIsBiometricLoading(true);

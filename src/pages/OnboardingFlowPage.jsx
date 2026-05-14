@@ -20,6 +20,7 @@ const STEPS = [
 
 const OnboardingFlowPage = () => {
   const [currentStep, setCurrentStep] = useState(1);
+  const [maxStepReached, setMaxStepReached] = useState(1);
 
   const [isAgentVerified, setIsAgentVerified] = useState(
     sessionStorage.getItem("agentVerified") === "true",
@@ -29,7 +30,13 @@ const OnboardingFlowPage = () => {
     sessionStorage.getItem("agentVerified") !== "true",
   );
 
-  const next = () => setCurrentStep((s) => Math.min(s + 1, STEPS.length));
+  const next = () => {
+    setCurrentStep((s) => {
+      const nextStep = Math.min(s + 1, STEPS.length);
+      setMaxStepReached((max) => Math.max(max, nextStep));
+      return nextStep;
+    });
+  };
 
   const handleAgentVerified = () => {
     setIsAgentVerified(true);
@@ -164,20 +171,13 @@ const OnboardingFlowPage = () => {
         activeStep={currentStep - 1}
         steps={STEPS}
         onStepClick={(step) => {
-          // Allow going back to any previous step
-          if (step < currentStep) {
+          const IS_TESTING = false; 
+
+          // Allow navigating to any step up to maxStepReached
+          // This prevents skipping ahead without completing the current step via the Proceed button
+          if (IS_TESTING || step <= maxStepReached) {
             setCurrentStep(step);
-            return;
           }
-
-          // // Prevent going forward if OTP is not verified
-          // if (!isMobileVerified || (emailId.length > 0 && !isEmailVerified)) {
-          //   alert("Please verify your OTP to proceed to this step.");
-          //   return;
-          // }
-
-          // If verified, allow navigation
-          setCurrentStep(step);
         }}
       />
       )}

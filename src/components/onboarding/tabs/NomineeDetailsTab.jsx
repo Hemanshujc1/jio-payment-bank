@@ -5,10 +5,10 @@ import NomineeChoice from "../sections/NomineeChoice";
 import NomineeInfo from "../sections/NomineeInfo";
 import GuardianInfo from "../sections/GuardianInfo";
 import { differenceInYears } from "date-fns";
-import { parseDate } from "../../../utils/validationUtils";
+import { parseDate, checkNamesMatch } from "../../../utils/validationUtils";
 
 const NomineeDetailsTab = ({ onNext }) => {
-  const { trigger } = useFormContext();
+  const { trigger, getValues, setError, clearErrors } = useFormContext();
   const provideNominee = useWatch({ name: "nominee.provide" });
   const nomineeDob = useWatch({ name: "nominee.dob" });
 
@@ -17,12 +17,58 @@ const NomineeDetailsTab = ({ onNext }) => {
   const handleProceed = async () => {
     let isValid = false;
 
+    clearErrors([
+      "nominee.firstName",
+      "guardian.firstName"
+    ]);
+
     if (provideNominee === "Yes") {
       const fieldsToTrigger = ["nominee"];
       if (isMinor) {
         fieldsToTrigger.push("guardian");
       }
       isValid = await trigger(fieldsToTrigger);
+      
+      if (isValid) {
+        const data = getValues();
+        const applicantFullName = `${data.applicant.firstName || ""} ${data.applicant.middleName || ""} ${data.applicant.lastName || ""}`.replace(/\s+/g, ' ').trim();
+        const nomineeFullName = `${data.nominee.firstName || ""} ${data.nominee.middleName || ""} ${data.nominee.lastName || ""}`.replace(/\s+/g, ' ').trim();
+        
+        let hasCrossMatchError = false;
+
+        if (checkNamesMatch(nomineeFullName, applicantFullName)) {
+          setError("nominee.firstName", {
+            type: "manual",
+            message: "Nominee Name cannot be the same as Applicant Name",
+          });
+          hasCrossMatchError = true;
+        }
+
+        if (isMinor) {
+          const guardianFullName = `${data.guardian.firstName || ""} ${data.guardian.middleName || ""} ${data.guardian.lastName || ""}`.replace(/\s+/g, ' ').trim();
+          
+          if (checkNamesMatch(guardianFullName, applicantFullName)) {
+            setError("guardian.firstName", {
+              type: "manual",
+              message: "Guardian Name cannot be the same as Applicant Name",
+            });
+            hasCrossMatchError = true;
+          }
+
+          if (checkNamesMatch(guardianFullName, nomineeFullName)) {
+            setError("guardian.firstName", {
+              type: "manual",
+              message: "Guardian Name cannot be the same as Nominee Name",
+            });
+            hasCrossMatchError = true;
+          }
+        }
+
+        if (hasCrossMatchError) {
+          isValid = false;
+        }
+      }
+
     } else {
       isValid = await trigger(["nominee.provide"]);
     }

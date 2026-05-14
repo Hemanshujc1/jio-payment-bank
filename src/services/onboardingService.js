@@ -151,16 +151,16 @@ const onboardingService = {
    */
   getConsents: async (language) => {
     try {
-      const response = await axios.post("http://192.168.200.173:8090/common/get-consents",{language});
+      // const response = await axios.post("http://192.168.200.173:8090/common/get-consents",{language});
 
-      // const response = await apiClient.post(
-      //   "/get-consents",
-      //   { language },
-      //   {
-      //   baseURL: import.meta.env.VITE_COMMON_API_BASE_URL,
+      const response = await apiClient.post(
+        "/get-consents",
+        { language },
+        {
+        baseURL: import.meta.env.VITE_COMMON_API_BASE_URL,
         
-      //   }
-      // );
+        }
+      );
      return response.data;
     } catch (error) {
       throw error;

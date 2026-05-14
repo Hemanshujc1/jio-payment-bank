@@ -3,9 +3,10 @@ import { useFormContext } from 'react-hook-form';
 import ProceedButton from "../../common/ProceedButton";
 import FamilyDetails from "../sections/FamilyDetails";
 import FinancialDetails from "../sections/FinancialDetails";
+import { checkNamesMatch } from "../../../utils/validationUtils";
 
 const FamilyFinancialDetailsTab = ({ onNext }) => {
-  const { trigger, watch } = useFormContext();
+  const { trigger, watch, getValues, setError, clearErrors } = useFormContext();
   const maritalStatus = watch("applicant.maritalStatus");
 
   const handleProceed = async () => {
@@ -24,9 +25,51 @@ const FamilyFinancialDetailsTab = ({ onNext }) => {
       fieldsToTrigger.push("family.spouseName.firstName", "family.spouseName.middleName", "family.spouseName.lastName");
     }
 
+    // Clear previous custom cross-match errors so they don't block unnecessarily if fixed
+    clearErrors([
+      "family.fatherName.firstName",
+      "family.motherName.firstName",
+      "family.spouseName.firstName"
+    ]);
+
     const isValid = await trigger(fieldsToTrigger);
+    
     if (isValid) {
-      onNext();
+      const data = getValues();
+      const applicantFullName = `${data.applicant.firstName} ${data.applicant.middleName || ""} ${data.applicant.lastName}`.replace(/\s+/g, ' ').trim();
+      const fatherFullName = `${data.family.fatherName.firstName} ${data.family.fatherName.middleName || ""} ${data.family.fatherName.lastName}`.replace(/\s+/g, ' ').trim();
+      const motherFullName = `${data.family.motherName.firstName} ${data.family.motherName.middleName || ""} ${data.family.motherName.lastName}`.replace(/\s+/g, ' ').trim();
+      const spouseFullName = maritalStatus === 'Married' 
+        ? `${data.family.spouseName?.firstName || ""} ${data.family.spouseName?.middleName || ""} ${data.family.spouseName?.lastName || ""}`.replace(/\s+/g, ' ').trim()
+        : "";
+
+      const namesToSync = [
+        { label: "Applicant", name: applicantFullName, path: "applicant.firstName" },
+        { label: "Father", name: fatherFullName, path: "family.fatherName.firstName" },
+        { label: "Mother", name: motherFullName, path: "family.motherName.firstName" },
+      ];
+      
+      if (spouseFullName) {
+        namesToSync.push({ label: "Spouse", name: spouseFullName, path: "family.spouseName.firstName" });
+      }
+
+      let hasCrossMatchError = false;
+
+      for (let i = 0; i < namesToSync.length; i++) {
+        for (let j = i + 1; j < namesToSync.length; j++) {
+          if (checkNamesMatch(namesToSync[i].name, namesToSync[j].name)) {
+            setError(namesToSync[j].path, {
+              type: "manual",
+              message: `${namesToSync[j].label} Name cannot be the same as ${namesToSync[i].label} Name`,
+            });
+            hasCrossMatchError = true;
+          }
+        }
+      }
+
+      if (!hasCrossMatchError) {
+        onNext();
+      }
     }
   };
 

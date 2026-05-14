@@ -70,7 +70,7 @@ export const  onboardingSchema = z.object({
     agreeTerms: z.boolean().refine(val => val === true, "Must agree to terms and conditions"),
     agreeAeps: z.boolean().refine(val => val === true, "Must agree to AEPS terms"),
     agreeSweep: z.boolean().refine(val => val === true, "Must agree to sweep terms"),
-    pan: z.string().min(1, "PAN Number is required").regex(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/, "Enter Valid PAN Number"),
+    pan: z.string().min(1, "PAN Number is required").regex(/^[A-Z]{3}P[A-Z]{1}[0-9]{4}[A-Z]{1}$/, "Enter Valid PAN Number (4th character must be 'P')"),
     aadhaar: z.string().min(1, "Aadhaar/VID is required").regex(/^\d+$/, "Aadhaar/VID must be numeric").refine(val => val.length === 12 || val.length === 16, "Aadhaar must be 12 digits or VID must be 16 digits"),
     fatcaDeclared: z.boolean().refine(val => val === true, "Must declare FATCA status"),
     subscriptionId: z.string().optional(),
