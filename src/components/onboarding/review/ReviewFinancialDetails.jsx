@@ -2,28 +2,28 @@ import ReviewHeader from './ReviewHeader';
 import ReviewRow from './ReviewRow';
 
 const occupationMap = {
-  'OCC01': 'Private Sector Service',
-  'OCC02': 'Public Sector Service',
-  'OCC03': 'Government Sector Service',
-  'JP1': 'Business',
-  'OCC04': 'Professional',
-  'OCC05': 'Self Employed',
-  'OCC06': 'Retired',
-  'OCC07': 'Homemaker',
-  'OCC08': 'Student',
-  'OCC09': 'Farmer',
-  'OCC10': 'Others',
+  'JP1': 'Private Sector Service',
+  'JP2': 'Public Sector Service',
+  'JP3': 'Government Sector Service',
+  'JP4': 'Business',
+  'JP5': 'Professional',
+  'JP6': 'Self Employed',
+  'JP7': 'Retired',
+  'JP8': 'Homemaker',
+  'JP9': 'Student',
+  'JP10': 'Farmer',
+  'JP11': 'Others',
 };
 
 const sourceOfIncomeMap = {
-  'INC01': 'Salary',
-  'A04': 'Business',
-  'INC02': 'Professional Fees',
-  'INC03': 'Agriculture',
-  'INC04': 'Savings',
-  'INC05': 'Family Wealth',
-  'INC06': 'Inheritance',
-  'INC07': 'Others',
+  'A01': 'Salary',
+  'A02': 'Business',
+  'A03': 'Professional Fees',
+  'A04': 'Agriculture',
+  'A05': 'Savings',
+  'A06': 'Family Wealth',
+  'A07': 'Inheritance',
+  'A08': 'Others',
 };
 
 const annualIncomeMap = {
