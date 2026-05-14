@@ -71,7 +71,7 @@ export const  onboardingSchema = z.object({
     agreeAeps: z.boolean().refine(val => val === true, "Must agree to AEPS terms"),
     agreeSweep: z.boolean().refine(val => val === true, "Must agree to sweep terms"),
     pan: z.string().min(1, "PAN Number is required").regex(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/, "Enter Valid PAN Number"),
-    aadhaar: z.string().min(1, "Aadhaar Number is required").length(12, "Aadhaar must be 12 digits").regex(/^\d+$/, "Aadhaar must be numeric"),
+    aadhaar: z.string().min(1, "Aadhaar/VID is required").regex(/^\d+$/, "Aadhaar/VID must be numeric").refine(val => val.length === 12 || val.length === 16, "Aadhaar must be 12 digits or VID must be 16 digits"),
     fatcaDeclared: z.boolean().refine(val => val === true, "Must declare FATCA status"),
     subscriptionId: z.string().optional(),
     schemeCode: z.string().optional(),
@@ -99,7 +99,7 @@ export const  onboardingSchema = z.object({
         const age = differenceInYears(new Date(), date);
         return age >= 18;
       }, "Applicant must be at least 18 years old"),
-    maritalStatus: z.enum(["Married", "Unmarried"]),
+    maritalStatus: z.enum(["Married", "Single"]),
     emailId: z.string().optional().or(z.literal("")),
     communicationAddress: addressSchema,
   }),

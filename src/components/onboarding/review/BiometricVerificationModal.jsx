@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaFingerprint } from "react-icons/fa";
 import onboardingService from "../../../services/onboardingService";
+import ConsentsSection from "../sections/ConsentsSection";
+import LanguageSelection from "../sections/LanguageSelection";
 
 const BiometricVerificationModal = ({
   isOpen,
@@ -8,13 +10,52 @@ const BiometricVerificationModal = ({
   isVerified,
   isLoading,
   onCaptureSuccess,
-  consentAccepted,
-  setConsentAccepted,
   apiPayloadData,
 }) => {
   const [selectedDevice, setSelectedDevice] = useState("mantra");
   const [statusMessage, setStatusMessage] = useState("");
   const [localLoading, setLocalLoading] = useState(false);
+
+  const [language, setLanguage] = useState("English");
+  const [consentsList, setConsentsList] = useState([]);
+  const [selectedConsents, setSelectedConsents] = useState({});
+
+  const languagesList = [
+    { name: "English", code: "EN" },
+    { name: "Hindi", code: "HI" },
+    { name: "Telugu", code: "TA" },
+    { name: "Tamil", code: "TE" },
+    { name: "Kannada", code: "KN" },
+    { name: "Marathi", code: "MR" },
+    { name: "Bengali", code: "BN" },
+  ];
+
+  useEffect(() => {
+    const fetchConsents = async () => {
+      try {
+        const selectedLang = languagesList.find((l) => l.name === language);
+        const langCode = selectedLang ? selectedLang.code : "EN";
+        const res = await onboardingService.getConsents(langCode);
+        if (res.status === "SUCCESS" && res.response?.consents) {
+          setConsentsList(res.response.consents);
+          const initial = {};
+          res.response.consents.forEach((c) => {
+            initial[c.consentTextCode] = false;
+          });
+          setSelectedConsents(initial);
+        }
+      } catch (err) {
+        console.error("Failed to fetch consents", err);
+      }
+    };
+    if (isOpen) {
+      fetchConsents();
+    }
+  }, [language, isOpen]);
+
+  const isAllConsentsSelected =
+    consentsList.length > 0 &&
+    consentsList.every((c) => selectedConsents[c.consentTextCode]);
 
   if (!isOpen) return null;
 
@@ -89,20 +130,14 @@ const BiometricVerificationModal = ({
               longitude: "72.8733474523108",  // Hardcoded
               // vkid: "RJ2903071",              // Hardcoded
               bioMetricData: captureXml,
-              consents: [                     // Hardcoded
-                {
-                    consent: "Hello, I verify for all of the mentioned B88",
-                    code: "B88",
-                    version: "1",
-                    method: "checkbox"
-                },
-                {
-                    consent: "Hello, I verify for all of the mentioned C50",
-                    code: "C50",
-                    version: "1",
-                    method: "checkbox"
-                }
-              ]
+              consents: consentsList
+                .filter((c) => selectedConsents[c.consentTextCode])
+                .map((c) => ({
+                  consent: c.text1,
+                  code: c.consentTextCode,
+                  version: "1",
+                  method: "checkbox",
+                }))
             };
 
             const apiResponse = await onboardingService.customerBioAuth(payload);
@@ -136,7 +171,7 @@ const BiometricVerificationModal = ({
     setLocalLoading(false);
   };
 
-  const isButtonDisabled = !consentAccepted || isLoading || localLoading;
+  const isButtonDisabled = !isAllConsentsSelected || isLoading || localLoading;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 animate-in fade-in duration-200">
@@ -187,43 +222,17 @@ const BiometricVerificationModal = ({
           </div>
         </div>
 
-        <h2 className="font-bold text-[18px] md:text-[20px] tracking-wide text-center mt-2 shrink-0">
-          Disclaimer
-        </h2>
-
-        <div className="flex items-start gap-3 w-full bg-gray-50 border border-gray-200 p-4 rounded-lg shrink-0">
-          <input
-            type="checkbox"
-            id="final-biometric-consent"
-            checked={consentAccepted}
-            onChange={(e) => setConsentAccepted(e.target.checked)}
-            className="w-5 h-5 cursor-pointer rounded-sm mt-0.5 accent-black shrink-0 border-gray-300"
+        <div className="w-full shrink-0">
+          <ConsentsSection
+            consents={consentsList}
+            selectedConsents={selectedConsents}
+            setSelectedConsents={setSelectedConsents}
           />
-          <label
-            htmlFor="final-biometric-consent"
-            className="text-[13.5px] text-black leading-relaxed cursor-pointer font-medium flex flex-col gap-2"
-          >
-            <p>
-              I hereby authorize Vakrangee Limited to use Biometric/OTP for
-              authenticating my identity through the Aadhaar based
-              Authentication system for obtaining my e-KYC through Aadhaar based
-              e-KYC services of UIDAI in accordance with the provisions of the
-              Aadhaar (Targeted Delivery of Financial and other Subsidies,
-              Benefits and Services) Act, 2016 and the allied rules and
-              regulations notified.
-            </p>
-            <p>
-              I have understood that the Biometric and/or OTP, provided for
-              authentication shall be used for authenticating my identity
-              through the Aadhaar Authentication system for this specific
-              transaction only and for no other purposes.
-            </p>
-            <p>
-              I understand that Security and confidentiality of personal data
-              (Other than Biometric/OTP) shall be ensured by Vakrangee and
-              Vakrangee may use this data in the future for its own consumption.
-            </p>
-          </label>
+          <LanguageSelection
+            language={language}
+            setLanguage={setLanguage}
+            languages={languagesList}
+          />
         </div>
 
         {statusMessage && (

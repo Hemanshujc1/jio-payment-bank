@@ -24,7 +24,7 @@ const IdentityInputs = ({
 
         <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 w-full xl:w-auto grow">
           <div className="flex flex-col flex-1 gap-1.5 min-w-0">
-            <label className="text-[13px] sm:text-[14px] font-bold text-gray-600 ml-1">Aadhaar Card No</label>
+            <label className="text-[13px] sm:text-[14px] font-bold text-gray-600 ml-1">Aadhaar Number / VID</label>
             <div className={`rounded-xl flex items-center px-4 py-3 shadow-sm border transition-all ${disabled ? 'bg-gray-50 border-gray-200 opacity-80' : 'bg-white ' + (errors?.aadhaar ? 'border-red-500' : 'border-neutral-light focus-within:border-gray-900')}`}>
               <input
                 type="text"

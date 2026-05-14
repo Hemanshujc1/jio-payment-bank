@@ -35,7 +35,7 @@ const NomineeInfo = () => {
     if (applicant.gender === "Male" && opt === "Husband") return false;
     if (applicant.gender === "Female" && opt === "Wife") return false;
     if (
-      applicant.maritalStatus === "Unmarried" &&
+      applicant.maritalStatus === "Single" &&
       (opt === "Husband" || opt === "Wife" || opt === "Spouse")
     )
       return false;

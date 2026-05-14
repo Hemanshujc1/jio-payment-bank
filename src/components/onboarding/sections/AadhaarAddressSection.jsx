@@ -103,7 +103,7 @@ const AadhaarAddressSection = ({ aadhaarAddress }) => {
         </label>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4">
+      <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4 ${sameAsAadhaar ? 'hidden' : ''}`}>
         {/* Address Line 1 */}
         <div className="flex flex-col gap-1.5">
           <span className="font-bold text-[13px] sm:text-[14px] text-gray-700 ml-0.5">

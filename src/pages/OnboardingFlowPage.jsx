@@ -111,7 +111,7 @@ const OnboardingFlowPage = () => {
         lastName: "",
         gender: "Male",
         dob: "",
-        maritalStatus: "Unmarried",
+        maritalStatus: "Single",
       },
       family: {
         fatherName: { firstName: "", middleName: "", lastName: "" },

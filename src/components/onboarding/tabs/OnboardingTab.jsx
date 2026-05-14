@@ -63,7 +63,7 @@ const OnboardingTab = ({
 
   const languagesList = [
     { name: "English", code: "EN" },
-    { name: "Hindi", code: "HN" },
+    { name: "Hindi", code: "HI" },
     { name: "Telugu", code: "TA" },
     { name: "Tamil", code: "TE" },
     { name: "Kannada", code: "KN" },
@@ -435,13 +435,13 @@ const OnboardingTab = ({
     let chars = "";
 
     if (showAadhaar) {
-      chars = val.replace(/[^0-9]/g, "").slice(0, 12);
+      chars = val.replace(/[^0-9]/g, "").slice(0, 16);
     } else {
       const maskedVal = formatAadhaar(aadhaar).replace(/[0-9]/g, "X");
       if (val.length > maskedVal.length) {
         const added = val.slice(-1);
         if (/[0-9]/.test(added)) {
-          chars = (aadhaar + added).slice(0, 12);
+          chars = (aadhaar + added).slice(0, 16);
         } else {
           chars = aadhaar;
         }

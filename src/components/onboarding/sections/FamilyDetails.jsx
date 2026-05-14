@@ -52,7 +52,7 @@ const FamilyDetails = () => {
         <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6">
           <span className="font-bold text-[14px] sm:text-[15px] text-gray-800 ml-0.5">Marital Status<span className="text-red-500 ml-0.5">*</span></span>
           <div className="flex items-center gap-8 sm:gap-10 mt-1 sm:mt-0 ml-1 sm:ml-0">
-            {["Unmarried","Married"].map((status) => (
+            {["Single","Married"].map((status) => (
               <label key={status} className="flex items-center gap-3 cursor-pointer group">
                 <input 
                   type="radio" 

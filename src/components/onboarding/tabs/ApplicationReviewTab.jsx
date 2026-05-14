@@ -20,7 +20,6 @@ const ApplicationReviewTab = ({ goToStep }) => {
   const [chargeCollected, setChargeCollected] = useState(false);
 
   const [showBiometricConsent, setShowBiometricConsent] = useState(false);
-  const [biometricConsentAccepted, setBiometricConsentAccepted] = useState(false);
   
   // This loading state will now be used while the final application is submitting
   const [isBiometricLoading, setIsBiometricLoading] = useState(false); 
@@ -307,8 +306,6 @@ const ApplicationReviewTab = ({ goToStep }) => {
         onClose={() => setShowBiometricConsent(false)}
         isVerified={isBiometricVerified}
         isLoading={isBiometricLoading} // Spans the button while final payload submits
-        consentAccepted={biometricConsentAccepted}
-        setConsentAccepted={setBiometricConsentAccepted}
         
         // 1. Pass the IDs the modal needs for the customerBioAuth verification
         apiPayloadData={{
