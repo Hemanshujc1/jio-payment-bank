@@ -152,7 +152,6 @@ const onboardingService = {
   getConsents: async (language) => {
     try {
       // const response = await axios.post("http://192.168.200.173:8090/common/get-consents",{language});
-
       const response = await apiClient.post(
         "/get-consents",
         { language },

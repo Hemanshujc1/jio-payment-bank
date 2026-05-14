@@ -19,7 +19,13 @@ const BiometricSection = ({
 
   // ✅ RD SERVICE CHECK
   const checkRDService = async (deviceType) => {
-    let url = "http://127.0.0.1:11100";
+    let url = "";
+
+    if (deviceType === "MANTRA") {
+      url = "http://127.0.0.1:11100";
+    } else if (deviceType === "MORPHO") {
+      url = "http://127.0.0.1:11100";
+    }
 
     try {
       const response = await fetch(url, {
@@ -28,70 +34,119 @@ const BiometricSection = ({
 
       const text = await response.text();
 
+      console.log(`${deviceType} RD SERVICE RESPONSE:`, text);
+
       if (text && text.includes("RDService")) {
         return { status: true };
       }
 
       return { status: false };
     } catch (error) {
+      console.error("RD SERVICE ERROR:", error);
       return { status: false };
     }
   };
 
-const captureBiometric = async (deviceType) => {
+  const captureBiometric = async (deviceType) => {
   setShowDeviceModal(false);
   setIsBiometricLoading(true);
 
   const rdCheck = await checkRDService(deviceType);
 
+  const method = deviceType === "MORPHO" ? "POST" : "CAPTURE";
+
   if (!rdCheck.status) {
     setIsBiometricLoading(false);
+
     setRdError({
       show: true,
       message: `${deviceType} RD Service is not running.`,
     });
+
     return;
   }
 
   try {
-    const url = "http://127.0.0.1:11100/rd/capture";
+    let url = "";
+    let xmlRequest = "";
 
-    const xmlRequest = `
-      <PidOptions ver="1.0">
-        <Opts 
-          fCount="1" 
-          fType="2" 
-          iCount="0" 
-          format="0" 
-          pidVer="2.0" 
-          timeout="20000" 
-          env="PP"
-          wadh="E0jzJ/P8UopUHAieZn8CKqS4WPMi5ZSYXgfnlfkWjrc="
-        />
-      </PidOptions>
-    `;
+    // ✅ MANTRA CONFIG
+    if (deviceType === "MANTRA") {
+      url = "http://127.0.0.1:11100/rd/capture";
+
+      xmlRequest = `
+        <PidOptions ver="1.0">
+          <Opts 
+            fCount="1" 
+            fType="2" 
+            iCount="0" 
+            format="0" 
+            pidVer="2.0" 
+            timeout="20000" 
+            env="PP"
+            wadh="E0jzJ/P8UopUHAieZn8CKqS4WPMi5ZSYXgfnlfkWjrc="
+          />
+        </PidOptions>
+      `;
+    }
+
+    // ✅ MORPHO CONFIG
+    else if (deviceType === "MORPHO") {
+      url = "http://127.0.0.1:11100/capture";
+
+      xmlRequest = `
+        <PidOptions ver="1.0">
+          <Opts 
+            env="PP"
+            fCount="1"
+            fType="0"
+            format="0"
+            pidVer="2.0"
+            timeout="10000"
+            otp=""
+            wadh="E0jzJ/P8UopUHAieZn8CKqS4WPMi5ZSYXgfnlfkWjrc="
+            posh=""
+          />
+        </PidOptions>
+      `;
+    }
+
+    console.log("CAPTURE URL:", url);
+    console.log("PID XML:", xmlRequest);
 
     const xhr = new XMLHttpRequest();
-    xhr.open("CAPTURE", url, true);
+
+    //xhr.open("CAPTURE", url, true);
+    xhr.open(method, url, true);
 
     xhr.onload = function () {
+      console.log("CAPTURE RESPONSE:", xhr.responseText);
+
       if (xhr.status === 200) {
         const result = xhr.responseText;
-        console.log("RD RESULT:", result);
 
         const parser = new DOMParser();
         const xml = parser.parseFromString(result, "text/xml");
 
         const resp = xml.getElementsByTagName("Resp")[0];
+
         const errCode = resp?.getAttribute("errCode");
         const errInfo = resp?.getAttribute("errInfo");
 
-        if (errCode === "0") {
-          if (onCaptureSuccess) {
-              onCaptureSuccess(result); 
-          }
+        console.log("ERR CODE:", errCode);
+        console.log("ERR INFO:", errInfo);
 
-        } else {
+        // ✅ SUCCESS
+        if (errCode === "0") {
+          setIsBiometricVerified(true);
+
+          if (onCaptureSuccess) {
+            onCaptureSuccess(result);
+          }
+        }
+
+        // ❌ FAILED
+        else {
           setRdError({
             show: true,
             message: errInfo || "Fingerprint capture failed",
@@ -108,11 +163,14 @@ const captureBiometric = async (deviceType) => {
     };
 
     xhr.onerror = function () {
+      console.error("XHR ERROR");
+
       setRdError({
         show: true,
         message:
           "Unable to connect to RD service. Please ensure device is connected.",
       });
+
       setIsBiometricLoading(false);
     };
 
