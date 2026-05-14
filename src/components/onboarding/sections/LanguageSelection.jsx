@@ -7,19 +7,22 @@ const LanguageSelection = ({ language, setLanguage, languages }) => {
         Choose any alternative language to view the translation:
       </h2>
       <div className="flex flex-wrap gap-4 sm:gap-x-6 sm:gap-y-5 mb-10 sm:mb-16 max-w-4xl">
-        {languages.map((lang) => (
-          <button
-            key={lang}
-            onClick={() => setLanguage(lang)}
-            className={`flex-1 min-w-30 sm:flex-none sm:w-37.5 py-2 sm:py-1.5 rounded-full font-bold border transition-all shadow-sm text-[14px] sm:text-[15px] ${
-              language === lang
-                ? "bg-sand-500 text-sand-350 border-brown-700"
-                : "bg-white text-gray-700 border-gray-300 hover:border-gray-900"
-            }`}
-          >
-            {lang}
-          </button>
-        ))}
+        {languages.map((lang) => {
+          const langName = typeof lang === 'object' ? lang.name : lang;
+          return (
+            <button
+              key={langName}
+              onClick={() => setLanguage(langName)}
+              className={`flex-1 min-w-30 sm:flex-none sm:w-37.5 py-2 sm:py-1.5 rounded-full font-bold border transition-all shadow-sm text-[14px] sm:text-[15px] ${
+                language === langName
+                  ? "bg-sand-500 text-sand-350 border-brown-700"
+                  : "bg-white text-gray-700 border-gray-300 hover:border-gray-900"
+              }`}
+            >
+              {langName}
+            </button> 
+          );
+        })}
       </div>
     </>
   );

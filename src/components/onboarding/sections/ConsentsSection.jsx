@@ -50,38 +50,41 @@ const ConsentsSection = ({
         </label>
       </div>
 
-      {consents.map((consentItem) => {
-        const isSelected = selectedConsents[consentItem.consentTextCode] || false;
-        const hasError = errors?.consents && !isSelected;
+      <div className="w-full max-h-[250px] sm:max-h-[300px] overflow-y-auto pr-2 sm:pr-4 mb-8 border border-gray-200 rounded-lg p-3 sm:p-5 bg-gray-50/50 shadow-inner">
+        {consents.map((consentItem, index) => {
+          const isSelected = selectedConsents[consentItem.consentTextCode] || false;
+          const hasError = errors?.consents && !isSelected;
+          const isLast = index === consents.length - 1;
 
-        return (
-          <div key={consentItem.consentTextCode} className="flex flex-col gap-4 sm:gap-2 mb-6 sm:mb-5">
-            <div className="flex items-start gap-3 sm:gap-4 group">
-              <div 
-                className="cursor-pointer shrink-0 mt-0.5 sm:mt-1"
-                onClick={() => toggleConsent(consentItem.consentTextCode)}
-              >
-                <div className={`w-5 h-5 shrink-0 border-2 ${hasError ? 'border-red-500' : 'border-primary'} flex items-center justify-center transition-colors group-hover:border-gray-900`}>
-                  {isSelected && <IoMdCheckmark />}
+          return (
+            <div key={consentItem.consentTextCode} className={`flex flex-col gap-4 sm:gap-2 ${isLast ? 'mb-0' : 'mb-6 sm:mb-5'}`}>
+              <div className="flex items-start gap-3 sm:gap-4 group">
+                <div 
+                  className="cursor-pointer shrink-0 mt-0.5 sm:mt-1"
+                  onClick={() => toggleConsent(consentItem.consentTextCode)}
+                >
+                  <div className={`w-5 h-5 shrink-0 border-2 ${hasError ? 'border-red-500' : 'border-primary'} flex items-center justify-center transition-colors group-hover:border-gray-900`}>
+                    {isSelected && <IoMdCheckmark />}
+                  </div>
+                  <input
+                    type="checkbox"
+                    className="hidden"
+                    checked={isSelected}
+                    readOnly
+                  />
                 </div>
-                <input
-                  type="checkbox"
-                  className="hidden"
-                  checked={isSelected}
-                  readOnly
-                />
+                <p 
+                  className="text-[12.5px] sm:text-[13px] leading-snug sm:leading-tight text-gray-800 max-w-6xl select-none" 
+                  onClick={() => toggleConsent(consentItem.consentTextCode)}
+                >
+                  {consentItem.text1}
+                </p>
               </div>
-              <p 
-                className="text-[12.5px] sm:text-[13px] leading-snug sm:leading-tight text-gray-800 max-w-6xl select-none" 
-                onClick={() => toggleConsent(consentItem.consentTextCode)}
-              >
-                {consentItem.text1}
-              </p>
+              {hasError && <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-8 sm:ml-9">Please agree to this consent</span>}
             </div>
-            {hasError && <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-8 sm:ml-9">Please agree to this consent</span>}
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
     </>
   );
 };

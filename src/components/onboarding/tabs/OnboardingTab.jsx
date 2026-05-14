@@ -61,6 +61,16 @@ const OnboardingTab = ({
   const [panAadhaarSuccess, setPanAadhaarSuccess] = useState(false);
   const [verificationErrorMessage, setVerificationErrorMessage] = useState("");
 
+  const languagesList = [
+    { name: "English", code: "EN" },
+    { name: "Hindi", code: "HN" },
+    { name: "Telugu", code: "TA" },
+    { name: "Tamil", code: "TE" },
+    { name: "Kannada", code: "KN" },
+    { name: "Marathi", code: "MR" },
+    { name: "Bengali", code: "BN" },
+  ];
+
   const getImageSrc = (base64) => {
     return `data:image/jpeg;base64,${base64}`;
   };
@@ -68,7 +78,8 @@ const OnboardingTab = ({
   useEffect(() => {
     const fetchConsents = async () => {
       try {
-        const langCode = language === "Hindi" ? "oth" : "eng";
+        const selectedLang = languagesList.find((l) => l.name === language);
+        const langCode = selectedLang ? selectedLang.code : "EN";
         const res = await onboardingService.getConsents(langCode);
         if (res.status === "SUCCESS" && res.response?.consents) {
           setConsentsList(res.response.consents);
@@ -477,7 +488,7 @@ const OnboardingTab = ({
       ? formatAadhaar(aadhaar).replace(/[0-9]/g, "X")
       : "";
 
-  const languages = ["English", "Hindi"];
+
 
   const handleProceed = async () => {
     const isValid = await trigger("onboarding");
@@ -556,7 +567,7 @@ const OnboardingTab = ({
       <LanguageSelection
         language={language}
         setLanguage={(val) => setValue("onboarding.language", val)}
-        languages={languages}
+        languages={languagesList}
       />
 
       {/* Biometric Integration Step */}
