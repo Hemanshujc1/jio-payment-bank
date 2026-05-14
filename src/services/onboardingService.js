@@ -2,6 +2,33 @@ import apiClient from "../utils/apiClient";
 import axios from "axios";
 
 const onboardingService = {
+  
+  /**
+   * Generate OTP for Agent Verification
+   * @Param {Object} payload {"vkid": "RJ2903071"}
+   */
+  sendAgentOtp: async (payload) => {
+  const res = await apiClient.post("/agent-otp", payload, 
+    {
+      baseURL: import.meta.env.VITE_COMMON_API_BASE_URL,
+    }
+  );
+  return res.data;
+},
+
+  /**
+   * Verifies OTP for Agent Verification
+   * @param {Object} payload {"vkid": "RJ2903071", "otp": "556165"} 
+   */
+ verifyAgentOtp: async (payload) => {
+  const res = await apiClient.post("/verify-agent-otp", payload,
+    {
+      baseURL: import.meta.env.VITE_COMMON_API_BASE_URL,
+    }
+  );
+  return res.data;
+},
+
   /**
    * Generates OTP for mobile number.
    * @param {string} mobileNumber
@@ -92,8 +119,8 @@ const onboardingService = {
    */
   panAadhaarVerify: async (payload) => {
     try {
-      //const response = await apiClient.post("/pan-aadhar-verify", payload);
-      const response = await axios.post("http://192.168.200.173:8090/customer/pan-aadhar-verify", payload);
+      const response = await apiClient.post("/pan-aadhar-verify", payload);
+      //const response = await axios.post("http://192.168.200.173:8090/customer/pan-aadhar-verify", payload);
       return response.data;
     } catch (error) {
       throw error;
@@ -181,8 +208,8 @@ const onboardingService = {
    */
   customerBioAuth: async (payload) => {
     try{
-      //const response = await apiClient.post("/customer-auth", payload);
-      const response = await axios.post("http://192.168.200.173:8090/customer/customer-auth", payload);
+      const response = await apiClient.post("/customer-auth", payload);
+      //const response = await axios.post("http://192.168.200.173:8090/customer/customer-auth", payload);
       return response.data;
     } catch(error){
       throw error;
@@ -195,8 +222,8 @@ const onboardingService = {
    */
   submitApplication: async (payload) => {
     try {
-      //const response = await apiClient.post("/submit-application", payload);
-      const response = await axios.post("http://192.168.200.173:8090/customer/submit-application", payload);
+      const response = await apiClient.post("/submit-application", payload);
+      //const response = await axios.post("http://192.168.200.173:8090/customer/submit-application", payload);
       return response.data;
     } catch (error) {
       throw error;
