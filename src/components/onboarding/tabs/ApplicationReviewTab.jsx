@@ -15,7 +15,6 @@ const ApplicationReviewTab = ({ goToStep }) => {
   const { getValues } = useFormContext();
   const toast = useToast();
 
-  const [termsAccepted, setTermsAccepted] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [showChargeVerification, setShowChargeVerification] = useState(false);
   const [chargeCollected, setChargeCollected] = useState(false);
@@ -213,10 +212,6 @@ const ApplicationReviewTab = ({ goToStep }) => {
 
   // ✅ SUBMIT FLOW
   const handleSubmit = () => {
-    if (!termsAccepted) {
-      toast.warning("Please accept Terms & Conditions");
-      return;
-    }
     setShowChargeVerification(true);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -294,8 +289,6 @@ const ApplicationReviewTab = ({ goToStep }) => {
       <Divider />
 
       <ReviewTermsConditions
-        termsAccepted={termsAccepted}
-        setTermsAccepted={setTermsAccepted}
         onSubmit={handleSubmit}
       />
 
