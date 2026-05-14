@@ -91,7 +91,7 @@ const AgentOtpModal = ({ isOpen, onVerified }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-[9999] bg-black/50 flex items-center justify-center px-4 backdrop-blur-[2px]">
+    <div className="fixed inset-0 z-9999 bg-black/50 flex items-center justify-center px-4 backdrop-blur-[2px]">
       <div className="bg-[#F4E4C1] border border-[#A67C52]/30 rounded-3xl shadow-2xl w-full max-w-md p-7 flex flex-col gap-6 animate-in fade-in zoom-in-95 duration-300">
         {/* TITLE */}
         <div className="flex flex-col items-center gap-2">
