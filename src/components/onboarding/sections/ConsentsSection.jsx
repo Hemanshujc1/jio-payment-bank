@@ -50,7 +50,7 @@ const ConsentsSection = ({
         </label>
       </div>
 
-      <div className="w-full max-h-[250px] sm:max-h-[300px] overflow-y-auto pr-2 sm:pr-4 mb-8 border border-gray-200 rounded-lg p-3 sm:p-5 bg-gray-50/50 shadow-inner">
+      <div className="w-full max-h-62.5 sm:max-h-75 overflow-y-auto pr-2 sm:pr-4 mb-8 border border-gray-200 rounded-lg p-3 sm:p-5 bg-gray-50/50 shadow-inner">
         {consents.map((consentItem, index) => {
           const isSelected = selectedConsents[consentItem.consentTextCode] || false;
           const hasError = errors?.consents && !isSelected;

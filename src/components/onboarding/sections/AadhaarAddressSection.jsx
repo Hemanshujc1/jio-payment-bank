@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import onboardingService from "../../../services/onboardingService";
 
-const AadhaarAddressSection = ({ mockAadhaarAddress }) => {
+const AadhaarAddressSection = ({ aadhaarAddress }) => {
   const {
     register,
     watch,
@@ -17,27 +17,27 @@ const AadhaarAddressSection = ({ mockAadhaarAddress }) => {
   const [isPincodeLoading, setIsPincodeLoading] = useState(false);
 
   useEffect(() => {
-    if (sameAsAadhaar && mockAadhaarAddress) {
+    if (sameAsAadhaar && aadhaarAddress) {
       setValue(
         "applicant.communicationAddress.addressLine1",
-        mockAadhaarAddress.addressLine1
+        aadhaarAddress.houseNumber || ""
       );
       setValue(
         "applicant.communicationAddress.addressLine2",
-        mockAadhaarAddress.addressLine2
+        aadhaarAddress.landmark || ""
       );
       setValue(
         "applicant.communicationAddress.addressLine3",
-        mockAadhaarAddress.addressLine3
+        aadhaarAddress.locality || ""
       );
-      setValue("applicant.communicationAddress.city", mockAadhaarAddress.city);
+      setValue("applicant.communicationAddress.city", aadhaarAddress.district || "");
       setValue(
         "applicant.communicationAddress.state",
-        mockAadhaarAddress.state
+        aadhaarAddress.state || ""
       );
       setValue(
         "applicant.communicationAddress.pincode",
-        mockAadhaarAddress.pincode
+        aadhaarAddress.pincode || ""
       );
     } else if (!sameAsAadhaar && prevSameAsAadhaar.current === true) {
       // Clear fields when unchecked
@@ -49,7 +49,7 @@ const AadhaarAddressSection = ({ mockAadhaarAddress }) => {
       setValue("applicant.communicationAddress.pincode", "");
     }
     prevSameAsAadhaar.current = sameAsAadhaar;
-  }, [sameAsAadhaar, mockAadhaarAddress, setValue]);
+  }, [sameAsAadhaar, aadhaarAddress, setValue]);
 
   // Pincode Lookup logic
   useEffect(() => {
