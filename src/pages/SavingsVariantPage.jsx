@@ -89,7 +89,7 @@ const SavingsVariantPage = () => {
   if (locationStatus === "error") {
     return (
       <div className="w-full h-screen min-h-100 flex flex-col items-center justify-center px-4 animate-in fade-in duration-500">
-        <div className="bg-red-50 text-red-600 p-8 rounded-2xl border border-red-200 text-center max-w-md shadow-sm">
+        <div className="text-red-600 p-8 rounded-2xl border-2 text-center max-w-md shadow-sm">
           <IoMdCloseCircle className="text-5xl mx-auto mb-4 text-red-500" />
           <h3 className="font-extrabold text-2xl mb-2 text-red-700">Location Required</h3>
           <p className="font-medium text-red-600">{locationErrorMsg}</p>
