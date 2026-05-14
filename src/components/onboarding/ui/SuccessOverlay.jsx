@@ -1,16 +1,16 @@
-import React, { useEffect } from 'react';
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import verification from '../../../assets/verification.gif';
+import verification from "../../../assets/verification.gif";
 
 const SuccessOverlay = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      navigate("/"); 
-    }, 3000); 
+      navigate("/");
+    }, 3000);
 
-    return () => clearTimeout(timer); 
+    return () => clearTimeout(timer);
   }, [navigate]);
 
   return (
@@ -23,7 +23,11 @@ const SuccessOverlay = () => {
       </h1>
 
       <div className="w-40 sm:w-56 md:w-72 [@media(max-height:700px)]:w-32 animate-in zoom-in-75 duration-700 delay-100">
-        <img src={verification} alt="verification" className="w-full h-auto drop-shadow-2xl" />
+        <img
+          src={verification}
+          alt="verification"
+          className="w-full h-auto drop-shadow-2xl"
+        />
       </div>
 
       <div className="flex flex-col gap-3 items-center text-center px-5 py-5 sm:px-8 sm:py-7 rounded-2xl border border-white/10 bg-black/20 backdrop-blur-sm max-w-lg w-full shadow-2xl animate-in slide-in-from-bottom-10 duration-700 delay-200">
@@ -32,7 +36,10 @@ const SuccessOverlay = () => {
         </p>
         <div className="h-px w-10 bg-white/20 my-1"></div>
         <p className="text-white text-[14px] sm:text-[18px] md:text-[20px] font-bold tracking-wide mt-1 drop-shadow-sm opacity-90">
-          Application ID: <span className="text-[#36B34A] break-all">XXXXXXXXXXXXXXX</span>
+          Application ID:{" "}
+          <span className="text-[#36B34A] break-all">
+            {applicationNumber || "XXXXXXXXXXXXXXX"}
+          </span>
         </p>
       </div>
     </div>

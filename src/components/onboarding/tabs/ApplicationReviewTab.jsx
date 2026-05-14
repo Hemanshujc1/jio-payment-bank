@@ -317,7 +317,7 @@ const ApplicationReviewTab = ({ goToStep }) => {
         onCaptureSuccess={handleFinalSubmit} 
       />
 
-      {isSuccess && <SuccessOverlay />}
+      {isSuccess && <SuccessOverlay applicationNumber={sessionStorage.getItem("applicationNumber")} />}
     </div>
   );
 };
