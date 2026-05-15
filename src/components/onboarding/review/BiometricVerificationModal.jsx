@@ -55,7 +55,9 @@ const BiometricVerificationModal = ({
 
   const isAllConsentsSelected =
     consentsList.length > 0 &&
-    consentsList.every((c) => c.mandatory !== "Y" || selectedConsents[c.consentTextCode]);
+    consentsList.every(
+      (c) => c.mandatory !== "Y" || selectedConsents[c.consentTextCode],
+    );
 
   if (!isOpen) return null;
 
@@ -72,14 +74,25 @@ const BiometricVerificationModal = ({
         });
         if (response.ok) {
           const text = await response.text();
-          if (selectedDevice === "mantra" && text.toLowerCase().includes("mantra")) {
+          if (
+            selectedDevice === "mantra" &&
+            text.toLowerCase().includes("mantra")
+          ) {
             devicePort = port;
             break;
           } else if (
             selectedDevice === "morpho" &&
-            (text.toLowerCase().includes("morpho") || text.toLowerCase().includes("scl"))
+            (text.toLowerCase().includes("morpho") ||
+              text.toLowerCase().includes("scl"))
           ) {
             devicePort = port;
+            break;
+          } else if (
+            selectedDevice === "startek" &&
+            text.toLocaleLowerCase().includes("startek")
+          ) {
+            devicePort = port;
+
             break;
           }
         }
@@ -89,21 +102,96 @@ const BiometricVerificationModal = ({
     }
 
     if (!devicePort) {
-      setStatusMessage(`Error: ${selectedDevice.charAt(0).toUpperCase() + selectedDevice.slice(1)} RD Service is not running or device is disconnected.`);
+      setStatusMessage(
+        `Error: ${selectedDevice.charAt(0).toUpperCase() + selectedDevice.slice(1)} RD Service is not running or device is disconnected.`,
+      );
       setLocalLoading(false);
       return;
     }
 
-    setStatusMessage("Device ready. Please place your finger on the scanner...");
+    setStatusMessage(
+      "Device ready. Please place your finger on the scanner...",
+    );
 
-    const pidOptions = `<PidOptions ver="1.0">
-      <Opts fCount="1" fType="2" iCount="0" pCount="0" format="0" pidVer="2.0" timeout="10000" env="PP" />
-    </PidOptions>`;
+    let pidOptions = "";
+    let captureUrl = "";
+    let captureMethod = "";
+
+    // ✅ MANTRA CONFIG
+    if (selectedDevice === "mantra") {
+      pidOptions = `
+    <PidOptions ver="1.0">
+      <Opts
+        env="PP"
+        fCount="1"
+        fType="2"
+        iCount="0"
+        pCount="0"
+        format="0"
+        pidVer="2.0"
+        timeout="10000"
+        wadh="E0jzJ/P8UopUHAieZn8CKqS4WPMi5ZSYXgfnlfkWjrc="
+      />
+    </PidOptions>
+  `;
+
+      captureUrl = `http://127.0.0.1:${devicePort}/rd/capture`;
+
+      captureMethod = "CAPTURE";
+    }
+
+    // ✅ MORPHO CONFIG
+    else if (selectedDevice === "morpho") {
+      pidOptions =
+        '<PidOptions ver="1.0">' +
+        "<Opts " +
+        'env="PP" ' +
+        'fCount="1" ' +
+        'fType="2" ' +
+        'iCount="0" ' +
+        'iType="0" ' +
+        'pCount="0" ' +
+        'pType="0" ' +
+        'format="0" ' +
+        'pidVer="2.0" ' +
+        'timeout="10000" ' +
+        'posh="UNKNOWN"/>' +
+        "</PidOptions>";
+
+      captureUrl = `http://127.0.0.1:${devicePort}/capture`;
+
+      captureMethod = "CAPTURE";
+    }
+
+    // ✅ STARTEK CONFIG
+    else if (selectedDevice === "startek") {
+      pidOptions = `
+    <PidOptions ver="1.0">
+      <Opts
+        env="PP"
+        fCount="1"
+        fType="2"
+        iCount="0"
+        pCount="0"
+        format="0"
+        pidVer="2.0"
+        timeout="20000"
+        otp=""
+        wadh="E0jzJ/P8UopUHAieZn8CKqS4WPMi5ZSYXgfnlfkWjrc="
+        posh=""
+      />
+    </PidOptions>
+  `;
+
+      captureUrl = `http://127.0.0.1:${devicePort}/rd/capture`;
+
+      captureMethod = "CAPTURE";
+    }
 
     // 2. Capture Biometric Data
     try {
-      const captureResponse = await fetch(`http://127.0.0.1:${devicePort}/rd/capture`, {
-        method: "CAPTURE",
+      const captureResponse = await fetch(captureUrl, {
+        method: captureMethod,
         headers: {
           Accept: "text/xml",
           "Content-Type": "text/xml",
@@ -117,7 +205,7 @@ const BiometricVerificationModal = ({
         // 3. Check for success code in XML (errCode="0")
         if (captureXml.includes('errCode="0"')) {
           setStatusMessage("Biometric captured! Authenticating with server...");
-          
+
           // ========================================================
           // 4. API CALL WITH SPECIFIED PAYLOAD FORMAT
           // ========================================================
@@ -134,16 +222,19 @@ const BiometricVerificationModal = ({
             const payload = {
               vkid: localStorage.getItem("vkid") || "RJ2903071",
               applicationNumber: sessionStorage.getItem("applicationNumber"),
-              externalAppRefNumber: sessionStorage.getItem("externalAppRefNumber"),
+              externalAppRefNumber: sessionStorage.getItem(
+                "externalAppRefNumber",
+              ),
               latitude: "19.118027857360293", // Hardcoded
               longitude: "72.8733474523108",  // Hardcoded
               bioMetricData: captureXml,
               consents: formattedConsents
             };
 
-            const apiResponse = await onboardingService.customerBioAuth(payload);
+            const apiResponse =
+              await onboardingService.customerBioAuth(payload);
 
-            if(apiResponse.status === "SUCCESS") {
+            if (apiResponse.status === "SUCCESS") {
               setStatusMessage("Biometric Verified Successfully!");
               if (onCaptureSuccess) {
                 onCaptureSuccess(formattedConsents); 
@@ -151,19 +242,23 @@ const BiometricVerificationModal = ({
             } else{
               setStatusMessage("Biometric Verification Failed!");
             }
-
           } catch (apiError) {
             console.error("API Authentication Failed:", apiError);
-            setStatusMessage("Authentication Error: Failed to verify biometric data on the server.");
+            setStatusMessage(
+              "Authentication Error: Failed to verify biometric data on the server.",
+            );
           }
-          
         } else {
           const errorMatch = captureXml.match(/errInfo="([^"]+)"/);
-          const errorMsg = errorMatch ? errorMatch[1] : "Capture failed. Please try again.";
+          const errorMsg = errorMatch
+            ? errorMatch[1]
+            : "Capture failed. Please try again.";
           setStatusMessage(`Capture Error: ${errorMsg}`);
         }
       } else {
-        setStatusMessage("Error: Failed to communicate with the capture service.");
+        setStatusMessage(
+          "Error: Failed to communicate with the capture service.",
+        );
       }
     } catch (error) {
       setStatusMessage("Error: Capture service unreachable.");
@@ -190,7 +285,9 @@ const BiometricVerificationModal = ({
         </h2>
 
         <div className="w-full bg-gray-50 border border-gray-200 p-4 rounded-lg flex flex-col gap-3 shrink-0">
-          <label className="font-bold text-[14px] text-gray-800">Select Fingerprint Device:</label>
+          <label className="font-bold text-[14px] text-gray-800">
+            Select Fingerprint Device:
+          </label>
           <div className="flex gap-6">
             <label className="flex items-center gap-2 cursor-pointer text-[14px] font-medium">
               <input
@@ -200,7 +297,7 @@ const BiometricVerificationModal = ({
                 checked={selectedDevice === "mantra"}
                 onChange={(e) => {
                   setSelectedDevice(e.target.value);
-                  setStatusMessage(""); 
+                  setStatusMessage("");
                 }}
                 className="w-4 h-4 accent-black cursor-pointer"
               />
@@ -214,11 +311,25 @@ const BiometricVerificationModal = ({
                 checked={selectedDevice === "morpho"}
                 onChange={(e) => {
                   setSelectedDevice(e.target.value);
-                  setStatusMessage(""); 
+                  setStatusMessage("");
                 }}
                 className="w-4 h-4 accent-black cursor-pointer"
               />
               Morpho
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer text-[14px] font-medium">
+              <input
+                type="radio"
+                name="device"
+                value="startek"
+                checked={selectedDevice === "startek"}
+                onChange={(e) => {
+                  setSelectedDevice(e.target.value);
+                  setStatusMessage("");
+                }}
+                className="w-4 h-4 accent-black cursor-pointer"
+              />
+              Startek
             </label>
           </div>
         </div>
@@ -237,7 +348,9 @@ const BiometricVerificationModal = ({
         </div>
 
         {statusMessage && (
-          <div className={`w-full text-center text-[13.5px] font-bold p-2 rounded-lg shrink-0 ${statusMessage.includes("Error") ? "text-red-600 bg-red-50" : "text-blue-600 bg-blue-50"}`}>
+          <div
+            className={`w-full text-center text-[13.5px] font-bold p-2 rounded-lg shrink-0 ${statusMessage.includes("Error") ? "text-red-600 bg-red-50" : "text-blue-600 bg-blue-50"}`}
+          >
             {statusMessage}
           </div>
         )}
@@ -270,8 +383,18 @@ const BiometricVerificationModal = ({
           ) : (
             <div className="flex flex-col items-center animate-in zoom-in-50 duration-500">
               <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center text-white mb-3 shadow-lg shadow-green-500/30">
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path>
+                <svg
+                  className="w-8 h-8"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="3"
+                    d="M5 13l4 4L19 7"
+                  ></path>
                 </svg>
               </div>
               <p className="text-green-700 font-black text-[17px] tracking-wide">
