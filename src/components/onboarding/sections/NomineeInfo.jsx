@@ -26,44 +26,48 @@ const NomineeInfo = () => {
     "Brother",
     "Mother",
     "Father",
-    "Spouse",
     "Son",
     "Daughter",
     "Husband",
     "Wife",
   ].filter((opt) => {
+    // Basic gender filtering
     if (applicant.gender === "Male" && opt === "Husband") return false;
     if (applicant.gender === "Female" && opt === "Wife") return false;
-    if (
-      applicant.maritalStatus === "Single" &&
-      (opt === "Husband" || opt === "Wife" || opt === "Spouse")
-    )
-      return false;
-    if (applicant.maritalStatus !== "Married" && opt === "Spouse") return false;
+
+    // Marital status filtering
+    if (applicant.maritalStatus === "Single") {
+      if (opt === "Husband" || opt === "Wife") return false;
+    }
+
+    // Only show Husband/Wife if Married
+    if (applicant.maritalStatus !== "Married") {
+      if (opt === "Husband" || opt === "Wife") return false;
+    }
+
     return true;
   });
 
   const isAutoPopulated = [
     "Father",
     "Mother",
-    "Spouse",
     "Husband",
     "Wife",
   ].includes(relationship);
 
   useEffect(() => {
     if (relationship === "Father") {
-      setValue("nominee.firstName", family.fatherName.firstName);
-      setValue("nominee.middleName", family.fatherName.middleName);
-      setValue("nominee.lastName", family.fatherName.lastName);
+      setValue("nominee.firstName", family.fatherName.firstName, { shouldValidate: true });
+      setValue("nominee.middleName", family.fatherName.middleName, { shouldValidate: true });
+      setValue("nominee.lastName", family.fatherName.lastName, { shouldValidate: true });
     } else if (relationship === "Mother") {
-      setValue("nominee.firstName", family.motherName.firstName);
-      setValue("nominee.middleName", family.motherName.middleName);
-      setValue("nominee.lastName", family.motherName.lastName);
-    } else if (["Spouse", "Husband", "Wife"].includes(relationship)) {
-      setValue("nominee.firstName", family.spouseName?.firstName || "");
-      setValue("nominee.middleName", family.spouseName?.middleName || "");
-      setValue("nominee.lastName", family.spouseName?.lastName || "");
+      setValue("nominee.firstName", family.motherName.firstName, { shouldValidate: true });
+      setValue("nominee.middleName", family.motherName.middleName, { shouldValidate: true });
+      setValue("nominee.lastName", family.motherName.lastName, { shouldValidate: true });
+    } else if (["Husband", "Wife"].includes(relationship)) {
+      setValue("nominee.firstName", family.spouseName?.firstName || "", { shouldValidate: true });
+      setValue("nominee.middleName", family.spouseName?.middleName || "", { shouldValidate: true });
+      setValue("nominee.lastName", family.spouseName?.lastName || "", { shouldValidate: true });
     }
   }, [relationship, family, setValue]);
 

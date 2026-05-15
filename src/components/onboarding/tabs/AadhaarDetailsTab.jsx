@@ -69,6 +69,8 @@ const AadhaarDetailsTab = ({ onNext, kycData }) => {
       setValue("applicant.communicationAddress.addressLine3", addr.locality || "");
       setValue("applicant.communicationAddress.city", addr.district || "");
       setValue("applicant.communicationAddress.state", addr.state || "");
+      setValue("applicant.communicationAddress.stateCode", addr.stateCode || "");
+      setValue("applicant.communicationAddress.district", addr.district || "");
       setValue("applicant.communicationAddress.pincode", addr.pincode || "");
     }
 
@@ -86,6 +88,8 @@ const AadhaarDetailsTab = ({ onNext, kycData }) => {
       setValue("applicant.communicationAddress.addressLine3", addr.locality || "");
       setValue("applicant.communicationAddress.city", addr.district || "");
       setValue("applicant.communicationAddress.state", addr.state || "");
+      setValue("applicant.communicationAddress.stateCode", addr.stateCode || "");
+      setValue("applicant.communicationAddress.district", addr.district || "");
       setValue("applicant.communicationAddress.pincode", addr.pincode || "");
     } else {
       // Clear fields
@@ -94,6 +98,8 @@ const AadhaarDetailsTab = ({ onNext, kycData }) => {
       setValue("applicant.communicationAddress.addressLine3", "");
       setValue("applicant.communicationAddress.city", "");
       setValue("applicant.communicationAddress.state", "");
+      setValue("applicant.communicationAddress.stateCode", "");
+      setValue("applicant.communicationAddress.district", "");
       setValue("applicant.communicationAddress.pincode", "");
     }
   };

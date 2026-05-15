@@ -203,7 +203,7 @@ const onboardingService = {
 
   /**
    * For Customer E-Auth Submission
-   * @Param {Object} payload { applicationNumber, externalAppRefNumber, latitude, longitude, vkid, aadharNo, bioMetricData, consents[]}
+   * @Param {Object} payload { applicationNumber, externalAppRefNumber, latitude, longitude, vkid, bioMetricData, consents[]}
    */
   customerBioAuth: async (payload) => {
     try{

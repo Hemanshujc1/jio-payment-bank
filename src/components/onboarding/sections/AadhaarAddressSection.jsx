@@ -44,6 +44,16 @@ const AadhaarAddressSection = ({ aadhaarAddress }) => {
         { shouldValidate: true }
       );
       setValue(
+        "applicant.communicationAddress.stateCode",
+        aadhaarAddress.stateCode || "",
+        { shouldValidate: true }
+      );
+      setValue(
+        "applicant.communicationAddress.district",
+        aadhaarAddress.district || "",
+        { shouldValidate: true }
+      );
+      setValue(
         "applicant.communicationAddress.pincode",
         aadhaarAddress.pincode || "",
         { shouldValidate: true }
@@ -55,6 +65,8 @@ const AadhaarAddressSection = ({ aadhaarAddress }) => {
       setValue("applicant.communicationAddress.addressLine3", "");
       setValue("applicant.communicationAddress.city", "");
       setValue("applicant.communicationAddress.state", "");
+      setValue("applicant.communicationAddress.stateCode", "");
+      setValue("applicant.communicationAddress.district", "");
       setValue("applicant.communicationAddress.pincode", "");
     }
     prevSameAsAadhaar.current = sameAsAadhaar;
@@ -70,6 +82,8 @@ const AadhaarAddressSection = ({ aadhaarAddress }) => {
           if (res.cityName && res.stateName) {
             setValue("applicant.communicationAddress.city", res.cityName, { shouldValidate: true });
             setValue("applicant.communicationAddress.state", res.stateName, { shouldValidate: true });
+            setValue("applicant.communicationAddress.stateCode", res.stateCode, { shouldValidate: true });
+            setValue("applicant.communicationAddress.district", res.district, { shouldValidate: true });
             clearErrors("applicant.communicationAddress.pincode");
           } else if (res.error) {
             setError("applicant.communicationAddress.pincode", {

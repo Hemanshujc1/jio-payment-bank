@@ -54,9 +54,11 @@ const AddressForm = ({ prefix, title, aadhaarAddress }) => {
         setValue(`${prefix}.addressLine1`, targetAddress?.addressLine1 || "");
         setValue(`${prefix}.addressLine2`, targetAddress?.addressLine2 || "");
         setValue(`${prefix}.addressLine3`, targetAddress?.addressLine3 || "");
-        setValue(`${prefix}.city`, targetAddress?.city || "");
-        setValue(`${prefix}.state`, targetAddress?.state || "");
-        setValue(`${prefix}.pincode`, targetAddress?.pincode || "");
+        setValue(`${prefix}.addressDetails.city`, targetAddress?.city || "");
+        setValue(`${prefix}.addressDetails.state`, targetAddress?.state || "");
+        setValue(`${prefix}.addressDetails.stateCode`, targetAddress?.stateCode || "");
+        setValue(`${prefix}.addressDetails.district`, targetAddress?.district || "");
+        setValue(`${prefix}.addressDetails.pincode`, targetAddress?.pincode || "");
       }
     }
   }, [
@@ -82,6 +84,12 @@ const AddressForm = ({ prefix, title, aadhaarAddress }) => {
               shouldValidate: true,
             });
             setValue(`${prefix}.addressDetails.state`, res.stateName, {
+              shouldValidate: true,
+            });
+            setValue(`${prefix}.addressDetails.stateCode`, res.stateCode, {
+              shouldValidate: true,
+            });
+            setValue(`${prefix}.addressDetails.district`, res.district, {
               shouldValidate: true,
             });
             clearErrors(`${prefix}.addressDetails.pincode`);

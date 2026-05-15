@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useFormContext } from "react-hook-form";
+import { differenceInYears } from "date-fns";
+import { parseDate } from "../../../utils/validationUtils";
 import ReviewAadhaarDetails from "../review/ReviewAadhaarDetails";
 import ReviewFamilyDetails from "../review/ReviewFamilyDetails";
 import ReviewFinancialDetails from "../review/ReviewFinancialDetails";
@@ -81,10 +83,12 @@ const ApplicationReviewTab = ({ goToStep }) => {
       .filter(Boolean)
       .join(", "),
 
-    state: address.stateCode || "MH",
+    state: address.state || "",
+    stateCode: address.stateCode || "",
     street: address.addressLine2 || "",
     country: "India",
     pincode: address.pincode || "",
+    city: address.city || address.district || "",
     district: address.district || "",
     landmark: address.landmark || "",
     locality: address.addressLine3 || "",
@@ -101,8 +105,8 @@ const ApplicationReviewTab = ({ goToStep }) => {
     mapAddress(
       communicationAddress,
       "CURRENT",
-      JSON.stringify(aadhaarAddress) ===
-        JSON.stringify(communicationAddress)
+      JSON.stringify({ ...aadhaarAddress, stateCode: undefined }) ===
+        JSON.stringify({ ...communicationAddress, stateCode: undefined })
     ),
   ];
 };
@@ -113,9 +117,8 @@ const ApplicationReviewTab = ({ goToStep }) => {
       applicationNumber: sessionStorage.getItem("applicationNumber"),
       externalAppRefNumber: sessionStorage.getItem("externalAppRefNumber"),
       personAddress: buildPersonAddress(),
-
-      martialStatus:
-        formData.applicant.maritalStatus === "Married" ? "2" : "1",
+      
+      martialStatus: formData.applicant.maritalStatus === "Married" ? "2" : "1",
 
       consents: Array.isArray(consentsArray) && consentsArray.length > 0
         ? consentsArray
@@ -124,39 +127,56 @@ const ApplicationReviewTab = ({ goToStep }) => {
             : []),
 
       financialDetails: {
-        sourceOfIncome: formData.financial.sourceOfIncome || "A04",
-        annualSalary: formData.financial.annualIncome || "3",
-        occupation: formData.financial.occupation || "JP1",
+        sourceOfIncome: formData.financial.sourceOfIncome || "NA",
+        annualSalary: formData.financial.annualIncome || "NA",
+        occupation: formData.financial.occupation || "NA",
       },
 
-      nomineeDetails: {
-        relationship: formData.nominee.relationship,
-        salutation: "Mr",
-        firstName: formData.nominee.firstName,
-        middleName: formData.nominee.middleName,
-        lastName: formData.nominee.lastName,
-        dateOfBirth: formatDate(formData.nominee.dob),
-        gender: "Male",
-        percentage: "100",
-        priority: "1",
-        minor: false,
-      },
+      nomineeDetails: (() => {
+        const rel = formData.nominee.relationship;
+        const appGender = formData.applicant.gender;
+        const dob = formData.nominee.dob;
+        
+        let nomineeGender = "Male";
+        let salutation = "Mr";
+        
+        if (["Mother", "Sister", "Daughter", "Wife"].includes(rel)) {
+          nomineeGender = "Female";
+          salutation = (rel === "Mother" || rel === "Wife") ? "Mrs" : "Ms";
+        }
+
+        const age = dob ? differenceInYears(new Date(), parseDate(dob)) : 0;
+        const isMinor = age < 18;
+
+        return {
+          relationship: rel,
+          salutation: salutation,
+          firstName: formData.nominee.firstName,
+          middleName: formData.nominee.middleName,
+          lastName: formData.nominee.lastName,
+          dateOfBirth: formatDate(dob),
+          gender: nomineeGender,
+          percentage: "100",
+          priority: "1",
+          minor: isMinor,
+        };
+      })(),
 
       nomineeAddress: {
         addressType: "Permanent",
         careOf: "None",
-        houseNumber: formData.nominee.addressLine1,
-        street: formData.nominee.addressLine2,
-        landmark: formData.nominee.addressLine2,
-        locality: formData.nominee.addressLine3,
-        city: formData.nominee.city,
-        postOffice: formData.nominee.city,
-        district: formData.nominee.district,
-        subDistrict: formData.nominee.district,
-        state: formData.nominee.state,
-        stateCode: "MH",
+        houseNumber: formData.nominee.addressDetails?.addressLine1 || "",
+        street: formData.nominee.addressDetails?.addressLine2 || "",
+        landmark: formData.nominee.addressDetails?.addressLine2 || "",
+        locality: formData.nominee.addressDetails?.addressLine3 || "",
+        city: formData.nominee.addressDetails?.city || "",
+        postOffice: formData.nominee.addressDetails?.city || "",
+        district: formData.nominee.addressDetails?.district || "",
+        subDistrict: formData.nominee.addressDetails?.district || "",
+        state: formData.nominee.addressDetails?.state || "",
+        stateCode: formData.nominee.addressDetails?.stateCode || "",
         country: "India",
-        pincode: formData.nominee.pincode,
+        pincode: formData.nominee.addressDetails?.pincode || "",
       },
 
       nomineeContactDetails: [
@@ -181,18 +201,18 @@ const ApplicationReviewTab = ({ goToStep }) => {
       guardianAddress: {
         addressType: "Permanent",
         careOf: "None",
-        houseNumber: formData.guardian?.addressLine1 || "",
-        street: formData.guardian?.addressLine2 || "",
-        landmark: formData.guardian?.addressLine2 || "",
-        locality: formData.guardian?.addressLine3 || "",
-        city: formData.guardian?.city || "",
-        postOffice: formData.guardian?.city || "",
-        district: formData.guardian?.district || "",
-        subDistrict: formData.guardian?.district || "",
-        state: formData.guardian?.state || "",
-        stateCode: "MH",
+        houseNumber: formData.guardian?.addressDetails?.addressLine1 || "",
+        street: formData.guardian?.addressDetails?.addressLine2 || "",
+        landmark: formData.guardian?.addressDetails?.addressLine2 || "",
+        locality: formData.guardian?.addressDetails?.addressLine3 || "",
+        city: formData.guardian?.addressDetails?.city || "",
+        postOffice: formData.guardian?.addressDetails?.city || "",
+        district: formData.guardian?.addressDetails?.district || "",
+        subDistrict: formData.guardian?.addressDetails?.district || "",
+        state: formData.guardian?.addressDetails?.state || "",
+        stateCode: formData.guardian?.addressDetails?.stateCode || "",
         country: "India",
-        pincode: formData.guardian?.pincode || "",
+        pincode: formData.guardian?.addressDetails?.pincode || "",
       },
 
       guardianOVDDetails: {
@@ -201,12 +221,12 @@ const ApplicationReviewTab = ({ goToStep }) => {
       },
 
       addOn: {
-        subscriptionId: formData.onboarding?.subscriptionId || "1000",
-        schemeCode: formData.onboarding?.schemeCode || "2042",
-        network: formData.onboarding?.network || "DUMMY",
-        region: formData.onboarding?.region || "DOMESTIC",
-        cardType: formData.onboarding?.cardType || "VIRTUAL",
-        tierType: formData.onboarding?.tierType || "TRGWFEE",
+        subscriptionId: formData.onboarding?.subscriptionId || "NA",
+        schemeCode: formData.onboarding?.schemeCode || "NA",
+        network: formData.onboarding?.network || "NA",
+        region: formData.onboarding?.region || "NA",
+        cardType: formData.onboarding?.cardType || "NA",
+        tierType: formData.onboarding?.tierType || "NA",
       },
     };
   };

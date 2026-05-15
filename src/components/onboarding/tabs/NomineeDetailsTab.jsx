@@ -11,6 +11,8 @@ const NomineeDetailsTab = ({ onNext }) => {
   const { trigger, getValues, setError, clearErrors } = useFormContext();
   const provideNominee = useWatch({ name: "nominee.provide" });
   const nomineeDob = useWatch({ name: "nominee.dob" });
+  const relationship = useWatch({ name: "nominee.relationship" });
+  const applicant = useWatch({ name: "applicant" });
 
   const isMinor = nomineeDob ? differenceInYears(new Date(), parseDate(nomineeDob)) < 18 : false;
 
@@ -62,6 +64,36 @@ const NomineeDetailsTab = ({ onNext }) => {
             });
             hasCrossMatchError = true;
           }
+        }
+
+        // --- NEW VALIDATIONS ---
+        
+        // 1. Gender check for Husband/Wife
+        if ((applicant.gender === "Male" && relationship === "Husband") || 
+            (applicant.gender === "Female" && relationship === "Wife")) {
+          setError("nominee.relationship", {
+            type: "manual",
+            message: "Please select valid Nominee relation",
+          });
+          isValid = false;
+        }
+
+        // 2. Marital status check
+        if (applicant.maritalStatus === "Single" && (relationship === "Husband" || relationship === "Wife")) {
+          setError("nominee.relationship", {
+            type: "manual",
+            message: "Please select valid Nominee relation",
+          });
+          isValid = false;
+        }
+
+        // 3. Minor check for Husband/Wife
+        if ((relationship === "Husband" || relationship === "Wife") && isMinor) {
+          setError("nominee.dob", {
+            type: "manual",
+            message: "Enter Valid Date of Birth",
+          });
+          isValid = false;
         }
 
         if (hasCrossMatchError) {

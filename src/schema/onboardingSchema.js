@@ -51,6 +51,8 @@ const addressSchema = z.object({
   state: z.string()
     .min(4, "State must be at least 4 characters")
     .max(20, "State cannot exceed 20 characters"),
+  stateCode: z.union([z.string(), z.number()]).optional(),
+  district: z.string().optional(),
   pincode: z.string()
     .length(6, "Pincode must be 6 digits")
     .regex(/^[0-9]{6}$/, "Pincode must be exactly 6 digits"),
