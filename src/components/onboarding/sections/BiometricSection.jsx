@@ -12,180 +12,240 @@ const BiometricSection = ({
 }) => {
   const [showDeviceModal, setShowDeviceModal] = useState(false);
   const [isBiometricLoading, setIsBiometricLoading] = useState(false);
+
   const [rdError, setRdError] = useState({
     show: false,
     message: "",
   });
 
-  // ✅ RD SERVICE CHECK
-  const checkRDService = async (deviceType) => {
-    let url = "";
-
-    if (deviceType === "MANTRA") {
-      url = "http://127.0.0.1:11100";
-    } else if (deviceType === "MORPHO") {
-      url = "http://127.0.0.1:11100";
-    }
-
-    try {
-      const response = await fetch(url, {
-        method: "RDSERVICE",
-      });
-
-      const text = await response.text();
-
-      console.log(`${deviceType} RD SERVICE RESPONSE:`, text);
-
-      if (text && text.includes("RDService")) {
-        return { status: true };
-      }
-
-      return { status: false };
-    } catch (error) {
-      console.error("RD SERVICE ERROR:", error);
-      return { status: false };
-    }
+  // ✅ COMMON RD SERVICE PORTS
+  const RD_PORTS = {
+    MANTRA: [11100, 11101, 11102, 10094],
+    MORPHO: [11100, 11101, 11102, 10093],
+    STARTEK: [11100, 11101, 11102, 8005],
   };
 
-  const captureBiometric = async (deviceType) => {
-  setShowDeviceModal(false);
-  setIsBiometricLoading(true);
+  // ✅ CHECK ACTIVE RD SERVICE PORT
+  const checkRDService = async (deviceType) => {
+    const ports = RD_PORTS[deviceType] || [];
 
-  const rdCheck = await checkRDService(deviceType);
+    for (let port of ports) {
+      try {
+        const url = `http://127.0.0.1:${port}`;
 
-  const method = deviceType === "MORPHO" ? "POST" : "CAPTURE";
-
-  if (!rdCheck.status) {
-    setIsBiometricLoading(false);
-
-    setRdError({
-      show: true,
-      message: `${deviceType} RD Service is not running.`,
-    });
-
-    return;
-  }
-
-  try {
-    let url = "";
-    let xmlRequest = "";
-
-    // ✅ MANTRA CONFIG
-    if (deviceType === "MANTRA") {
-      url = "http://127.0.0.1:11100/rd/capture";
-
-      xmlRequest = `
-        <PidOptions ver="1.0">
-          <Opts 
-            fCount="1" 
-            fType="2" 
-            iCount="0" 
-            format="0" 
-            pidVer="2.0" 
-            timeout="20000" 
-            env="PP"
-            wadh="E0jzJ/P8UopUHAieZn8CKqS4WPMi5ZSYXgfnlfkWjrc="
-          />
-        </PidOptions>
-      `;
-    }
-
-    // ✅ MORPHO CONFIG
-    else if (deviceType === "MORPHO") {
-      url = "http://127.0.0.1:11100/capture";
-
-      xmlRequest = `
-        <PidOptions ver="1.0">
-          <Opts 
-            env="PP"
-            fCount="1"
-            fType="0"
-            format="0"
-            pidVer="2.0"
-            timeout="10000"
-            otp=""
-            wadh="E0jzJ/P8UopUHAieZn8CKqS4WPMi5ZSYXgfnlfkWjrc="
-            posh=""
-          />
-        </PidOptions>
-      `;
-    }
-
-    console.log("CAPTURE URL:", url);
-    console.log("PID XML:", xmlRequest);
-
-    const xhr = new XMLHttpRequest();
-
-    //xhr.open("CAPTURE", url, true);
-    xhr.open(method, url, true);
-
-    xhr.onload = function () {
-      console.log("CAPTURE RESPONSE:", xhr.responseText);
-
-      if (xhr.status === 200) {
-        const result = xhr.responseText;
-
-        const parser = new DOMParser();
-        const xml = parser.parseFromString(result, "text/xml");
-
-        const resp = xml.getElementsByTagName("Resp")[0];
-
-        const errCode = resp?.getAttribute("errCode");
-        const errInfo = resp?.getAttribute("errInfo");
-
-        console.log("ERR CODE:", errCode);
-        console.log("ERR INFO:", errInfo);
-
-        // ✅ SUCCESS
-        if (errCode === "0") {
-          setIsBiometricVerified(true);
-
-          if (onCaptureSuccess) {
-            onCaptureSuccess(result);
-          }
-        }
-
-        // ❌ FAILED
-        else {
-          setRdError({
-            show: true,
-            message: errInfo || "Fingerprint capture failed",
-          });
-        }
-      } else {
-        setRdError({
-          show: true,
-          message: "RD service not responding properly.",
+        const response = await fetch(url, {
+          method: "RDSERVICE",
         });
+
+        const text = await response.text();
+
+        console.log(`${deviceType} RD SERVICE RESPONSE ON PORT ${port}:`, text);
+
+        // ✅ VALID RD SERVICE FOUND
+        if (
+          text &&
+          (text.includes("RDService") ||
+            text.includes("Mantra") ||
+            text.includes("Morpho") ||
+            text.includes("Startek") ||
+            text.includes("StarTek"))
+        ) {
+          return {
+            status: true,
+            port,
+          };
+        }
+      } catch (error) {
+        console.log(`${deviceType} NOT FOUND ON PORT ${port}`);
       }
+    }
 
-      setIsBiometricLoading(false);
+    return {
+      status: false,
+      port: null,
     };
+  };
 
-    xhr.onerror = function () {
-      console.error("XHR ERROR");
+  // ✅ CAPTURE BIOMETRIC
+  const captureBiometric = async (deviceType) => {
+    setShowDeviceModal(false);
+    setIsBiometricLoading(true);
+
+    // ✅ CHECK RD SERVICE
+    const rdCheck = await checkRDService(deviceType);
+
+    // ✅ REQUEST METHOD
+    let method = "CAPTURE";
+
+    if (deviceType === "MORPHO") {
+      method = "CAPTURE";
+    }
+
+    // ❌ RD SERVICE NOT FOUND
+    if (!rdCheck.status) {
+      setIsBiometricLoading(false);
 
       setRdError({
         show: true,
-        message:
-          "Unable to connect to RD service. Please ensure device is connected.",
+        message: `${deviceType} RD Service is not running.`,
+      });
+
+      return;
+    }
+
+    // ✅ ACTIVE PORT
+    const rdPort = rdCheck.port;
+
+    console.log("ACTIVE RD PORT:", rdPort);
+
+    try {
+      let url = "";
+      let xmlRequest = "";
+
+      // ✅ MANTRA CONFIG
+      if (deviceType === "MANTRA") {
+        url = `http://127.0.0.1:${rdPort}/rd/capture`;
+
+        xmlRequest = `
+          <PidOptions ver="1.0">
+            <Opts 
+              fCount="1" 
+              fType="2" 
+              iCount="0" 
+              format="0" 
+              pidVer="2.0" 
+              timeout="20000" 
+              env="PP"
+              wadh="E0jzJ/P8UopUHAieZn8CKqS4WPMi5ZSYXgfnlfkWjrc="
+            />
+          </PidOptions>
+        `;
+      }
+
+      // ✅ MORPHO CONFIG
+      else if (deviceType === "MORPHO") {
+        url = `http://127.0.0.1:${rdPort}/capture`;
+
+        xmlRequest = `<PidOptions ver="1.0"><Opts env="PP" fCount="1" fType="2" format="0" pidVer="2.0" timeout="10000" otp="" wadh="E0jzJ/P8UopUHAieZn8CKqS4WPMi5ZSYXgfnlfkWjrc=" posh=""/></PidOptions>`;
+
+        // xmlRequest = `
+        //   <PidOptions ver="1.0">
+        //     <Opts
+        //       env="PP"
+        //       fCount="1"
+        //       fType="0"
+        //       format="0"
+        //       pidVer="2.0"
+        //       timeout="10000"
+        //       otp=""
+        //       wadh="E0jzJ/P8UopUHAieZn8CKqS4WPMi5ZSYXgfnlfkWjrc="
+        //       posh=""
+        //     />
+        //   </PidOptions>
+        // `;
+      }
+
+      // ✅ STARTEK CONFIG
+      else if (deviceType === "STARTEK") {
+        url = `http://127.0.0.1:${rdPort}/rd/capture`;
+
+        xmlRequest = `
+          <PidOptions ver="1.0">
+            <Opts
+              env="PP"
+              fCount="1"
+              fType="2"
+              iCount="0"
+              pCount="0"
+              format="0"
+              pidVer="2.0"
+              timeout="20000"
+              otp=""
+              wadh="E0jzJ/P8UopUHAieZn8CKqS4WPMi5ZSYXgfnlfkWjrc="
+              posh=""
+            />
+          </PidOptions>
+        `;
+      }
+
+      console.log("CAPTURE URL:", url);
+      console.log("PID XML:", xmlRequest);
+
+      const xhr = new XMLHttpRequest();
+
+      // ✅ OPEN REQUEST
+      xhr.open(method, url, true);
+
+      // ✅ RESPONSE
+      xhr.onload = function () {
+        console.log("CAPTURE RESPONSE:", xhr.responseText);
+
+        if (xhr.status === 200) {
+          const result = xhr.responseText;
+
+          const parser = new DOMParser();
+          const xml = parser.parseFromString(result, "text/xml");
+
+          const resp = xml.getElementsByTagName("Resp")[0];
+
+          const errCode = resp?.getAttribute("errCode");
+          const errInfo = resp?.getAttribute("errInfo");
+
+          console.log("ERR CODE:", errCode);
+          console.log("ERR INFO:", errInfo);
+
+          // ✅ SUCCESS
+          if (errCode === "0") {
+            setIsBiometricVerified(true);
+
+            if (onCaptureSuccess) {
+              onCaptureSuccess(result);
+            }
+          }
+
+          // ❌ FAILED
+          else {
+            setRdError({
+              show: true,
+              message: errInfo || "Fingerprint capture failed",
+            });
+          }
+        } else {
+          setRdError({
+            show: true,
+            message: "RD service not responding properly.",
+          });
+        }
+
+        setIsBiometricLoading(false);
+      };
+
+      // ❌ CONNECTION ERROR
+      xhr.onerror = function () {
+        console.error("XHR ERROR");
+
+        setRdError({
+          show: true,
+          message:
+            "Unable to connect to RD service. Please ensure device is connected.",
+        });
+
+        setIsBiometricLoading(false);
+      };
+
+      // ✅ SEND REQUEST
+      xhr.send(xmlRequest);
+    } catch (err) {
+      console.error("CAPTURE ERROR:", err);
+
+      setRdError({
+        show: true,
+        message: "Something went wrong during capture.",
       });
 
       setIsBiometricLoading(false);
-    };
-
-    xhr.send(xmlRequest);
-  } catch (err) {
-    console.error("CAPTURE ERROR:", err);
-
-    setRdError({
-      show: true,
-      message: "Something went wrong during capture.",
-    });
-
-    setIsBiometricLoading(false);
-  }
-};
+    }
+  };
 
   return (
     <>
@@ -237,6 +297,7 @@ const BiometricSection = ({
                   ></path>
                 </svg>
               </div>
+
               <p className="text-green-700 font-black text-[17px] tracking-wide">
                 Biometric Verified Successfully
               </p>
@@ -245,7 +306,7 @@ const BiometricSection = ({
         )}
       </div>
 
-      {/* ✅ DEVICE SELECTION MODAL */}
+      {/* ✅ DEVICE MODAL */}
       {showDeviceModal && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl w-[90%] max-w-md p-6 shadow-2xl animate-in zoom-in-95 duration-300">
@@ -253,6 +314,7 @@ const BiometricSection = ({
               <h2 className="text-lg font-bold text-gray-800">
                 Select Biometric Device
               </h2>
+
               <button
                 onClick={() => setShowDeviceModal(false)}
                 className="text-gray-500 hover:text-red-500"
@@ -262,33 +324,56 @@ const BiometricSection = ({
             </div>
 
             <div className="space-y-4">
+              {/* ✅ MANTRA */}
               <div
                 onClick={() => captureBiometric("MANTRA")}
                 className="cursor-pointer p-4 border rounded-xl hover:bg-red-50 hover:border-red-400 transition-all flex items-center justify-between"
               >
                 <div>
                   <p className="font-semibold text-gray-800">Mantra Device</p>
+
                   <p className="text-sm text-gray-500">
                     Recommended for faster capture
                   </p>
                 </div>
+
                 <FaFingerprint className="text-red-500 text-xl" />
               </div>
 
+              {/* ✅ MORPHO */}
               <div
                 onClick={() => captureBiometric("MORPHO")}
                 className="cursor-pointer p-4 border rounded-xl hover:bg-blue-50 hover:border-blue-400 transition-all flex items-center justify-between"
               >
                 <div>
                   <p className="font-semibold text-gray-800">Morpho Device</p>
+
                   <p className="text-sm text-gray-500">
                     Secure biometric authentication
                   </p>
                 </div>
+
                 <FaFingerprint className="text-blue-500 text-xl" />
+              </div>
+
+              {/* ✅ STARTEK */}
+              <div
+                onClick={() => captureBiometric("STARTEK")}
+                className="cursor-pointer p-4 border rounded-xl hover:bg-green-50 hover:border-green-400 transition-all flex items-center justify-between"
+              >
+                <div>
+                  <p className="font-semibold text-gray-800">Startek Device</p>
+
+                  <p className="text-sm text-gray-500">
+                    UIDAI compatible fingerprint scanner
+                  </p>
+                </div>
+
+                <FaFingerprint className="text-green-600 text-xl" />
               </div>
             </div>
 
+            {/* ✅ CANCEL */}
             <button
               onClick={() => setShowDeviceModal(false)}
               className="mt-6 w-full py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium"

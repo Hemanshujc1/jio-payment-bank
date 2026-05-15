@@ -97,7 +97,7 @@ const BiometricVerificationModal = ({
     setStatusMessage("Device ready. Please place your finger on the scanner...");
 
     const pidOptions = `<PidOptions ver="1.0">
-      <Opts fCount="1" fType="0" iCount="0" pCount="0" format="0" pidVer="2.0" timeout="10000" wadh="E0jzJ/P8UopUHAieZn8CKqS4WPMi5ZSYXgfnlfkWjrc=" env="PP" />
+      <Opts fCount="1" fType="2" iCount="0" pCount="0" format="0" pidVer="2.0" timeout="10000" env="PP" />
     </PidOptions>`;
 
     // 2. Capture Biometric Data
