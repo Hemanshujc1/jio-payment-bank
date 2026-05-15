@@ -20,24 +20,33 @@ const AadhaarAddressSection = ({ aadhaarAddress }) => {
     if (sameAsAadhaar && aadhaarAddress) {
       setValue(
         "applicant.communicationAddress.addressLine1",
-        aadhaarAddress.houseNumber || ""
+        aadhaarAddress.houseNumber || "",
+        { shouldValidate: true }
       );
       setValue(
         "applicant.communicationAddress.addressLine2",
-        aadhaarAddress.landmark || ""
+        aadhaarAddress.landmark || "",
+        { shouldValidate: true }
       );
       setValue(
         "applicant.communicationAddress.addressLine3",
-        aadhaarAddress.locality || ""
+        aadhaarAddress.locality || "",
+        { shouldValidate: true }
       );
-      setValue("applicant.communicationAddress.city", aadhaarAddress.district || "");
+      setValue(
+        "applicant.communicationAddress.city",
+        aadhaarAddress.district || "",
+        { shouldValidate: true }
+      );
       setValue(
         "applicant.communicationAddress.state",
-        aadhaarAddress.state || ""
+        aadhaarAddress.state || "",
+        { shouldValidate: true }
       );
       setValue(
         "applicant.communicationAddress.pincode",
-        aadhaarAddress.pincode || ""
+        aadhaarAddress.pincode || "",
+        { shouldValidate: true }
       );
     } else if (!sameAsAadhaar && prevSameAsAadhaar.current === true) {
       // Clear fields when unchecked

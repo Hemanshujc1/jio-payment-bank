@@ -67,7 +67,7 @@ const AadhaarDetailsTab = ({ onNext, kycData }) => {
       setValue("applicant.communicationAddress.addressLine1", addr.houseNumber || "");
       setValue("applicant.communicationAddress.addressLine2", addr.landmark || "");
       setValue("applicant.communicationAddress.addressLine3", addr.locality || "");
-      setValue("applicant.communicationAddress.district", addr.district || "");
+      setValue("applicant.communicationAddress.city", addr.district || "");
       setValue("applicant.communicationAddress.state", addr.state || "");
       setValue("applicant.communicationAddress.pincode", addr.pincode || "");
     }
@@ -84,7 +84,7 @@ const AadhaarDetailsTab = ({ onNext, kycData }) => {
       setValue("applicant.communicationAddress.addressLine1", addr.houseNumber || "");
       setValue("applicant.communicationAddress.addressLine2", addr.landmark || "");
       setValue("applicant.communicationAddress.addressLine3", addr.locality || "");
-      setValue("applicant.communicationAddress.district", addr.district || "");
+      setValue("applicant.communicationAddress.city", addr.district || "");
       setValue("applicant.communicationAddress.state", addr.state || "");
       setValue("applicant.communicationAddress.pincode", addr.pincode || "");
     } else {
@@ -92,7 +92,7 @@ const AadhaarDetailsTab = ({ onNext, kycData }) => {
       setValue("applicant.communicationAddress.addressLine1", "");
       setValue("applicant.communicationAddress.addressLine2", "");
       setValue("applicant.communicationAddress.addressLine3", "");
-      setValue("applicant.communicationAddress.district", "");
+      setValue("applicant.communicationAddress.city", "");
       setValue("applicant.communicationAddress.state", "");
       setValue("applicant.communicationAddress.pincode", "");
     }
