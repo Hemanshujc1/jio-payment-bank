@@ -108,7 +108,7 @@ const ApplicationReviewTab = ({ goToStep }) => {
 };
 
   // ✅ FINAL PAYLOAD BUILDER
-  const buildFinalPayload = () => {
+  const buildFinalPayload = (consentsArray) => {
     return {
       applicationNumber: sessionStorage.getItem("applicationNumber"),
       externalAppRefNumber: sessionStorage.getItem("externalAppRefNumber"),
@@ -117,9 +117,11 @@ const ApplicationReviewTab = ({ goToStep }) => {
       martialStatus:
         formData.applicant.maritalStatus === "Married" ? "2" : "1",
 
-      consents: Array.isArray(formData.onboarding?.consents)
-        ? formData.onboarding.consents
-        : [],
+      consents: Array.isArray(consentsArray) && consentsArray.length > 0
+        ? consentsArray
+        : (Array.isArray(formData.onboarding?.consents)
+            ? formData.onboarding.consents
+            : []),
 
       financialDetails: {
         sourceOfIncome: formData.financial.sourceOfIncome || "A04",
@@ -226,11 +228,11 @@ const ApplicationReviewTab = ({ goToStep }) => {
 
   // ✅ AUTOMATIC FINAL SUBMISSION
   // This is triggered ONLY when the Modal successfully verifies the biometric
-  const handleFinalSubmit = async () => {
+  const handleFinalSubmit = async (consentsArray) => {
     setIsBiometricLoading(true);
 
     try {
-      const payload = buildFinalPayload();
+      const payload = buildFinalPayload(consentsArray);
       console.log("🚀 FINAL PAYLOAD:", payload);
 
       const res = await onboardingService.submitApplication(payload);

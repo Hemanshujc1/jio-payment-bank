@@ -122,22 +122,23 @@ const BiometricVerificationModal = ({
           // 4. API CALL WITH SPECIFIED PAYLOAD FORMAT
           // ========================================================
           try {
+            const formattedConsents = consentsList
+              .filter((c) => selectedConsents[c.consentTextCode])
+              .map((c) => ({
+                consent: c.text1,
+                code: c.consentTextCode,
+                version: "1",
+                method: "checkbox",
+              }));
+
             const payload = {
               vkid: localStorage.getItem("vkid") || "RJ2903071",
               applicationNumber: sessionStorage.getItem("applicationNumber"),
               externalAppRefNumber: sessionStorage.getItem("externalAppRefNumber"),
               latitude: "19.118027857360293", // Hardcoded
               longitude: "72.8733474523108",  // Hardcoded
-              // vkid: "RJ2903071",              // Hardcoded
               bioMetricData: captureXml,
-              consents: consentsList
-                .filter((c) => selectedConsents[c.consentTextCode])
-                .map((c) => ({
-                  consent: c.text1,
-                  code: c.consentTextCode,
-                  version: "1",
-                  method: "checkbox",
-                }))
+              consents: formattedConsents
             };
 
             const apiResponse = await onboardingService.customerBioAuth(payload);
@@ -145,8 +146,8 @@ const BiometricVerificationModal = ({
             if(apiResponse.status === "SUCCESS") {
               setStatusMessage("Biometric Verified Successfully!");
               if (onCaptureSuccess) {
-              onCaptureSuccess(apiResponse); 
-            }
+                onCaptureSuccess(formattedConsents); 
+              }
             } else{
               setStatusMessage("Biometric Verification Failed!");
             }
@@ -175,7 +176,7 @@ const BiometricVerificationModal = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 animate-in fade-in duration-200">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto p-6 md:p-8 flex flex-col items-center gap-6 relative animate-in zoom-in-95 duration-200">
+      <div className="bg-white rounded-xl shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto scrollbar-hide p-6 md:p-8 flex flex-col items-center gap-6 relative animate-in zoom-in-95 duration-200">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-500 hover:text-gray-900 transition-colors font-bold text-lg p-2 bg-white rounded-full"
