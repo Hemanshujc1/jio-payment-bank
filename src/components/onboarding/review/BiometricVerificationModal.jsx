@@ -181,7 +181,6 @@ const BiometricVerificationModal = ({
     `;
 
       captureUrl = `http://127.0.0.1:${devicePort}/rd/capture`;
-
       captureMethod = "CAPTURE";
     }
 
