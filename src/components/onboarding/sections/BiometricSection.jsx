@@ -299,7 +299,7 @@ const BiometricSection = ({
               </div>
 
               <p className="text-green-700 font-black text-[17px] tracking-wide">
-                Biometric Verified Successfully
+               Biometric capture completed successfully. Please wait for identity verification to finish.
               </p>
             </div>
           )

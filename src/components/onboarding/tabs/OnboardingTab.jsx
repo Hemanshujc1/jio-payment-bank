@@ -262,18 +262,18 @@ const OnboardingTab = ({
         setIsBiometricVerified(false);
         setDocumentStatus("mismatch");
         setPanAadhaarFailed(true);
-        setVerificationErrorMessage(
-          response.message || "Identity verification failed.",
-        );
+        const msg = response.message || "Identity verification failed.";
+        setVerificationErrorMessage(msg);
+        toast.error(msg);
       }
     } catch (error) {
       console.error("ERROR:", error);
       setIsBiometricVerified(false);
       setDocumentStatus("mismatch");
       setPanAadhaarFailed(true);
-      setVerificationErrorMessage(
-        error.message || "An error occurred during verification.",
-      );
+      const msg = error.message || "An error occurred during verification.";
+      setVerificationErrorMessage(msg);
+      toast.error(msg);
     } finally {
       setIsBiometricLoading(false);
     }
@@ -581,23 +581,7 @@ const OnboardingTab = ({
         onCaptureSuccess={captureBiometric}
       />
 
-      {/* Aadhaar/PAN API Verification Status */}
-      {panAadhaarFailed && (
-        <div className="w-full max-w-4xl mx-auto mt-4 px-4 py-3 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
-          <div className="flex items-center justify-center w-6 h-6 rounded-full bg-red-500 text-white shrink-0 font-bold text-sm mt-0.5">
-            !
-          </div>
-          <div className="flex flex-col">
-            <p className="text-red-800 font-bold text-[15px]">
-              Verification Failed
-            </p>
-            <p className="text-red-600 text-[13.5px] mt-0.5">
-              {verificationErrorMessage ||
-                "The details provided do not match our records."}
-            </p>
-          </div>
-        </div>
-      )}
+
 
       {panAadhaarSuccess && (
         <div className="w-full max-w-4xl mx-auto mt-4 px-4 py-3 bg-green-50 border border-green-200 rounded-xl flex items-start gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
