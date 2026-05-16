@@ -10,6 +10,7 @@ import ConsentsSection from "../sections/ConsentsSection";
 import LanguageSelection from "../sections/LanguageSelection";
 import BiometricSection from "../sections/BiometricSection";
 import { useToast } from "../../ui/Toast";
+import { MOBILE_REGEX, isRepeatingDigits } from "../../../utils/validationUtils";
 
 const OnboardingTab = ({
   onNext,
@@ -284,7 +285,7 @@ const OnboardingTab = ({
   const [isVerifyingEmailOtp, setIsVerifyingEmailOtp] = useState(false);
 
   const handleGenerateOtp = async () => {
-    if (mobileNumber.length >= 10) {
+    if (MOBILE_REGEX.test(mobileNumber) && !isRepeatingDigits(mobileNumber)) {
       setIsApiLoading(true);
       try {
         const response = await onboardingService.generateOtp(

@@ -125,7 +125,11 @@ const AadhaarDetailsTab = ({ onNext, kycData }) => {
       "applicant.communicationAddress",
     ]);
 
-    if (isValid) onNext();
+    if (isValid) {
+      onNext();
+    } else {
+      toast.error("Please fill all required fields correctly.");
+    }
   };
 
   return (

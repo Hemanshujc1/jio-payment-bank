@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import ProceedButton from "../../common/ProceedButton";
 import OtpVerification from "../../common/OtpVerification";
 import { IoMdCheckmarkCircle } from "react-icons/io";
+import { MOBILE_REGEX, isRepeatingDigits } from "../../../utils/validationUtils";
 
 const MobileOtpSection = ({
   mobileNumber,
@@ -109,11 +110,21 @@ const MobileOtpSection = ({
                 <IoMdCheckmarkCircle className="text-green-500 text-2xl absolute right-3" />
               )}
             </div>
+            {mobileNumber.length === 10 && !MOBILE_REGEX.test(mobileNumber) && (
+              <p className="text-red-500 text-[11px] font-bold mt-1 ml-1 animate-in fade-in slide-in-from-top-1 duration-200">
+                Invalid mobile number
+              </p>
+            )}
+            {mobileNumber.length === 10 && isRepeatingDigits(mobileNumber) && (
+              <p className="text-red-500 text-[11px] font-bold mt-1 ml-1 animate-in fade-in slide-in-from-top-1 duration-200">
+                Invalid mobile number
+              </p>
+            )}
             
             {!isMobileVerified && !showMobileOtp && (
               <button
                 onClick={handleGenerateMobileOtp}
-                disabled={mobileNumber.length < 10 || isApiLoading}
+                disabled={!MOBILE_REGEX.test(mobileNumber) || isRepeatingDigits(mobileNumber) || isApiLoading}
                 className="mt-4 w-full h-11 bg-sand-500 text-sand-350 border border-brown-700 font-bold rounded-lg hover:bg-brown-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-[14px] flex items-center justify-center gap-2"
               >
                 {isApiLoading ? (
@@ -168,12 +179,12 @@ const MobileOtpSection = ({
             <label className="text-[14px] text-sand-500 font-bold mb-2">
               Email Address <span className="text-sand-400 font-normal ml-1">(Optional)</span>
             </label>
-            <div className={`flex items-center rounded-xl p-3 w-full border transition-all duration-200 relative ${isEmailVerified ? 'bg-green-50/30 border-green-200' : 'bg-sand-100/50 border-sand-300 focus-within:border-brown-700 focus-within:bg-white'}`}>
+            <div className={`flex items-center rounded-xl p-3 w-full border transition-all duration-200 relative ${isEmailVerified ? 'bg-green-50/30 border-green-200' : (!isMobileVerified ? 'bg-gray-100 border-gray-200' : 'bg-sand-100/50 border-sand-300 focus-within:border-brown-700 focus-within:bg-white')}`}>
               <input
                 type="email"
                 placeholder="customer@example.com"
-                disabled={showEmailOtp || isEmailVerified}
-                className={`grow outline-none text-sand-900 font-semibold bg-transparent text-[16px] ${(showEmailOtp || isEmailVerified) ? 'opacity-70 cursor-not-allowed' : ''}`}
+                disabled={!isMobileVerified || showEmailOtp || isEmailVerified}
+                className={`grow outline-none text-sand-900 font-semibold bg-transparent text-[16px] ${(!isMobileVerified || showEmailOtp || isEmailVerified) ? 'opacity-70 cursor-not-allowed' : ''}`}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -199,7 +210,13 @@ const MobileOtpSection = ({
               </button>
             )}
 
-            {!isValidEmail && email.length > 0 && (
+            {!isMobileVerified && (
+              <p className="text-amber-600 font-bold text-[11px] mt-2 animate-in fade-in slide-in-from-left-1 duration-300">
+                Please verify the mobile OTP first to enter the email ID
+              </p>
+            )}
+
+            {!isValidEmail && email.length > 0 && isMobileVerified && (
               <p className="text-red-500 font-medium text-[12px] mt-2">Please enter a valid email address.</p>
             )}
 

@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 
-const NameFields = ({ prefix, label, error, register }) => (
+const NameFields = ({ prefix, label, error, register, onBlur }) => (
   <div className="flex flex-col gap-4">
     <span className="font-bold text-[14px] sm:text-[15px] text-gray-800 ml-0.5">{label}<span className="text-red-500 ml-0.5">*</span></span>
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 items-start">
       <div className="flex flex-col gap-1.5">
         <input 
-          {...register(`${prefix}.firstName`)}
+          {...register(`${prefix}.firstName`, { onBlur })}
           type="text" 
           placeholder="First Name" 
           className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${error?.firstName ? 'border-red-500' : 'border-neutral-light focus-within:border-gray-900'} placeholder:text-gray-400 text-[14px] font-medium`}
@@ -16,7 +16,7 @@ const NameFields = ({ prefix, label, error, register }) => (
       </div>
       <div className="flex flex-col gap-1.5">
         <input 
-          {...register(`${prefix}.middleName`)}
+          {...register(`${prefix}.middleName`, { onBlur })}
           type="text" 
           placeholder="Middle Name (Optional)" 
           className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${error?.middleName ? 'border-red-500' : 'border-neutral-light focus-within:border-gray-900'} placeholder:text-gray-400 text-[14px] font-medium`}
@@ -25,7 +25,7 @@ const NameFields = ({ prefix, label, error, register }) => (
       </div>
       <div className="flex flex-col gap-1.5">
         <input 
-          {...register(`${prefix}.lastName`)}
+          {...register(`${prefix}.lastName`, { onBlur })}
           type="text" 
           placeholder="Last Name" 
           className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${error?.lastName ? 'border-red-500' : 'border-neutral-light focus-within:border-gray-900'} placeholder:text-gray-400 text-[14px] font-medium`}
@@ -37,8 +37,12 @@ const NameFields = ({ prefix, label, error, register }) => (
 );
 
 const FamilyDetails = () => {
-  const { register, watch, setValue, formState: { errors } } = useFormContext();
+  const { register, watch, setValue, trigger, formState: { errors } } = useFormContext();
   const maritalStatus = watch("applicant.maritalStatus");
+
+  const handleBlur = (e) => {
+    trigger(e.target.name);
+  };
 
   return (
     <section className="flex flex-col w-full">
@@ -72,6 +76,7 @@ const FamilyDetails = () => {
           label="Father Name" 
           error={errors.family?.fatherName}
           register={register}
+          onBlur={handleBlur}
         />
 
         {/* Mother Name */}
@@ -80,6 +85,7 @@ const FamilyDetails = () => {
           label="Mother Name" 
           error={errors.family?.motherName}
           register={register}
+          onBlur={handleBlur}
         />
 
         {/* Spouse Name (Only if Married) */}
@@ -89,6 +95,7 @@ const FamilyDetails = () => {
             label="Spouse Name" 
             error={errors.family?.spouseName}
             register={register}
+            onBlur={handleBlur}
           />
         )}
 

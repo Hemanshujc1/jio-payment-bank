@@ -8,7 +8,7 @@ import { differenceInYears } from "date-fns";
 import { parseDate, checkNamesMatch } from "../../../utils/validationUtils";
 
 const NomineeDetailsTab = ({ onNext }) => {
-  const { trigger, getValues, setError, clearErrors } = useFormContext();
+  const { trigger, getValues, setError, clearErrors, formState: { errors } } = useFormContext();
   const provideNominee = useWatch({ name: "nominee.provide" });
   const nomineeDob = useWatch({ name: "nominee.dob" });
   const relationship = useWatch({ name: "nominee.relationship" });
@@ -58,9 +58,14 @@ const NomineeDetailsTab = ({ onNext }) => {
           }
 
           if (checkNamesMatch(guardianFullName, nomineeFullName)) {
+            const message = "Guardian Name cannot be the same as Nominee Name";
             setError("guardian.firstName", {
               type: "manual",
-              message: "Guardian Name cannot be the same as Nominee Name",
+              message: message,
+            });
+            setError("nominee.firstName", {
+              type: "manual",
+              message: "Nominee Name cannot be the same as Guardian Name",
             });
             hasCrossMatchError = true;
           }

@@ -72,8 +72,13 @@ export const  onboardingSchema = z.object({
     agreeTerms: z.boolean().refine(val => val === true, "Must agree to terms and conditions"),
     agreeAeps: z.boolean().refine(val => val === true, "Must agree to AEPS terms"),
     agreeSweep: z.boolean().refine(val => val === true, "Must agree to sweep terms"),
-    pan: z.string().min(1, "PAN Number is required").regex(/^[A-Z]{3}P[A-Z]{1}[0-9]{4}[A-Z]{1}$/, "Enter Valid PAN Number (4th character must be 'P')"),
-    aadhaar: z.string().min(1, "Aadhaar/VID is required").regex(/^\d+$/, "Aadhaar/VID must be numeric").refine(val => val.length === 12 || val.length === 16, "Aadhaar must be 12 digits or VID must be 16 digits"),
+    pan: z.string().min(1, "PAN Number is required").regex(/^[A-Z]{3}P[A-Z]{1}[0-9]{4}[A-Z]{1}$/, "Enter Valid PAN Number"),
+    aadhaar: z.string()
+      .min(1, "Aadhaar/VID is required")
+      .regex(/^\d+$/, "Aadhaar/VID must be numeric")
+      .refine(val => val.length === 12 || val.length === 16, "Aadhaar must be 12 digits or VID must be 16 digits")
+      .refine(val => !/^[01]/.test(val), "Please enter a valid Aadhaar number")
+      .refine(val => !/^(.)\1+$/.test(val), "Please enter a valid Aadhaar number"),
     fatcaDeclared: z.boolean().refine(val => val === true, "Must declare FATCA status"),
     subscriptionId: z.string().optional(),
     schemeCode: z.string().optional(),
@@ -184,7 +189,6 @@ export const  onboardingSchema = z.object({
   }
 
   // Nominee/Guardian checks against core family
-  /* Relaxing name duplication constraints as per user request
   if (data.nominee.provide === "Yes") {
     const nominee = data.nominee;
     const nomineeFullName = `${nominee.firstName || ""} ${nominee.middleName || ""} ${nominee.lastName || ""}`.replace(/\s+/g, ' ').trim();
@@ -212,11 +216,11 @@ export const  onboardingSchema = z.object({
         }
         if (nomineeFullName !== "" && checkNamesMatch(guardianFullName, nomineeFullName)) {
           addNameMatchIssue("Nominee", "Guardian", ["guardian", "firstName"]);
+          addNameMatchIssue("Guardian", "Nominee", ["nominee", "firstName"]);
         }
       }
     }
   }
-  */
 
   // Explicit Spouse Validation when Married
   if (data.applicant.maritalStatus === 'Married') {

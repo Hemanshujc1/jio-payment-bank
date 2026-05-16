@@ -55,6 +55,19 @@ const FamilyFinancialDetailsTab = ({ onNext }) => {
 
       let hasCrossMatchError = false;
 
+      // Cross-branch validation for Spouse Name (since superRefine on root might not trigger for individual field triggers)
+      if (maritalStatus === 'Married') {
+        const spouse = data.family.spouseName;
+        if (!spouse?.firstName?.trim()) {
+          setError("family.spouseName.firstName", { type: "manual", message: "Name is required" });
+          hasCrossMatchError = true;
+        }
+        if (!spouse?.lastName?.trim()) {
+          setError("family.spouseName.lastName", { type: "manual", message: "Name is required" });
+          hasCrossMatchError = true;
+        }
+      }
+
       for (let i = 0; i < namesToSync.length; i++) {
         for (let j = i + 1; j < namesToSync.length; j++) {
           if (checkNamesMatch(namesToSync[i].name, namesToSync[j].name)) {

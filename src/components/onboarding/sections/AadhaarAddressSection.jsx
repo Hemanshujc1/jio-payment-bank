@@ -126,6 +126,14 @@ const AadhaarAddressSection = ({ aadhaarAddress }) => {
         </label>
       </div>
 
+      {sameAsAadhaar && errors.applicant?.communicationAddress && (
+        <div className="mb-4 p-3 flex items-center gap-2 animate-in fade-in slide-in-from-top-1">
+          <p className="text-red-600 text-[12px] font-medium">
+            The communication address is invalid. Please select "Others" to enter manually.
+          </p>
+        </div>
+      )}
+
       <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4 ${sameAsAadhaar ? 'hidden' : ''}`}>
         {/* Address Line 1 */}
         <div className="flex flex-col gap-1.5">

@@ -167,6 +167,14 @@ const AddressForm = ({ prefix, title, aadhaarAddress }) => {
             </span>
           )}
 
+          {addressType && addressType !== "Others" && error?.addressDetails && (
+            <div className="p-3 flex items-center animate-in fade-in slide-in-from-top-1">
+              <p className="text-red-600 text-[12px] font-medium">
+                The selected address is invalid. Please select "Others" to enter manually.
+              </p>
+            </div>
+          )}
+
           {addressType &&
             addressType !== "Others" &&
             (currentAddress?.addressLine1 ||

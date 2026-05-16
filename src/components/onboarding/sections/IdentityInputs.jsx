@@ -55,7 +55,7 @@ const IdentityInputs = ({
                 onChange={handlePanChange}
                 onBlur={() => handleBlur("pan")}
                 disabled={disabled}
-                placeholder="Enter PAN"
+                placeholder="ABCPE1234F"
                 className={`grow outline-none bg-transparent placeholder-neutral-400 tracking-wider text-[14px] ${disabled ? 'cursor-not-allowed' : ''}`}
               />
               <button

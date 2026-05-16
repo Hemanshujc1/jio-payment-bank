@@ -97,14 +97,12 @@ const FinancialDetails = () => {
   const filteredIncomeOptions = getAnnualIncomeOptions(selectedOccupation);
 
   useEffect(() => {
-    // If the currently selected source of income is not in the new filtered list, clear it
     if (
       selectedSource &&
       !filteredSourceOptions.find((o) => o.value === selectedSource)
     ) {
       setValue("financial.sourceOfIncome", "", { shouldValidate: true });
     }
-    // If the currently selected annual income is not in the new filtered list, clear it
     if (
       selectedIncome &&
       !filteredIncomeOptions.find((o) => o.value === selectedIncome)
