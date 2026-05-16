@@ -130,7 +130,6 @@ const BiometricVerificationModal = ({
         format="0"
         pidVer="2.0"
         timeout="10000"
-        wadh="E0jzJ/P8UopUHAieZn8CKqS4WPMi5ZSYXgfnlfkWjrc="
       />
     </PidOptions>
   `;
@@ -165,8 +164,7 @@ const BiometricVerificationModal = ({
 
     // ✅ STARTEK CONFIG
     else if (selectedDevice === "startek") {
-      pidOptions = `
-    <PidOptions ver="1.0">
+      pidOptions =  `<PidOptions ver="1.0">
       <Opts
         env="PP"
         fCount="1"
@@ -177,14 +175,12 @@ const BiometricVerificationModal = ({
         pidVer="2.0"
         timeout="20000"
         otp=""
-        wadh="E0jzJ/P8UopUHAieZn8CKqS4WPMi5ZSYXgfnlfkWjrc="
         posh=""
       />
     </PidOptions>
-  `;
+    `;
 
       captureUrl = `http://127.0.0.1:${devicePort}/rd/capture`;
-
       captureMethod = "CAPTURE";
     }
 
