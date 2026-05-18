@@ -13,17 +13,19 @@ import { ToastProvider } from './components/ui/Toast'
 const App = () => {
 
   useEffect(() => {
-    fetch("https://localhost:3000/validate", {
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || "https://localhost:3000";
+
+    fetch(`${backendUrl}/validate`, {
       credentials: "include"
     })
       .then(res => {
         if (res.status === 401) {
-          window.location.href = "https://localhost:3000/auth";
+          window.location.href = `${backendUrl}/auth`;
         }
       })
       .catch(err => {
         console.log("Server Error:", err);
-        window.location.href = "https://localhost:3000/auth";
+        window.location.href = `${backendUrl}/auth`;
       });
 
   }, []);

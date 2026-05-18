@@ -18,12 +18,14 @@ const Navbar = () => {
   // FETCH LOGGED-IN USER
   // -----------------------------------------
   useEffect(() => {
-    fetch("https://localhost:3000/profile", {
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || "https://localhost:3000";
+
+    fetch(`${backendUrl}/profile`, {
       credentials: "include"
     })
       .then((res) => {
         if (res.status === 401) {
-          window.location.href = "https://localhost:3000/auth";
+          window.location.href = `${backendUrl}/auth`;
           return;
         }
         return res.json();
@@ -73,7 +75,8 @@ const Navbar = () => {
   // LOGOUT
   // -----------------------------------------
   const logout = () => {
-    window.location.href = "https://localhost:3000/logout";
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || "https://localhost:3000";
+    window.location.href = `${backendUrl}/logout`;
   };
 
   return (
