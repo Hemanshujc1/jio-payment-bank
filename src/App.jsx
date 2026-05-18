@@ -1,14 +1,10 @@
 import React, {useEffect } from "react";
-
 import { Routes, Route } from 'react-router-dom'
 import Navbar from './components/layout/Navbar'
 import Footer from './components/layout/Footer'
 import SavingsVariantPage from './pages/SavingsVariantPage'
 import OnboardingFlowPage from './pages/OnboardingFlowPage'
 import { ToastProvider } from './components/ui/Toast'
-
-
-
 
 const App = () => {
 
