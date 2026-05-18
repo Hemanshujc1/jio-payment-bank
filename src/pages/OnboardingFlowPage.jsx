@@ -171,7 +171,7 @@ const OnboardingFlowPage = () => {
         activeStep={currentStep - 1}
         steps={STEPS}
         onStepClick={(step) => {
-          const IS_TESTING = true; 
+          const IS_TESTING = false; 
 
           // Allow navigating to any step up to maxStepReached
           // This prevents skipping ahead without completing the current step via the Proceed button
