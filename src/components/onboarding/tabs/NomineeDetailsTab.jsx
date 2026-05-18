@@ -8,7 +8,7 @@ import { differenceInYears } from "date-fns";
 import { parseDate, checkNamesMatch } from "../../../utils/validationUtils";
 
 const NomineeDetailsTab = ({ onNext }) => {
-  const { trigger, getValues, setError, clearErrors, formState: { errors } } = useFormContext();
+  const { trigger, getValues, setValue, setError, clearErrors, formState: { errors } } = useFormContext();
   const provideNominee = useWatch({ name: "nominee.provide" });
   const nomineeDob = useWatch({ name: "nominee.dob" });
   const relationship = useWatch({ name: "nominee.relationship" });
@@ -107,6 +107,38 @@ const NomineeDetailsTab = ({ onNext }) => {
       }
 
     } else {
+      // Clear nominee fields (except provide)
+      setValue("nominee.relationship", "");
+      setValue("nominee.firstName", "");
+      setValue("nominee.middleName", "");
+      setValue("nominee.lastName", "");
+      setValue("nominee.dob", "");
+      setValue("nominee.address", "");
+      setValue("nominee.addressDetails.addressLine1", "");
+      setValue("nominee.addressDetails.addressLine2", "");
+      setValue("nominee.addressDetails.addressLine3", "");
+      setValue("nominee.addressDetails.city", "");
+      setValue("nominee.addressDetails.state", "");
+      setValue("nominee.addressDetails.stateCode", "");
+      setValue("nominee.addressDetails.district", "");
+      setValue("nominee.addressDetails.pincode", "");
+
+      // Clear guardian fields
+      setValue("guardian.relationship", "");
+      setValue("guardian.firstName", "");
+      setValue("guardian.middleName", "");
+      setValue("guardian.lastName", "");
+      setValue("guardian.dob", "");
+      setValue("guardian.address", "");
+      setValue("guardian.addressDetails.addressLine1", "");
+      setValue("guardian.addressDetails.addressLine2", "");
+      setValue("guardian.addressDetails.addressLine3", "");
+      setValue("guardian.addressDetails.city", "");
+      setValue("guardian.addressDetails.state", "");
+      setValue("guardian.addressDetails.stateCode", "");
+      setValue("guardian.addressDetails.district", "");
+      setValue("guardian.addressDetails.pincode", "");
+
       isValid = await trigger(["nominee.provide"]);
     }
 

@@ -132,7 +132,7 @@ const ApplicationReviewTab = ({ goToStep }) => {
         occupation: formData.financial.occupation || "NA",
       },
 
-      nomineeDetails: (() => {
+      nomineeDetails: formData.nominee.provide === "Yes" ? (() => {
         const rel = formData.nominee.relationship;
         const appGender = formData.applicant.gender;
         const dob = formData.nominee.dob;
@@ -160,9 +160,9 @@ const ApplicationReviewTab = ({ goToStep }) => {
           priority: "1",
           minor: isMinor,
         };
-      })(),
+      })() : null,
 
-      nomineeAddress: {
+      nomineeAddress: formData.nominee.provide === "Yes" ? {
         addressType: "Permanent",
         careOf: "None",
         houseNumber: formData.nominee.addressDetails?.addressLine1 || "",
@@ -177,9 +177,9 @@ const ApplicationReviewTab = ({ goToStep }) => {
         stateCode: formData.nominee.addressDetails?.stateCode || "",
         country: "India",
         pincode: formData.nominee.addressDetails?.pincode || "",
-      },
+      } : null,
 
-      nomineeContactDetails: [
+      nomineeContactDetails: formData.nominee.provide === "Yes" ? [
         {
           type: "Mobile",
           countryCode: "91",
@@ -191,14 +191,18 @@ const ApplicationReviewTab = ({ goToStep }) => {
           type: "Personal Email",
           email: formData.applicant.emailId || "",
         },
-      ],
+      ] : [],
 
-      nomineeOVDDetails: {
+      nomineeOVDDetails: formData.nominee.provide === "Yes" ? {
         documentType: "Aadhaar",
         documentNumber: "",
-      },
+      } : null,
 
-      guardianAddress: {
+      guardianAddress: (formData.nominee.provide === "Yes" && (() => {
+        const dob = formData.nominee.dob;
+        const age = dob ? differenceInYears(new Date(), parseDate(dob)) : 0;
+        return age < 18;
+      })()) ? {
         addressType: "Permanent",
         careOf: "None",
         houseNumber: formData.guardian?.addressDetails?.addressLine1 || "",
@@ -213,12 +217,16 @@ const ApplicationReviewTab = ({ goToStep }) => {
         stateCode: formData.guardian?.addressDetails?.stateCode || "",
         country: "India",
         pincode: formData.guardian?.addressDetails?.pincode || "",
-      },
+      } : null,
 
-      guardianOVDDetails: {
+      guardianOVDDetails: (formData.nominee.provide === "Yes" && (() => {
+        const dob = formData.nominee.dob;
+        const age = dob ? differenceInYears(new Date(), parseDate(dob)) : 0;
+        return age < 18;
+      })()) ? {
         documentType: "Aadhaar",
         documentNumber: "",
-      },
+      } : null,
 
       addOn: {
         subscriptionId: formData.onboarding?.subscriptionId || "NA",
