@@ -196,6 +196,15 @@ export const  onboardingSchema = z.object({
     // Check Nominee against Applicant, Father, Mother, Spouse
     if (nomineeFullName !== "") {
       for (const familyMember of namesToSync) {
+        // Skip cross-validation check if the nominee relationship naturally matches the family member
+        const isMatchedMother = familyMember.label === "Mother" && nominee.relationship === "Mother";
+        const isMatchedFather = familyMember.label === "Father" && nominee.relationship === "Father";
+        const isMatchedSpouse = familyMember.label === "Spouse" && ["Husband", "Wife", "Spouse"].includes(nominee.relationship);
+
+        if (isMatchedMother || isMatchedFather || isMatchedSpouse) {
+          continue;
+        }
+
         if (checkNamesMatch(nomineeFullName, familyMember.name)) {
           addNameMatchIssue(familyMember.label, "Nominee", ["nominee", "firstName"]);
         }
@@ -210,6 +219,14 @@ export const  onboardingSchema = z.object({
       // Check Guardian against Applicant, Father, Mother, Spouse AND Nominee
       if (guardianFullName !== "") {
         for (const familyMember of namesToSync) {
+          // Skip cross-validation check if the guardian relationship naturally matches the family member
+          const isMatchedMother = familyMember.label === "Mother" && g.relationship === "Mother";
+          const isMatchedFather = familyMember.label === "Father" && g.relationship === "Father";
+
+          if (isMatchedMother || isMatchedFather) {
+            continue;
+          }
+
           if (checkNamesMatch(guardianFullName, familyMember.name)) {
             addNameMatchIssue(familyMember.label, "Guardian", ["guardian", "firstName"]);
           }
@@ -335,7 +352,18 @@ export const  onboardingSchema = z.object({
       if (!isValidAgeDiff) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: "Please enter a valid Date of Birth",
+          message: "Enter Valid Date of Birth",
+          path: ["nominee", "dob"],
+        });
+      }
+
+      // Explicitly block minors for relationships that inherently must be adults
+      const age = differenceInYears(new Date(), parseDate(nominee.dob));
+      const adultOnlyRelations = ["Mother", "Father", "Husband", "Wife"];
+      if (adultOnlyRelations.includes(nominee.relationship) && age < 18) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `${nominee.relationship} cannot be a minor`,
           path: ["nominee", "dob"],
         });
       }

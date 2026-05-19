@@ -8,26 +8,25 @@ import { ToastProvider } from './components/ui/Toast'
 
 const App = () => {
  const [isValidating, setIsValidating] = useState(true);
+  useEffect(() => {
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || "https://localhost:3000";
 
-  // useEffect(() => {
-  //   const backendUrl = import.meta.env.VITE_BACKEND_URL || "https://localhost:3000";
+    fetch(`${backendUrl}/validate`, {
+      credentials: "include"
+    })
+      .then(res => {
+        if (res.status === 401) {
+          window.location.href = `${backendUrl}/auth`;
+        } else {
+          setIsValidating(false);
+        }
+      })
+      .catch(err => {
+        console.log("Server Error:", err);
+        window.location.href = `${backendUrl}/auth`;
+      });
 
-  //   fetch(`${backendUrl}/validate`, {
-  //     credentials: "include"
-  //   })
-  //     .then(res => {
-  //       if (res.status === 401) {
-  //         window.location.href = `${backendUrl}/auth`;
-  //       } else {
-  //         setIsValidating(false);
-  //       }
-  //     })
-  //     .catch(err => {
-  //       console.log("Server Error:", err);
-  //       window.location.href = `${backendUrl}/auth`;
-  //     });
-
-  // }, []);
+  }, []);
 
   if (isValidating) {
     return (

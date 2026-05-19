@@ -3,7 +3,7 @@ import { Controller, useFormContext } from "react-hook-form";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-const CustomDatePicker = ({ name, maxDate, disabled }) => {
+const CustomDatePicker = ({ name, maxDate, minDate, disabled }) => {
   const { control, watch, formState: { errors } } = useFormContext();
   const value = watch(name);
 
@@ -55,6 +55,7 @@ const CustomDatePicker = ({ name, maxDate, disabled }) => {
             maxLength={10}
             onBlur={onBlur}
             maxDate={maxDate}
+            minDate={minDate}
             disabled={disabled}
             dateFormat="dd/MM/yyyy"
             placeholderText="dd/mm/yyyy"

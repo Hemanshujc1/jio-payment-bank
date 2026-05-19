@@ -159,7 +159,30 @@ const NomineeInfo = () => {
             Date Of Birth<span className="text-red-500 ml-0.5">*</span>
           </span>
           <div className="grow relative z-30">
-            <CustomDatePicker name="nominee.dob" maxDate={new Date()} />
+            {(() => {
+              let maxDobDate = new Date();
+              let minDobDate = null;
+
+              if (["Mother", "Father", "Husband", "Wife"].includes(relationship)) {
+                maxDobDate = new Date(new Date().setFullYear(new Date().getFullYear() - 18));
+              }
+
+              if (["Son", "Daughter"].includes(relationship) && applicant?.dob) {
+                const parts = applicant.dob.split("/");
+                if (parts.length === 3) {
+                  const appDobDate = new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
+                  minDobDate = new Date(appDobDate.getFullYear() + 18, appDobDate.getMonth(), appDobDate.getDate());
+                }
+              }
+
+              return (
+                <CustomDatePicker 
+                  name="nominee.dob" 
+                  maxDate={maxDobDate} 
+                  minDate={minDobDate}
+                />
+              );
+            })()}
           </div>
         </div>
       </div>
