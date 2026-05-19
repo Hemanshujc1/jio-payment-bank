@@ -51,9 +51,9 @@ const AddressForm = ({ prefix, title, aadhaarAddress }) => {
       if (currentJSON !== targetJSON) {
         setValue(`${prefix}.addressDetails`, targetAddress);
 
-        setValue(`${prefix}.addressLine1`, targetAddress?.addressLine1 || "");
-        setValue(`${prefix}.addressLine2`, targetAddress?.addressLine2 || "");
-        setValue(`${prefix}.addressLine3`, targetAddress?.addressLine3 || "");
+        setValue(`${prefix}.addressDetails.addressLine1`, targetAddress?.addressLine1 || "");
+        setValue(`${prefix}.addressDetails.addressLine2`, targetAddress?.addressLine2 || "");
+        setValue(`${prefix}.addressDetails.addressLine3`, targetAddress?.addressLine3 || "");
         setValue(`${prefix}.addressDetails.city`, targetAddress?.city || "");
         setValue(`${prefix}.addressDetails.state`, targetAddress?.state || "");
         setValue(`${prefix}.addressDetails.stateCode`, targetAddress?.stateCode || "");

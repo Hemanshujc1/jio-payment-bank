@@ -89,7 +89,7 @@ const ReviewNomineeDetails = ({ data, guardian, onEdit }) => {
           <div className="px-1">
             <ReviewRow
               label="Nominee Address"
-              value={formatAddress(data)}
+              value={formatAddress(data?.addressDetails)}
             />
           </div>
         </div>
@@ -126,7 +126,7 @@ const ReviewNomineeDetails = ({ data, guardian, onEdit }) => {
               <div className="px-1">
                 <ReviewRow
                   label="Guardian Address"
-                  value={formatAddress(guardian)}
+                  value={formatAddress(guardian?.addressDetails)}
                 />
               </div>
 
