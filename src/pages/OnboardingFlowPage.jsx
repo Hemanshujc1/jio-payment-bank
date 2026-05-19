@@ -151,7 +151,6 @@ const OnboardingFlowPage = () => {
 
   return (
     <div className="w-full max-w-7xl mx-auto flex flex-col px-3 sm:px-6 md:px-8 pt-2 sm:pt-4 pb-0 text-black font-sans">
-      
       <AgentOtpModal
         isOpen={showAgentOtpModal}
         onVerified={handleAgentVerified}
@@ -167,19 +166,19 @@ const OnboardingFlowPage = () => {
       )}
 
       {isAgentVerified && (
-      <HorizontalLinearAlternativeLabelStepper
-        activeStep={currentStep - 1}
-        steps={STEPS}
-        onStepClick={(step) => {
-          const IS_TESTING = false; 
+        <HorizontalLinearAlternativeLabelStepper
+          activeStep={currentStep - 1}
+          steps={STEPS}
+          onStepClick={(step) => {
+            const IS_TESTING = false;
 
-          // Allow navigating to any step up to maxStepReached
-          // This prevents skipping ahead without completing the current step via the Proceed button
-          if (IS_TESTING || step <= maxStepReached) {
-            setCurrentStep(step);
-          }
-        }}
-      />
+            // Allow navigating to any step up to maxStepReached
+            // This prevents skipping ahead without completing the current step via the Proceed button
+            if (IS_TESTING || step <= maxStepReached) {
+              setCurrentStep(step);
+            }
+          }}
+        />
       )}
 
       <FormProvider {...methods}>
