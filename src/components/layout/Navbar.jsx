@@ -111,7 +111,7 @@ const Navbar = () => {
 
           {/* USER NAME */}
           {/* <span className="font-bold text-blue-700 text-[11px] sm:text-[14px] text-center whitespace-nowrap px-3 py-1 bg-blue-50 rounded-lg border border-blue-200 shadow-sm">
-            {user.user_name || "User"}
+         j   {user.user_name || "User"}
           </span> */}
 
           {/* WALLET */}

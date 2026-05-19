@@ -10,10 +10,10 @@ export default defineConfig({
   server: {
     host: "localhost",
     port: 5173,
-    https: {
-      key: fs.readFileSync("../backend/server.pem"),
-      cert: fs.readFileSync("../backend/server.crt"),
-    },
+    // https: {
+    //   key: fs.readFileSync("../backend/server.pem"),
+    //   cert: fs.readFileSync("../backend/server.crt"),
+    // },
     proxy: {
       "/api": {
         target: "http://vkmssit.vakrangee.in:8090",

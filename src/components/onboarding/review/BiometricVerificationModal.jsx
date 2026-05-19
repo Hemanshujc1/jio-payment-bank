@@ -74,6 +74,7 @@ const BiometricVerificationModal = ({
         });
         if (response.ok) {
           const text = await response.text();
+
           if (
             selectedDevice === "mantra" &&
             text.toLowerCase().includes("mantra")
@@ -81,15 +82,12 @@ const BiometricVerificationModal = ({
             devicePort = port;
             break;
           } else if (
-            selectedDevice === "morpho" &&
-            (text.toLowerCase().includes("morpho") ||
-              text.toLowerCase().includes("scl"))
+            selectedDevice === "morpho"
           ) {
             devicePort = port;
             break;
           } else if (
-            selectedDevice === "startek" &&
-            text.toLocaleLowerCase().includes("startek")
+            selectedDevice === "startek"
           ) {
             devicePort = port;
 
@@ -233,7 +231,7 @@ const BiometricVerificationModal = ({
             if (apiResponse.status === "SUCCESS") {
               setStatusMessage("Biometric Verified Successfully!");
               if (onCaptureSuccess) {
-                onCaptureSuccess(formattedConsents); 
+                onCaptureSuccess(formattedConsents);
               }
             } else{
               setStatusMessage("Biometric Verification Failed!");
