@@ -93,7 +93,7 @@ const MobileOtpSection = ({
             <label className="text-[14px] text-sand-500 font-bold mb-2">
               Mobile Number<span className="text-red-500 ml-1">*</span>
             </label>
-            <div className={`flex items-center rounded-xl p-3 w-full border transition-all duration-200 relative ${isMobileVerified ? 'bg-green-50/30 border-green-200' : 'bg-sand-100/50 border-sand-300 focus-within:border-brown-700 focus-within:bg-white'}`}>
+            <div className={`flex items-center rounded-xl p-3 w-full border transition-all duration-200 relative ${isMobileVerified ? 'bg-green-50/30 border-green-200' : 'bg-white  border-sand-300 focus-within:border-brown-700 focus-within:bg-white'}`}>
               <input
                 type="text"
                 placeholder="XXXXXXXXXX"
@@ -179,7 +179,7 @@ const MobileOtpSection = ({
             <label className="text-[14px] text-sand-500 font-bold mb-2">
               Email Address <span className="text-sand-400 font-normal ml-1">(Optional)</span>
             </label>
-            <div className={`flex items-center rounded-xl p-3 w-full border transition-all duration-200 relative ${isEmailVerified ? 'bg-green-50/30 border-green-200' : (!isMobileVerified ? 'bg-gray-100 border-gray-200' : 'bg-sand-100/50 border-sand-300 focus-within:border-brown-700 focus-within:bg-white')}`}>
+            <div className={`flex items-center rounded-xl p-3 w-full border transition-all duration-200 relative ${isEmailVerified ? 'bg-green-50/30 border-green-200' : (!isMobileVerified ? 'bg-gray-100 border-gray-200' : 'bg-white border-sand-300 focus-within:border-brown-700 focus-within:bg-white')}`}>
               <input
                 type="email"
                 placeholder="customer@example.com"
