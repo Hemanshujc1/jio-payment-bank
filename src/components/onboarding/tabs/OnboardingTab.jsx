@@ -586,7 +586,7 @@ const OnboardingTab = ({
 
 
       {panAadhaarSuccess && (
-        <div className="w-full max-w-4xl mx-auto mt-4 px-4 py-3 bg-green-50 border border-green-200 rounded-xl flex items-start gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
+        <div className="w-full max-w-4xl mx-auto mt-4 px-4 py-3 bg-green-50 border border-green-200 rounded-xl flex items-start gap-3">
           <div className="flex items-center justify-center w-6 h-6 rounded-full bg-green-500 text-white shrink-0 font-bold text-sm mt-0.5">
             ✓
           </div>

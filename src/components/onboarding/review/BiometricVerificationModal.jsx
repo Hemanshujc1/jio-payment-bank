@@ -84,9 +84,9 @@ const BiometricVerificationModal = ({
           } else if (selectedDevice === "morpho") {
             devicePort = port;
             break;
-          } else if (selectedDevice === "startek") {
+          } else if (selectedDevice === "startek" &&
+            text.toLowerCase().includes("startek")) {
             devicePort = port;
-
             break;
           }
         }

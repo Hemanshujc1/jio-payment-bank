@@ -281,7 +281,7 @@ const BiometricSection = ({
           </button>
         ) : (
           documentStatus !== "mismatch" && (
-            <div className="flex flex-col items-center animate-in zoom-in-50 duration-500">
+            <div className="flex flex-col items-center">
               <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center text-white mb-4 shadow-lg shadow-green-500/30">
                 <svg
                   className="w-8 h-8"
