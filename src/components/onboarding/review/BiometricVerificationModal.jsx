@@ -272,7 +272,7 @@ const BiometricVerificationModal = ({
         </button>
 
         <h2 className="font-bold text-[20px] md:text-[22px] tracking-wide text-center mt-2">
-          Biometric Verification
+        Customer Biometric Verification
         </h2>
 
         <div className="w-full bg-gray-50 border border-gray-200 p-4 rounded-lg flex flex-col gap-3 shrink-0">
