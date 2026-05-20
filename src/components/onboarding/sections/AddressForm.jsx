@@ -212,11 +212,10 @@ const AddressForm = ({ prefix, title, aadhaarAddress }) => {
               <input
                 {...register(`${prefix}.addressDetails.addressLine1`)}
                 maxLength={100}
-                className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${
-                  error?.addressDetails?.addressLine1
+                className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${error?.addressDetails?.addressLine1
                     ? "border-red-500"
                     : "border-neutral-light focus-within:border-gray-900"
-                } text-[14px] font-medium text-gray-900`}
+                  } text-[14px] font-medium text-gray-900`}
                 placeholder="Address Line 1"
               />
               {error?.addressDetails?.addressLine1 && (
@@ -233,11 +232,10 @@ const AddressForm = ({ prefix, title, aadhaarAddress }) => {
               <input
                 {...register(`${prefix}.addressDetails.addressLine2`)}
                 maxLength={100}
-                className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${
-                  error?.addressDetails?.addressLine2
+                className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${error?.addressDetails?.addressLine2
                     ? "border-red-500"
                     : "border-neutral-light focus-within:border-gray-900"
-                } text-[14px] font-medium text-gray-900`}
+                  } text-[14px] font-medium text-gray-900`}
                 placeholder="Address Line 2"
               />
               {error?.addressDetails?.addressLine2 && (
@@ -254,11 +252,10 @@ const AddressForm = ({ prefix, title, aadhaarAddress }) => {
               <input
                 {...register(`${prefix}.addressDetails.addressLine3`)}
                 maxLength={100}
-                className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${
-                  error?.addressDetails?.addressLine3
+                className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${error?.addressDetails?.addressLine3
                     ? "border-red-500"
                     : "border-neutral-light focus-within:border-gray-900"
-                } text-[14px] font-medium text-gray-900`}
+                  } text-[14px] font-medium text-gray-900`}
                 placeholder="Address Line 3"
               />
               {error?.addressDetails?.addressLine3 && (
@@ -279,11 +276,10 @@ const AddressForm = ({ prefix, title, aadhaarAddress }) => {
                   onInput={(e) => {
                     e.target.value = e.target.value.replace(/[^0-9]/g, "");
                   }}
-                  className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all w-full focus:outline-none ${
-                    error?.addressDetails?.pincode
+                  className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all w-full focus:outline-none ${error?.addressDetails?.pincode
                       ? "border-red-500"
                       : "border-neutral-light focus-within:border-gray-900"
-                  } text-[14px] font-medium text-gray-900`}
+                    } text-[14px] font-medium text-gray-900`}
                   placeholder="6-digit Pincode"
                 />
                 {isPincodeLoading && (
@@ -307,11 +303,10 @@ const AddressForm = ({ prefix, title, aadhaarAddress }) => {
                 {...register(`${prefix}.addressDetails.city`)}
                 maxLength={20}
                 readOnly
-                className={`bg-gray-100 rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${
-                  error?.addressDetails?.city
+                className={`bg-gray-100 rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${error?.addressDetails?.city
                     ? "border-red-500"
                     : "border-neutral-light"
-                } text-[14px] font-medium text-gray-500 cursor-not-allowed`}
+                  } text-[14px] font-medium text-gray-500 cursor-not-allowed`}
                 placeholder="City"
               />
               {error?.addressDetails?.city && (
@@ -329,11 +324,10 @@ const AddressForm = ({ prefix, title, aadhaarAddress }) => {
                 {...register(`${prefix}.addressDetails.state`)}
                 maxLength={20}
                 readOnly
-                className={`bg-gray-100 rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${
-                  error?.addressDetails?.state
+                className={`bg-gray-100 rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${error?.addressDetails?.state
                     ? "border-red-500"
                     : "border-neutral-light"
-                } text-[14px] font-medium text-gray-500 cursor-not-allowed`}
+                  } text-[14px] font-medium text-gray-500 cursor-not-allowed`}
                 placeholder="State"
               />
               {error?.addressDetails?.state && (

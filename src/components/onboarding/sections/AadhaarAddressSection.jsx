@@ -143,11 +143,10 @@ const AadhaarAddressSection = ({ aadhaarAddress }) => {
           <input
             {...register("applicant.communicationAddress.addressLine1")}
             maxLength={100}
-            className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${
-              errors.applicant?.communicationAddress?.addressLine1
+            className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${errors.applicant?.communicationAddress?.addressLine1
                 ? "border-red-500"
                 : "border-neutral-light focus-within:border-gray-900"
-            } text-[14px]`}
+              } text-[14px]`}
             placeholder="Address Line 1"
           />
           {errors.applicant?.communicationAddress?.addressLine1 && <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-1">{errors.applicant.communicationAddress.addressLine1.message}</span>}
@@ -161,11 +160,10 @@ const AadhaarAddressSection = ({ aadhaarAddress }) => {
           <input
             {...register("applicant.communicationAddress.addressLine2")}
             maxLength={100}
-            className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${
-              errors.applicant?.communicationAddress?.addressLine2
+            className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${errors.applicant?.communicationAddress?.addressLine2
                 ? "border-red-500"
                 : "border-neutral-light focus-within:border-gray-900"
-            } text-[14px]`}
+              } text-[14px]`}
             placeholder="Address Line 2"
           />
           {errors.applicant?.communicationAddress?.addressLine2 && <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-1">{errors.applicant.communicationAddress.addressLine2.message}</span>}
@@ -179,11 +177,10 @@ const AadhaarAddressSection = ({ aadhaarAddress }) => {
           <input
             {...register("applicant.communicationAddress.addressLine3")}
             maxLength={100}
-            className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${
-              errors.applicant?.communicationAddress?.addressLine3
+            className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${errors.applicant?.communicationAddress?.addressLine3
                 ? "border-red-500"
                 : "border-neutral-light focus-within:border-gray-900"
-            } text-[14px]`}
+              } text-[14px]`}
             placeholder="Address Line 3"
           />
           {errors.applicant?.communicationAddress?.addressLine3 && <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-1">{errors.applicant.communicationAddress.addressLine3.message}</span>}
@@ -199,11 +196,10 @@ const AadhaarAddressSection = ({ aadhaarAddress }) => {
               {...register("applicant.communicationAddress.pincode")}
               maxLength={6}
               onInput={(e) => { e.target.value = e.target.value.replace(/[^0-9]/g, ""); }}
-              className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all w-full focus:outline-none ${
-                errors.applicant?.communicationAddress?.pincode
+              className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all w-full focus:outline-none ${errors.applicant?.communicationAddress?.pincode
                   ? "border-red-500"
                   : "border-neutral-light focus-within:border-gray-900"
-              } text-[14px]`}
+                } text-[14px]`}
               placeholder="6-digit Pincode"
             />
             {isPincodeLoading && (
@@ -223,16 +219,15 @@ const AadhaarAddressSection = ({ aadhaarAddress }) => {
             {...register("applicant.communicationAddress.city")}
             maxLength={20}
             readOnly
-            className={`bg-gray-100 rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${
-              errors.applicant?.communicationAddress?.city
+            className={`bg-gray-100 rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${errors.applicant?.communicationAddress?.city
                 ? "border-red-500"
                 : "border-neutral-light"
-            } text-[14px] cursor-not-allowed text-gray-500`}
+              } text-[14px] cursor-not-allowed text-gray-500`}
             placeholder="City"
           />
           {errors.applicant?.communicationAddress?.city && <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-1">{errors.applicant.communicationAddress.city.message}</span>}
         </div>
- 
+
         {/* State */}
         <div className="flex flex-col gap-1.5">
           <span className="font-bold text-[13px] sm:text-[14px] text-gray-700 ml-0.5">
@@ -242,11 +237,10 @@ const AadhaarAddressSection = ({ aadhaarAddress }) => {
             {...register("applicant.communicationAddress.state")}
             maxLength={20}
             readOnly
-            className={`bg-gray-100 rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${
-              errors.applicant?.communicationAddress?.state
+            className={`bg-gray-100 rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${errors.applicant?.communicationAddress?.state
                 ? "border-red-500"
                 : "border-neutral-light"
-            } text-[14px] cursor-not-allowed text-gray-500`}
+              } text-[14px] cursor-not-allowed text-gray-500`}
             placeholder="State"
           />
           {errors.applicant?.communicationAddress?.state && <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-1">{errors.applicant.communicationAddress.state.message}</span>}
