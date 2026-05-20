@@ -20,11 +20,10 @@ const ReviewAadhaarDetails = ({ data, onEdit }) => {
       addr.addressLine3,
       addr.city,
       addr.state,
+      addr.pincode
     ].filter(Boolean).join(", ");
 
-    return address
-      ? `${address} - ${addr.pincode || ""}`
-      : "-";
+    return address || "-";
   };
 
   // ✅ Base64 image support
@@ -72,7 +71,10 @@ const ReviewAadhaarDetails = ({ data, onEdit }) => {
             <ReviewRow label="Email" value={data?.emailId || "-"} />
             <ReviewRow label="Phone" value={data?.mobileNumber || "-"} />
             <ReviewRow label="PAN" value={data?.pan || "-"} />
-            <ReviewRow label="Aadhaar" value={data?.aadhaar || "-"} />
+            <ReviewRow 
+              label={(data?.aadhaar || "").replace(/[^a-zA-Z0-9]/g, "").length === 16 ? "VID" : "Aadhaar"} 
+              value={data?.aadhaar || "-"} 
+            />
           </div>
         </div>
       </div>
