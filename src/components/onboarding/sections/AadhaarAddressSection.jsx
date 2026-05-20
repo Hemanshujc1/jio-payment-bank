@@ -129,7 +129,7 @@ const AadhaarAddressSection = ({ aadhaarAddress }) => {
       {sameAsAadhaar && errors.applicant?.communicationAddress && (
         <div className="mb-4 p-3 flex items-center gap-2 animate-in fade-in slide-in-from-top-1">
           <p className="text-red-600 text-[12px] font-medium">
-            The communication address is invalid. Please select "Others" to enter manually.
+            The communication address is invalid. Please enter address manually.
           </p>
         </div>
       )}

@@ -67,34 +67,46 @@ const BiometricVerificationModal = ({
     setStatusMessage(`Checking ${selectedDevice} RD Service...`);
     let devicePort = null;
 
-    // 1. Scan for RD Service
-    for (let port = 11100; port <= 11105; port++) {
-      try {
-        const response = await fetch(`http://127.0.0.1:${port}/rd/info`, {
-          method: "RDSERVICE",
-        });
-        if (response.ok) {
-          const text = await response.text();
+  // ✅ RD PORTS
+const RD_PORTS = {
+  mantra: [11100, 11101, 11102, 10094],
+  morpho: [11100, 11101, 11102, 10093],
+  startek: [11100, 11101, 11102, 8005],
+};
 
-          if (
-            selectedDevice === "mantra" &&
-            text.toLowerCase().includes("mantra")
-          ) {
-            devicePort = port;
-            break;
-          } else if (selectedDevice === "morpho") {
-            devicePort = port;
-            break;
-          } else if (selectedDevice === "startek" &&
-            text.toLowerCase().includes("startek")) {
-            devicePort = port;
-            break;
-          }
-        }
-      } catch (error) {
-        // Port not active, loop continues
-      }
+// ✅ CHECK RD SERVICE
+const ports = RD_PORTS[selectedDevice] || [];
+
+for (let port of ports) {
+  try {
+    const response = await fetch(`http://127.0.0.1:${port}`, {
+      method: "RDSERVICE",
+    });
+
+    const text = await response.text();
+
+    console.log(
+      `${selectedDevice} RD SERVICE RESPONSE ON PORT ${port}:`,
+      text
+    );
+
+    if (
+      text &&
+      (
+        text.includes("RDService") ||
+        text.includes("Mantra") ||
+        text.includes("Morpho") ||
+        text.includes("Startek") ||
+        text.includes("StarTek")
+      )
+    ) {
+      devicePort = port;
+      break;
     }
+  } catch (error) {
+    console.log(`${selectedDevice} NOT FOUND ON PORT ${port}`);
+  }
+}
 
     if (!devicePort) {
       setStatusMessage(
