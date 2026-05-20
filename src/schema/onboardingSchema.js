@@ -69,9 +69,6 @@ export const  onboardingSchema = z.object({
     productType: z.enum(["savings", "current"]).default("savings"),
     aepsConsent: z.enum(["yes", "no"]).default("yes"),
     language: z.string().default("English"),
-    agreeTerms: z.boolean().refine(val => val === true, "Must agree to terms and conditions"),
-    agreeAeps: z.boolean().refine(val => val === true, "Must agree to AEPS terms"),
-    agreeSweep: z.boolean().refine(val => val === true, "Must agree to sweep terms"),
     pan: z.string().min(1, "PAN Number is required").regex(/^[A-Z]{3}P[A-Z]{1}[0-9]{4}[A-Z]{1}$/, "Enter Valid PAN Number"),
     aadhaar: z.string()
       .min(1, "Aadhaar/VID is required")
@@ -79,7 +76,6 @@ export const  onboardingSchema = z.object({
       .refine(val => val.length === 12 || val.length === 16, "Aadhaar must be 12 digits or VID must be 16 digits")
       .refine(val => !/^[01]/.test(val), "Please enter a valid Aadhaar number")
       .refine(val => !/^(.)\1+$/.test(val), "Please enter a valid Aadhaar number"),
-    fatcaDeclared: z.boolean().refine(val => val === true, "Must declare FATCA status"),
     subscriptionId: z.string().optional(),
     schemeCode: z.string().optional(),
     network: z.string().optional(),
@@ -121,6 +117,7 @@ export const  onboardingSchema = z.object({
   }),
   nominee: z.object({
     provide: z.enum(["Yes", "No"]),
+    c69Accepted: z.boolean().optional(),
     relationship: z.string().optional(),
     firstName: nameField().optional().or(z.literal("")),
     lastName: nameField(true).optional().or(z.literal("")),
@@ -407,6 +404,16 @@ export const  onboardingSchema = z.object({
           ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Pincode must be 6 digits", path: ["guardian", "addressDetails", "pincode"] });
         }
       }
+    }
+  } else {
+    console.log("DEBUG NOMINEE PROVIDE:", data.nominee);
+    // If provide is "No", c69Accepted must be true
+    if (!data.nominee.c69Accepted) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Please agree to this consent to proceed without a nominee.",
+        path: ["nominee", "c69Accepted"],
+      });
     }
   }
 });

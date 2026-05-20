@@ -9,9 +9,10 @@ import { parseDate, checkNamesMatch, focusFirstError } from "../../../utils/vali
 import { useToast } from "../../ui/Toast";
 
 const NomineeDetailsTab = ({ onNext }) => {
-  const { trigger, getValues, setValue, setError, clearErrors, formState: { errors } } = useFormContext();
+  const { trigger, getValues, setValue, register, setError, clearErrors, formState: { errors } } = useFormContext();
   const toast = useToast();
   const provideNominee = useWatch({ name: "nominee.provide" });
+  const c69ConsentData = useWatch({ name: "onboarding.c69ConsentData" });
   const nomineeDob = useWatch({ name: "nominee.dob" });
   const relationship = useWatch({ name: "nominee.relationship" });
   const applicant = useWatch({ name: "applicant" });
@@ -23,10 +24,12 @@ const NomineeDetailsTab = ({ onNext }) => {
 
     clearErrors([
       "nominee.firstName",
-      "guardian.firstName"
+      "guardian.firstName",
+      "nominee.c69Accepted"
     ]);
 
     if (provideNominee === "Yes") {
+      setValue("nominee.c69Accepted", false);
       const fieldsToTrigger = ["nominee"];
       if (isMinor) {
         fieldsToTrigger.push("guardian");
@@ -142,6 +145,16 @@ const NomineeDetailsTab = ({ onNext }) => {
       setValue("guardian.addressDetails.pincode", "");
 
       isValid = await trigger(["nominee.provide"]);
+
+      const values = getValues();
+      const isC69Accepted = values.nominee?.c69Accepted;
+      if (!isC69Accepted) {
+        setError("nominee.c69Accepted", {
+          type: "manual",
+          message: "Please agree to this consent to proceed without a nominee.",
+        });
+        isValid = false;
+      }
     }
 
     if (isValid) {
@@ -169,10 +182,32 @@ const NomineeDetailsTab = ({ onNext }) => {
               {isMinor && <GuardianInfo />}
             </>
           )}
+
+          {provideNominee === "No" && (
+            <div className="flex flex-col gap-2 mt-1 px-2 sm:px-0">
+              <label className="flex items-start gap-3 cursor-pointer group">
+                <div className="mt-1 shrink-0">
+                  <input
+                    type="checkbox"
+                    {...register("nominee.c69Accepted")}
+                    className={`w-5 h-5 border-2 accent-black cursor-pointer rounded-sm ${
+                      errors.nominee?.c69Accepted ? 'border-red-500' : 'border-[#D1A054]'
+                    }`}
+                  />
+                </div>
+                <span className="text-[13.5px] sm:text-[14px] leading-snug text-gray-800 select-none">
+                  {c69ConsentData ? c69ConsentData.text1 : "-"}
+                  <span className="text-red-500 text-lg ml-1">*</span>
+                </span>
+              </label>
+              {errors.nominee?.c69Accepted && (
+                <span className="text-red-500 text-[12px] font-medium ml-8">{errors.nominee.c69Accepted.message}</span>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="flex justify-center w-full mt-2 mb-5 py-3 sm:mt-4">
-
           <ProceedButton onClick={handleProceed} className="w-fit shadow-xl hover:scale-105 active:scale-95 transition-all duration-200" />
         </div>
       </div>

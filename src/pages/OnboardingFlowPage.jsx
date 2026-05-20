@@ -43,6 +43,22 @@ const OnboardingFlowPage = () => {
     setShowAgentOtpModal(false);
   };
 
+  const handleNewApplication = () => {
+    
+    localStorage.clear();
+    sessionStorage.clear();
+
+    const cookies = document.cookie.split(";");
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i];
+      const eqPos = cookie.indexOf("=");
+      const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+      document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+    }
+
+    window.location.href = "/";
+  };
+
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [currentStep]);
@@ -98,9 +114,6 @@ const OnboardingFlowPage = () => {
         productType: "savings",
         aepsConsent: "yes",
         language: "English",
-        agreeTerms: false,
-        agreeAeps: false,
-        agreeSweep: false,
         pan: "",
         aadhaar: "",
         // fatcaDeclared: false,
@@ -132,6 +145,7 @@ const OnboardingFlowPage = () => {
         middleName: "",
         lastName: "",
         dob: "",
+        c69Accepted: false,
       },
       guardian: {
         relationship: "",
@@ -157,7 +171,13 @@ const OnboardingFlowPage = () => {
       />
 
       {isVerificationComplete && (
-        <div className="w-full flex justify-end mb-6 mt-2 animate-in fade-in zoom-in duration-500">
+        <div className="w-full flex justify-end items-center gap-3 mb-6 mt-2 animate-in fade-in zoom-in duration-500">
+          <button
+            onClick={handleNewApplication}
+            className="font-bold text-red-700 bg-red-50 border border-red-200 px-4 py-2 sm:py-2.5 rounded-xl text-[12px] sm:text-[14px] tracking-wider shadow-sm hover:bg-red-100 hover:text-red-800 transition-all duration-200 active:scale-95 cursor-pointer"
+          >
+            Start New Application
+          </button>
           <div className="font-bold text-sand-350 bg-sand-500 border border-brown-700 px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl text-[12px] sm:text-[14px] tracking-wider shadow-md flex items-center gap-3">
             <span className="opacity-90">App No:</span>
             <span>{applicationNumber}</span>
@@ -171,9 +191,6 @@ const OnboardingFlowPage = () => {
           steps={STEPS}
           onStepClick={(step) => {
             const IS_TESTING = true;
-
-            // Allow navigating to any step up to maxStepReached
-            // This prevents skipping ahead without completing the current step via the Proceed button
             if (IS_TESTING || step <= maxStepReached) {
               setCurrentStep(step);
             }

@@ -113,6 +113,24 @@ const ApplicationReviewTab = ({ goToStep }) => {
 
   // ✅ FINAL PAYLOAD BUILDER
   const buildFinalPayload = (consentsArray) => {
+    let baseConsents = Array.isArray(consentsArray) && consentsArray.length > 0
+      ? consentsArray
+      : (Array.isArray(formData.onboarding?.consents)
+          ? [...formData.onboarding.consents]
+          : []);
+
+    if (formData.nominee.provide === "No" && formData.nominee.c69Accepted && formData.onboarding.c69ConsentData) {
+      const c69Data = formData.onboarding.c69ConsentData;
+      if (!baseConsents.some(c => c.code === "C69")) {
+        baseConsents.push({
+          consent: c69Data.text1,
+          code: c69Data.consentTextCode,
+          version: "1",
+          method: "checkbox",
+        });
+      }
+    }
+
     return {
       applicationNumber: sessionStorage.getItem("applicationNumber"),
       externalAppRefNumber: sessionStorage.getItem("externalAppRefNumber"),
@@ -120,11 +138,7 @@ const ApplicationReviewTab = ({ goToStep }) => {
       
       martialStatus: formData.applicant.maritalStatus === "Married" ? "2" : "1",
 
-      consents: Array.isArray(consentsArray) && consentsArray.length > 0
-        ? consentsArray
-        : (Array.isArray(formData.onboarding?.consents)
-            ? formData.onboarding.consents
-            : []),
+      consents: baseConsents,
 
       financialDetails: {
         sourceOfIncome: formData.financial.sourceOfIncome || "NA",
