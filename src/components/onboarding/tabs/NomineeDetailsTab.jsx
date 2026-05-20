@@ -76,7 +76,6 @@ const NomineeDetailsTab = ({ onNext }) => {
           }
         }
 
-        // --- NEW VALIDATIONS ---
         
         // 1. Gender check for Husband/Wife
         if ((applicant.gender === "Male" && relationship === "Husband") || 
@@ -196,7 +195,16 @@ const NomineeDetailsTab = ({ onNext }) => {
                   />
                 </div>
                 <span className="text-[13.5px] sm:text-[14px] leading-snug text-gray-800 select-none">
-                  {c69ConsentData ? c69ConsentData.text1 : "-"}
+                  {c69ConsentData ? (
+                    c69ConsentData.text1.split(/\\r\\n|\\n|\r\n|\n/).map((line, i, arr) => (
+                      <React.Fragment key={i}>
+                        {line}
+                        {i !== arr.length - 1 && <br />}
+                      </React.Fragment>
+                    ))
+                  ) : (
+                    "Loading consent..."
+                  )}
                   <span className="text-red-500 text-lg ml-1">*</span>
                 </span>
               </label>

@@ -83,9 +83,15 @@ const OnboardingTab = ({
         const langCode = selectedLang ? selectedLang.code : "EN";
         const res = await onboardingService.getConsents(langCode);
         if (res.status === "SUCCESS" && res.response?.consents) {
-          setConsentsList(res.response.consents);
+          const allConsents = res.response.consents;
+          const c69 = allConsents.find(c => c.consentTextCode === "C69");
+          if (c69) {
+            setValue("onboarding.c69ConsentData", c69);
+          }
+          const filtered = allConsents.filter(c => c.consentTextCode !== "C69");
+          setConsentsList(filtered);
           const initial = {};
-          res.response.consents.forEach((c) => {
+          filtered.forEach((c) => {
             initial[c.consentTextCode] = false;
           });
           setSelectedConsents(initial);
