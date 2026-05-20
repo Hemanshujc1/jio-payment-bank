@@ -11,106 +11,99 @@ import { useToast } from "../../ui/Toast";
 const NomineeDetailsTab = ({ onNext }) => {
   const { trigger, getValues, setValue, register, setError, clearErrors, formState: { errors } } = useFormContext();
   const toast = useToast();
-  const provideNominee = useWatch({ name: "nominee.provide" });
+  
+  const nomineeVal = useWatch({ name: "nominee" }) || {};
+  const guardianVal = useWatch({ name: "guardian" }) || {};
+  const applicant = useWatch({ name: "applicant" }) || {};
   const c69ConsentData = useWatch({ name: "onboarding.c69ConsentData" });
-  const nomineeDob = useWatch({ name: "nominee.dob" });
-  const relationship = useWatch({ name: "nominee.relationship" });
-  const applicant = useWatch({ name: "applicant" });
+
+  const provideNominee = nomineeVal.provide;
+  const nomineeDob = nomineeVal.dob;
+  const relationship = nomineeVal.relationship;
 
   const isMinor = nomineeDob ? differenceInYears(new Date(), parseDate(nomineeDob)) < 18 : false;
 
+  const isNomineeFieldsFilled = !!(
+    nomineeVal.firstName?.trim() &&
+    nomineeVal.lastName?.trim() &&
+    nomineeVal.relationship?.trim() &&
+    nomineeVal.dob?.trim() &&
+    nomineeVal.address?.trim()
+  );
+
+  const isNomineeAddressFilled =
+    nomineeVal.address !== "Others" ||
+    !!(
+      nomineeVal.addressDetails?.addressLine1?.trim() &&
+      nomineeVal.addressDetails?.city?.trim() &&
+      nomineeVal.addressDetails?.state?.trim() &&
+      nomineeVal.addressDetails?.pincode?.trim()
+    );
+
+  const isGuardianFieldsFilled = !isMinor || !!(
+    guardianVal.firstName?.trim() &&
+    guardianVal.lastName?.trim() &&
+    guardianVal.relationship?.trim() &&
+    guardianVal.dob?.trim() &&
+    guardianVal.address?.trim()
+  );
+
+  const isGuardianAddressFilled = !isMinor ||
+    guardianVal.address !== "Others" ||
+    !!(
+      guardianVal.addressDetails?.addressLine1?.trim() &&
+      guardianVal.addressDetails?.city?.trim() &&
+      guardianVal.addressDetails?.state?.trim() &&
+      guardianVal.addressDetails?.pincode?.trim()
+    );
+
+  let isProceedDisabled = true;
+  if (provideNominee === "No") {
+    isProceedDisabled = !nomineeVal.c69Accepted;
+  } else if (provideNominee === "Yes") {
+    isProceedDisabled = !(
+      isNomineeFieldsFilled &&
+      isNomineeAddressFilled &&
+      isGuardianFieldsFilled &&
+      isGuardianAddressFilled
+    );
+  }
+
   const handleProceed = async () => {
-    let isValid = false;
+    let hasValidationError = false;
 
     clearErrors([
+      "nominee.provide",
       "nominee.firstName",
+      "nominee.lastName",
+      "nominee.relationship",
+      "nominee.dob",
+      "nominee.address",
+      "nominee.addressDetails.addressLine1",
+      "nominee.addressDetails.city",
+      "nominee.addressDetails.state",
+      "nominee.addressDetails.pincode",
       "guardian.firstName",
+      "guardian.lastName",
+      "guardian.relationship",
+      "guardian.dob",
+      "guardian.address",
+      "guardian.addressDetails.addressLine1",
+      "guardian.addressDetails.city",
+      "guardian.addressDetails.state",
+      "guardian.addressDetails.pincode",
       "nominee.c69Accepted"
     ]);
 
-    if (provideNominee === "Yes") {
-      setValue("nominee.c69Accepted", false);
-      const fieldsToTrigger = ["nominee"];
-      if (isMinor) {
-        fieldsToTrigger.push("guardian");
-      }
-      isValid = await trigger(fieldsToTrigger);
-      
-      if (isValid) {
-        const data = getValues();
-        const applicantFullName = `${data.applicant.firstName || ""} ${data.applicant.middleName || ""} ${data.applicant.lastName || ""}`.replace(/\s+/g, ' ').trim();
-        const nomineeFullName = `${data.nominee.firstName || ""} ${data.nominee.middleName || ""} ${data.nominee.lastName || ""}`.replace(/\s+/g, ' ').trim();
-        
-        let hasCrossMatchError = false;
+    const data = getValues();
+    const nomineeVal = data.nominee || {};
+    const guardianVal = data.guardian || {};
+    const applicantVal = data.applicant || {};
 
-        if (checkNamesMatch(nomineeFullName, applicantFullName)) {
-          setError("nominee.firstName", {
-            type: "manual",
-            message: "Nominee Name cannot be the same as Applicant Name",
-          });
-          hasCrossMatchError = true;
-        }
-
-        if (isMinor) {
-          const guardianFullName = `${data.guardian.firstName || ""} ${data.guardian.middleName || ""} ${data.guardian.lastName || ""}`.replace(/\s+/g, ' ').trim();
-          
-          if (checkNamesMatch(guardianFullName, applicantFullName)) {
-            setError("guardian.firstName", {
-              type: "manual",
-              message: "Guardian Name cannot be the same as Applicant Name",
-            });
-            hasCrossMatchError = true;
-          }
-
-          if (checkNamesMatch(guardianFullName, nomineeFullName)) {
-            const message = "Guardian Name cannot be the same as Nominee Name";
-            setError("guardian.firstName", {
-              type: "manual",
-              message: message,
-            });
-            setError("nominee.firstName", {
-              type: "manual",
-              message: "Nominee Name cannot be the same as Guardian Name",
-            });
-            hasCrossMatchError = true;
-          }
-        }
-
-        
-        // 1. Gender check for Husband/Wife
-        if ((applicant.gender === "Male" && relationship === "Husband") || 
-            (applicant.gender === "Female" && relationship === "Wife")) {
-          setError("nominee.relationship", {
-            type: "manual",
-            message: "Please select valid Nominee relation",
-          });
-          isValid = false;
-        }
-
-        // 2. Marital status check
-        if (applicant.maritalStatus === "Single" && (relationship === "Husband" || relationship === "Wife")) {
-          setError("nominee.relationship", {
-            type: "manual",
-            message: "Please select valid Nominee relation",
-          });
-          isValid = false;
-        }
-
-        // 3. Minor check for Husband/Wife
-        if ((relationship === "Husband" || relationship === "Wife") && isMinor) {
-          setError("nominee.dob", {
-            type: "manual",
-            message: "Enter Valid Date of Birth",
-          });
-          isValid = false;
-        }
-
-        if (hasCrossMatchError) {
-          isValid = false;
-        }
-      }
-
-    } else {
+    if (!provideNominee) {
+      setError("nominee.provide", { type: "manual", message: "Please select an option" });
+      hasValidationError = true;
+    } else if (provideNominee === "No") {
       // Clear nominee fields (except provide)
       setValue("nominee.relationship", "");
       setValue("nominee.firstName", "");
@@ -143,20 +136,185 @@ const NomineeDetailsTab = ({ onNext }) => {
       setValue("guardian.addressDetails.district", "");
       setValue("guardian.addressDetails.pincode", "");
 
-      isValid = await trigger(["nominee.provide"]);
-
-      const values = getValues();
-      const isC69Accepted = values.nominee?.c69Accepted;
-      if (!isC69Accepted) {
+      if (!nomineeVal.c69Accepted) {
         setError("nominee.c69Accepted", {
           type: "manual",
           message: "Please agree to this consent to proceed without a nominee.",
         });
-        isValid = false;
+        hasValidationError = true;
+      }
+    } else if (provideNominee === "Yes") {
+      setValue("nominee.c69Accepted", false);
+
+      // Validate nominee fields
+      if (!nomineeVal.firstName?.trim()) {
+        setError("nominee.firstName", { type: "manual", message: "Name is required" });
+        hasValidationError = true;
+      }
+      if (!nomineeVal.lastName?.trim()) {
+        setError("nominee.lastName", { type: "manual", message: "Name is required" });
+        hasValidationError = true;
+      }
+      if (!nomineeVal.relationship?.trim()) {
+        setError("nominee.relationship", { type: "manual", message: "Please select valid relationship" });
+        hasValidationError = true;
+      }
+      if (!nomineeVal.dob?.trim()) {
+        setError("nominee.dob", { type: "manual", message: "Enter Valid Date of Birth" });
+        hasValidationError = true;
+      }
+      if (!nomineeVal.address?.trim()) {
+        setError("nominee.address", { type: "manual", message: "Please select an address option" });
+        hasValidationError = true;
+      } else if (nomineeVal.address === "Others") {
+        if (!nomineeVal.addressDetails?.addressLine1?.trim()) {
+          setError("nominee.addressDetails.addressLine1", { type: "manual", message: "Address Line 1 is required" });
+          hasValidationError = true;
+        } else if (nomineeVal.addressDetails.addressLine1.trim().length < 5) {
+          setError("nominee.addressDetails.addressLine1", { type: "manual", message: "Address Line 1 must be at least 5 characters" });
+          hasValidationError = true;
+        }
+        if (!nomineeVal.addressDetails?.city?.trim()) {
+          setError("nominee.addressDetails.city", { type: "manual", message: "City is required" });
+          hasValidationError = true;
+        }
+        if (!nomineeVal.addressDetails?.state?.trim()) {
+          setError("nominee.addressDetails.state", { type: "manual", message: "State is required" });
+          hasValidationError = true;
+        }
+        if (!nomineeVal.addressDetails?.pincode?.trim()) {
+          setError("nominee.addressDetails.pincode", { type: "manual", message: "Pincode is required" });
+          hasValidationError = true;
+        } else if (nomineeVal.addressDetails.pincode.trim().length !== 6 || !/^\d+$/.test(nomineeVal.addressDetails.pincode.trim())) {
+          setError("nominee.addressDetails.pincode", { type: "manual", message: "Pincode must be 6 digits" });
+          hasValidationError = true;
+        }
+      }
+
+      // Check if nominee is minor
+      const isNomineeMinor = nomineeVal.dob ? differenceInYears(new Date(), parseDate(nomineeVal.dob)) < 18 : false;
+
+      if (isNomineeMinor) {
+        // Validate guardian fields
+        if (!guardianVal.firstName?.trim()) {
+          setError("guardian.firstName", { type: "manual", message: "Name is required" });
+          hasValidationError = true;
+        }
+        if (!guardianVal.lastName?.trim()) {
+          setError("guardian.lastName", { type: "manual", message: "Name is required" });
+          hasValidationError = true;
+        }
+        if (!guardianVal.relationship?.trim()) {
+          setError("guardian.relationship", { type: "manual", message: "Please select valid relationship" });
+          hasValidationError = true;
+        }
+        if (!guardianVal.dob?.trim()) {
+          setError("guardian.dob", { type: "manual", message: "Enter Valid Date of Birth" });
+          hasValidationError = true;
+        } else {
+          const guardianDate = parseDate(guardianVal.dob);
+          if (guardianDate && differenceInYears(new Date(), guardianDate) < 18) {
+            setError("guardian.dob", { type: "manual", message: "Date of birth of Guardian cannot be less than 18 years of age." });
+            hasValidationError = true;
+          }
+        }
+        if (!guardianVal.address?.trim()) {
+          setError("guardian.address", { type: "manual", message: "Please select an address option" });
+          hasValidationError = true;
+        } else if (guardianVal.address === "Others") {
+          if (!guardianVal.addressDetails?.addressLine1?.trim()) {
+            setError("guardian.addressDetails.addressLine1", { type: "manual", message: "Address Line 1 is required" });
+            hasValidationError = true;
+          } else if (guardianVal.addressDetails.addressLine1.trim().length < 5) {
+            setError("guardian.addressDetails.addressLine1", { type: "manual", message: "Address Line 1 must be at least 5 characters" });
+            hasValidationError = true;
+          }
+          if (!guardianVal.addressDetails?.city?.trim()) {
+            setError("guardian.addressDetails.city", { type: "manual", message: "City is required" });
+            hasValidationError = true;
+          }
+          if (!guardianVal.addressDetails?.state?.trim()) {
+            setError("guardian.addressDetails.state", { type: "manual", message: "State is required" });
+            hasValidationError = true;
+          }
+          if (!guardianVal.addressDetails?.pincode?.trim()) {
+            setError("guardian.addressDetails.pincode", { type: "manual", message: "Pincode is required" });
+            hasValidationError = true;
+          } else if (guardianVal.addressDetails.pincode.trim().length !== 6 || !/^\d+$/.test(guardianVal.addressDetails.pincode.trim())) {
+            setError("guardian.addressDetails.pincode", { type: "manual", message: "Pincode must be 6 digits" });
+            hasValidationError = true;
+          }
+        }
+      }
+
+      // Check cross-match errors
+      if (!hasValidationError) {
+        const applicantFullName = `${applicantVal.firstName || ""} ${applicantVal.middleName || ""} ${applicantVal.lastName || ""}`.replace(/\s+/g, ' ').trim();
+        const nomineeFullName = `${nomineeVal.firstName || ""} ${nomineeVal.middleName || ""} ${nomineeVal.lastName || ""}`.replace(/\s+/g, ' ').trim();
+
+        if (checkNamesMatch(nomineeFullName, applicantFullName)) {
+          setError("nominee.firstName", {
+            type: "manual",
+            message: "Nominee Name cannot be the same as Applicant Name",
+          });
+          hasValidationError = true;
+        }
+
+        if (isNomineeMinor) {
+          const guardianFullName = `${guardianVal.firstName || ""} ${guardianVal.middleName || ""} ${guardianVal.lastName || ""}`.replace(/\s+/g, ' ').trim();
+          
+          if (checkNamesMatch(guardianFullName, applicantFullName)) {
+            setError("guardian.firstName", {
+              type: "manual",
+              message: "Guardian Name cannot be the same as Applicant Name",
+            });
+            hasValidationError = true;
+          }
+
+          if (checkNamesMatch(guardianFullName, nomineeFullName)) {
+            setError("guardian.firstName", {
+              type: "manual",
+              message: "Guardian Name cannot be the same as Nominee Name",
+            });
+            setError("nominee.firstName", {
+              type: "manual",
+              message: "Nominee Name cannot be the same as Guardian Name",
+            });
+            hasValidationError = true;
+          }
+        }
+
+        // Gender vs Spouse check
+        if ((applicantVal.gender === "Male" && relationship === "Husband") || 
+            (applicantVal.gender === "Female" && relationship === "Wife")) {
+          setError("nominee.relationship", {
+            type: "manual",
+            message: "Please select valid Nominee relation",
+          });
+          hasValidationError = true;
+        }
+
+        // Marital status check
+        if (applicantVal.maritalStatus === "Single" && (relationship === "Husband" || relationship === "Wife")) {
+          setError("nominee.relationship", {
+            type: "manual",
+            message: "Please select valid Nominee relation",
+          });
+          hasValidationError = true;
+        }
+
+        // Minor check for Husband/Wife
+        if ((relationship === "Husband" || relationship === "Wife") && isNomineeMinor) {
+          setError("nominee.dob", {
+            type: "manual",
+            message: "Enter Valid Date of Birth",
+          });
+          hasValidationError = true;
+        }
       }
     }
 
-    if (isValid) {
+    if (!hasValidationError) {
       onNext();
     } else {
       toast.error("Please enter valid information in all fields.");
@@ -217,7 +375,7 @@ const NomineeDetailsTab = ({ onNext }) => {
 
         <div className="flex justify-center w-full mt-2 mb-5 py-3 sm:mt-4">
           <ProceedButton onClick={handleProceed} className="w-fit shadow-xl hover:scale-105 active:scale-95 transition-all duration-200" />
-        </div>
+        </div>       
       </div>
     </div>
   );
