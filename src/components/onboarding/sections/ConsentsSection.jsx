@@ -74,13 +74,18 @@ const ConsentsSection = ({
                     readOnly
                   />
                 </div>
-                <p 
-                  className="text-[12.5px] sm:text-[13px] leading-snug sm:leading-tight text-gray-800 max-w-6xl select-none" 
+                <div 
+                  className="text-[12.5px] sm:text-[13px] leading-snug sm:leading-tight text-gray-800 max-w-6xl select-none w-full" 
                   onClick={() => toggleConsent(consentItem.consentTextCode)}
                 >
-                  {consentItem.text1}
-                  {isMandatory && <span className="text-red-500 text-lg">*</span>}
-                </p>
+                  {consentItem.text1.split(/\\r\\n|\\n|\r\n|\n/).map((line, i, arr) => (
+                    <React.Fragment key={i}>
+                      {line}
+                      {i !== arr.length - 1 && <br />}
+                    </React.Fragment>
+                  ))}
+                  {isMandatory && <span className="text-red-500 text-lg ml-1">*</span>}
+                </div>
               </div>
               {hasError && <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-8 sm:ml-9">Please agree to this consent</span>}
             </div>

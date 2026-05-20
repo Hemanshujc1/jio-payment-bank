@@ -69,6 +69,7 @@ const AadhaarFieldGrid = () => {
                     disabled
                     className="bg-gray-100 text-gray-500 rounded-xl px-4 py-3 border border-neutral-light/50 cursor-not-allowed focus:outline-none text-[14px] font-medium shadow-sm appearance-none"
                 >
+                    <option value="" disabled hidden>Select Gender</option>
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
                 </select>

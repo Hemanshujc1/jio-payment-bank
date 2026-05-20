@@ -5,10 +5,12 @@ import NomineeChoice from "../sections/NomineeChoice";
 import NomineeInfo from "../sections/NomineeInfo";
 import GuardianInfo from "../sections/GuardianInfo";
 import { differenceInYears } from "date-fns";
-import { parseDate, checkNamesMatch } from "../../../utils/validationUtils";
+import { parseDate, checkNamesMatch, focusFirstError } from "../../../utils/validationUtils";
+import { useToast } from "../../ui/Toast";
 
 const NomineeDetailsTab = ({ onNext }) => {
   const { trigger, getValues, setValue, setError, clearErrors, formState: { errors } } = useFormContext();
+  const toast = useToast();
   const provideNominee = useWatch({ name: "nominee.provide" });
   const nomineeDob = useWatch({ name: "nominee.dob" });
   const relationship = useWatch({ name: "nominee.relationship" });
@@ -144,6 +146,9 @@ const NomineeDetailsTab = ({ onNext }) => {
 
     if (isValid) {
       onNext();
+    } else {
+      toast.error("Please enter valid information in all fields.");
+      focusFirstError();
     }
   };
 

@@ -3,17 +3,21 @@ import { useFormContext } from 'react-hook-form';
 import ProceedButton from "../../common/ProceedButton";
 import FamilyDetails from "../sections/FamilyDetails";
 import FinancialDetails from "../sections/FinancialDetails";
-import { checkNamesMatch } from "../../../utils/validationUtils";
+import { checkNamesMatch, focusFirstError } from "../../../utils/validationUtils";
+import { useToast } from "../../ui/Toast";
 
 const FamilyFinancialDetailsTab = ({ onNext }) => {
   const { trigger, watch, getValues, setError, clearErrors } = useFormContext();
+  const toast = useToast();
   const maritalStatus = watch("applicant.maritalStatus");
 
   const handleProceed = async () => {
     const fieldsToTrigger = [
       "family.fatherName.firstName",
+      "family.fatherName.middleName",
       "family.fatherName.lastName",
       "family.motherName.firstName",
+      "family.motherName.middleName",
       "family.motherName.lastName",
       "applicant.maritalStatus",
       "financial.occupation",
@@ -82,7 +86,13 @@ const FamilyFinancialDetailsTab = ({ onNext }) => {
 
       if (!hasCrossMatchError) {
         onNext();
+      } else {
+        toast.error("Please enter valid information in all fields.");
+        focusFirstError();
       }
+    } else {
+      toast.error("Please enter valid information in all fields.");
+      focusFirstError();
     }
   };
 

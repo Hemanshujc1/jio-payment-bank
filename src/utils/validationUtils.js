@@ -56,6 +56,31 @@ export const checkNamesMatch = (name1, name2) => {
   return normalizeName(name1) === normalizeName(name2);
 };
 
+export const focusFirstError = () => {
+  setTimeout(() => {
+    const elements = document.querySelectorAll('.border-red-500, .text-red-500, [aria-invalid="true"]');
+    let errorElement = null;
+    
+    for (let el of elements) {
+      if (el.tagName === 'SPAN' && el.textContent.trim() === '*') {
+        continue;
+      }
+      errorElement = el;
+      break;
+    }
+
+    if (errorElement) {
+      errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      if (errorElement.tagName === 'INPUT' || errorElement.tagName === 'SELECT') {
+        errorElement.focus();
+      } else {
+        const input = errorElement.parentElement?.querySelector('input, select');
+        if (input) input.focus();
+      }
+    }
+  }, 150);
+};
+
 export const validateAgeDifference = (applicantDob, nomineeDob, relationship) => {
   const appDate = typeof applicantDob === 'string' ? parseDate(applicantDob) : applicantDob;
   const nomDate = typeof nomineeDob === 'string' ? parseDate(nomineeDob) : nomineeDob;

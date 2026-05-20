@@ -4,6 +4,7 @@ import ProceedButton from "../../common/ProceedButton";
 import AadhaarFieldGrid from "../sections/AadhaarFieldGrid";
 import AadhaarAddressSection from "../sections/AadhaarAddressSection";
 import { useToast } from "../../ui/Toast";
+import { focusFirstError } from "../../../utils/validationUtils";
 
 const AadhaarDetailsTab = ({ onNext, kycData }) => {
   const { trigger, setValue } = useFormContext();
@@ -128,7 +129,8 @@ const AadhaarDetailsTab = ({ onNext, kycData }) => {
     if (isValid) {
       onNext();
     } else {
-      toast.error("Please fill all required fields correctly.");
+      toast.error("Please enter valid information in all fields.");
+      focusFirstError();
     }
   };
 
