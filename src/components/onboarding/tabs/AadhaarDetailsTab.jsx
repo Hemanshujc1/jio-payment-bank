@@ -12,19 +12,16 @@ const AadhaarDetailsTab = ({ onNext, kycData }) => {
 
   const [sameAsAadhaar, setSameAsAadhaar] = React.useState(false);
 
-  // ✅ Format DOB (01-09-1987 → 01/09/1987)
   const formatDOB = (dob) => {
     if (!dob) return "";
     const [dd, mm, yyyy] = dob.split("-");
     return `${dd}/${mm}/${yyyy}`;
   };
 
-  // ✅ Convert Base64 → Image
   const getImageSrc = (base64) => {
     return base64 ? `data:image/jpeg;base64,${base64}` : "/jpb/2.jpeg";
   };
 
-  // ✅ Format Aadhaar Address (for display)
   const formatAddress = (addr) => {
     if (!addr) return "";
     return [
@@ -39,10 +36,8 @@ const AadhaarDetailsTab = ({ onNext, kycData }) => {
       .join(", ");
   };
 
-  // Aadhaar address from real KYC data
   const aadhaarAddress = kycData?.address || null;
 
-  // ✅ Populate identity fields only (communication address is NOT pre-filled — user must tick checkbox)
   React.useEffect(() => {
     if (!kycData) return;
 
@@ -71,7 +66,6 @@ const AadhaarDetailsTab = ({ onNext, kycData }) => {
 
   }, [kycData, setValue]);
 
-  // ✅ Same as Aadhaar toggle (no pincode API call — copies directly)
   const handleSameAddressChange = (checked) => {
     setSameAsAadhaar(checked);
 
@@ -112,11 +106,10 @@ const AadhaarDetailsTab = ({ onNext, kycData }) => {
     }
   };
 
-  // ✅ Proceed validation
   const handleProceed = async () => {
     // Check UIDAI address completeness
     const addr = kycData?.address || {};
-    const isMandatoryMissing = !addr.district || !addr.state || !addr.country || !addr.pincode;
+    const isMandatoryMissing = !addr.district || !addr.state || !addr.pincode;
     const isAllLocalMissing = !addr.houseNumber && !addr.locality && !addr.landmark && !addr.street;
 
     if (isMandatoryMissing || isAllLocalMissing) {
