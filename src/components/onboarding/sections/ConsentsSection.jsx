@@ -84,12 +84,30 @@ const ConsentsSection = ({
                     toggleConsent(consentItem.consentTextCode);
                   }}
                 >
-                  {consentItem.text1.split(/\\r\\n|\\n|\r\n|\n/).map((line, i, arr) => (
-                    <React.Fragment key={i}>
-                      <span dangerouslySetInnerHTML={{ __html: line.replace(/<a /gi, "<a target='_blank' rel='noopener noreferrer' ") }} />
-                      {i !== arr.length - 1 && <br />}
-                    </React.Fragment>
-                  ))}
+                  {consentItem.text1.split(/\\r\\n|\\n|\r\n|\n/).map((line, i, arr) => {
+                    // Split the line by the custom pattern so we can render React elements safely
+                    const parts = line.split(/(\[\[.*?\|\|.*?\]\])/g);
+
+                    return (
+                      <React.Fragment key={i}>
+                        {parts.map((part, index) => {
+                          const match = part.match(/\[\[(.*?)\|\|(.*?)\]\]/);
+                          if (match) {
+                            const url = match[1].replace(/['">]/g, '').trim();
+                            const text = match[2].trim();
+                            return (
+                              <a key={index} href={url} target="_blank" rel="noopener noreferrer">
+                                {text}
+                              </a>
+                            );
+                          }
+                          // Return normal text for anything else (any <a> tags will just be plain text)
+                          return <React.Fragment key={index}>{part}</React.Fragment>;
+                        })}
+                        {i !== arr.length - 1 && <br />}
+                      </React.Fragment>
+                    );
+                  })}
                   {isMandatory && <span className="text-red-500 text-lg ml-1">*</span>}
                 </div>
               </div>
