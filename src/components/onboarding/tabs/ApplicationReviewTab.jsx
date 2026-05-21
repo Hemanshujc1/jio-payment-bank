@@ -146,6 +146,44 @@ const ApplicationReviewTab = ({ goToStep }) => {
         occupation: formData.financial.occupation || "NA",
       },
 
+      familyDetails: (() => {
+        const isMarried = formData.applicant.maritalStatus === "Married";
+        const members = [
+          {
+            relationship: "Father",
+            salutation: "Mr",
+            firstName: formData.family.fatherName?.firstName || "",
+            middleName: formData.family.fatherName?.middleName || "",
+            lastName: formData.family.fatherName?.lastName || "",
+            dateOfBirth: "",
+            gender: "Male",
+          },
+          {
+            relationship: "Mother",
+            salutation: "Mrs",
+            firstName: formData.family.motherName?.firstName || "",
+            middleName: formData.family.motherName?.middleName || "",
+            lastName: formData.family.motherName?.lastName || "",
+            dateOfBirth: "",
+            gender: "Female",
+          },
+        ];
+
+        if (isMarried) {
+          members.push({
+            relationship: "Spouse",
+            salutation: formData.applicant.gender === "Female" ? "Mr" : "Mrs",
+            firstName: formData.family.spouseName?.firstName || "",
+            middleName: formData.family.spouseName?.middleName || "",
+            lastName: formData.family.spouseName?.lastName || "",
+            dateOfBirth: "",
+            gender: formData.applicant.gender === "Female" ? "Male" : "Female",
+          });
+        }
+
+        return members;
+      })(),
+
       nomineeDetails: formData.nominee.provide === "Yes" ? (() => {
         const rel = formData.nominee.relationship;
         const appGender = formData.applicant.gender;
@@ -211,6 +249,32 @@ const ApplicationReviewTab = ({ goToStep }) => {
         documentType: "Aadhaar",
         documentNumber: "",
       } : null,
+
+      guardianDetails: (formData.nominee.provide === "Yes" && (() => {
+        const dob = formData.nominee.dob;
+        const age = dob ? differenceInYears(new Date(), parseDate(dob)) : 0;
+        return age < 18;
+      })()) ? (() => {
+        const g = formData.guardian;
+        const rel = g?.relationship || "";
+
+        let guardianGender = "Male";
+        let salutation = "Mr";
+        if (["Mother", "Sister", "Daughter", "Wife"].includes(rel)) {
+          guardianGender = "Female";
+          salutation = (rel === "Mother" || rel === "Wife") ? "Mrs" : "Ms";
+        }
+
+        return {
+          relationship: rel,
+          salutation: salutation,
+          firstName: g?.firstName || "",
+          middleName: g?.middleName || "",
+          lastName: g?.lastName || "",
+          dateOfBirth: formatDate(g?.dob),
+          gender: guardianGender,
+        };
+      })() : null,
 
       guardianAddress: (formData.nominee.provide === "Yes" && (() => {
         const dob = formData.nominee.dob;

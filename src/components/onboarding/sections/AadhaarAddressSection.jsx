@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import onboardingService from "../../../services/onboardingService";
 
-const AadhaarAddressSection = ({ aadhaarAddress }) => {
+const AadhaarAddressSection = ({ aadhaarAddress, onSameAsAadhaarChange }) => {
   const {
     register,
     watch,
@@ -72,10 +72,12 @@ const AadhaarAddressSection = ({ aadhaarAddress }) => {
     prevSameAsAadhaar.current = sameAsAadhaar;
   }, [sameAsAadhaar, aadhaarAddress, setValue]);
 
-  // Pincode Lookup logic
+  // Pincode Lookup logic — skipped entirely when "Same as Aadhaar" is checked
   useEffect(() => {
     const lookupPincode = async () => {
-      if (pincode?.length === 6 && !sameAsAadhaar) {
+      // ⛔ Never call the pincode API when copying from Aadhaar address
+      if (sameAsAadhaar) return;
+      if (pincode?.length === 6) {
         setIsPincodeLoading(true);
         try {
           const res = await onboardingService.getPincodeDetails(pincode);
@@ -118,6 +120,13 @@ const AadhaarAddressSection = ({ aadhaarAddress }) => {
           <input
             type="checkbox"
             {...register("applicant.sameAsAadhaar")}
+            defaultChecked={false}
+            onChange={(e) => {
+              // Sync to react-hook-form
+              register("applicant.sameAsAadhaar").onChange(e);
+              // Notify parent — triggers copy + console.log
+              onSameAsAadhaarChange?.(e.target.checked);
+            }}
             className="w-5 h-5 border-2 border-[#D1A054] accent-black cursor-pointer rounded-sm"
           />
           <span className="text-[13px] sm:text-[14px] font-bold text-gray-600 transition-colors group-hover:text-black">

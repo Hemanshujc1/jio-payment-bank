@@ -68,7 +68,7 @@ const GuardianInfo = () => {
               control={control}
               render={({ field }) => (
                 <CustomDropdown
-                  options={["Father", "Mother", "Uncle", "Aunt"]}
+                  options={["Father", "Mother","Spouse", "Uncle", "Aunt"]}
                   value={field.value}
                   onChange={field.onChange}
                   className="w-full"

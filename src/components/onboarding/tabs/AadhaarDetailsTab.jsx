@@ -10,7 +10,7 @@ const AadhaarDetailsTab = ({ onNext, kycData }) => {
   const { trigger, setValue } = useFormContext();
   const toast = useToast();
 
-  const [sameAsAadhaar, setSameAsAadhaar] = React.useState(true);
+  const [sameAsAadhaar, setSameAsAadhaar] = React.useState(false);
 
   // ✅ Format DOB (01-09-1987 → 01/09/1987)
   const formatDOB = (dob) => {
@@ -39,11 +39,15 @@ const AadhaarDetailsTab = ({ onNext, kycData }) => {
       .join(", ");
   };
 
-  // ✅ Populate form fields
+  // Aadhaar address from real KYC data
+  const aadhaarAddress = kycData?.address || null;
+
+  // ✅ Populate identity fields only (communication address is NOT pre-filled — user must tick checkbox)
   React.useEffect(() => {
     if (!kycData) return;
 
     const fullName = kycData.name || "";
+    if (!fullName) return;
     const names = fullName.split(" ");
 
     const firstName = names[0] || "";
@@ -59,41 +63,44 @@ const AadhaarDetailsTab = ({ onNext, kycData }) => {
       kycData.gender === "M" ? "Male" : "Female"
     );
 
-    setValue("applicant.dob", formatDOB(kycData.dob));
+    setValue("applicant.dob", formatDOB(kycData.dob) || "");
 
-    // Address mapping
-    if (kycData.address) {
-      const addr = kycData.address;
-
-      setValue("applicant.communicationAddress.addressLine1", addr.houseNumber || "");
-      setValue("applicant.communicationAddress.addressLine2", addr.landmark || "");
-      setValue("applicant.communicationAddress.addressLine3", addr.locality || "");
-      setValue("applicant.communicationAddress.city", addr.district || "");
-      setValue("applicant.communicationAddress.state", addr.state || "");
-      setValue("applicant.communicationAddress.stateCode", addr.stateCode || "");
-      setValue("applicant.communicationAddress.district", addr.district || "");
-      setValue("applicant.communicationAddress.pincode", addr.pincode || "");
-    }
+    // ℹ️ Communication address fields are intentionally NOT set here.
+    // They are populated only when the user ticks "Same as Aadhaar Address",
+    // or filled manually by the user.
 
   }, [kycData, setValue]);
 
-  // ✅ Same as Aadhaar toggle
+  // ✅ Same as Aadhaar toggle (no pincode API call — copies directly)
   const handleSameAddressChange = (checked) => {
     setSameAsAadhaar(checked);
 
-    if (checked && kycData?.address) {
-      const addr = kycData.address;
-       
-      setValue("applicant.communicationAddress.addressLine1", addr.houseNumber || "");
-      setValue("applicant.communicationAddress.addressLine2", addr.landmark || "");
-      setValue("applicant.communicationAddress.addressLine3", addr.locality || "");
-      setValue("applicant.communicationAddress.city", addr.district || "");
-      setValue("applicant.communicationAddress.state", addr.state || "");
-      setValue("applicant.communicationAddress.stateCode", addr.stateCode || "");
-      setValue("applicant.communicationAddress.district", addr.district || "");
-      setValue("applicant.communicationAddress.pincode", addr.pincode || "");
+    if (checked && aadhaarAddress) {
+      const addr = aadhaarAddress;
+      const communicationAddress = {
+        addressLine1: addr.houseNumber || "",
+        addressLine2: addr.landmark || "",
+        addressLine3: addr.locality || "",
+        city: addr.district || "",
+        state: addr.state || "",
+        stateCode: addr.stateCode || "",
+        district: addr.district || "",
+        pincode: addr.pincode || "",
+      };
+
+      // 📋 Log communication address copied from Aadhaar
+      console.log("[SameAsAadhaar] Communication Address copied:", communicationAddress);
+
+      setValue("applicant.communicationAddress.addressLine1", communicationAddress.addressLine1, { shouldValidate: true });
+      setValue("applicant.communicationAddress.addressLine2", communicationAddress.addressLine2, { shouldValidate: true });
+      setValue("applicant.communicationAddress.addressLine3", communicationAddress.addressLine3, { shouldValidate: true });
+      setValue("applicant.communicationAddress.city", communicationAddress.city, { shouldValidate: true });
+      setValue("applicant.communicationAddress.state", communicationAddress.state, { shouldValidate: true });
+      setValue("applicant.communicationAddress.stateCode", communicationAddress.stateCode, { shouldValidate: true });
+      setValue("applicant.communicationAddress.district", communicationAddress.district, { shouldValidate: true });
+      setValue("applicant.communicationAddress.pincode", communicationAddress.pincode, { shouldValidate: true });
     } else {
-      // Clear fields
+      // Clear fields when unchecked
       setValue("applicant.communicationAddress.addressLine1", "");
       setValue("applicant.communicationAddress.addressLine2", "");
       setValue("applicant.communicationAddress.addressLine3", "");
@@ -109,7 +116,6 @@ const AadhaarDetailsTab = ({ onNext, kycData }) => {
   const handleProceed = async () => {
     // Check UIDAI address completeness
     const addr = kycData?.address || {};
-    // const isMandatoryMissing = !addr.city 
     const isMandatoryMissing = !addr.district || !addr.state || !addr.country || !addr.pincode;
     const isAllLocalMissing = !addr.houseNumber && !addr.locality && !addr.landmark && !addr.street;
 
@@ -165,36 +171,15 @@ const AadhaarDetailsTab = ({ onNext, kycData }) => {
             </h3>
 
             <p className="text-sm text-gray-700 leading-relaxed">
-              {kycData?.address
-                ? formatAddress(kycData.address)
-                : "Loading..."}
+              {aadhaarAddress ? formatAddress(aadhaarAddress) : "Loading..."}
             </p>
           </div>
 
-          {/* Communication Address Header + Checkbox */}
-          {/* <div className="flex items-center justify-between">
-            <h3 className="font-semibold text-gray-800">
-              Communication Address
-            </h3>
-
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={sameAsAadhaar}
-                onChange={(e) =>
-                  handleSameAddressChange(e.target.checked)
-                }
-              />
-              <label className="text-sm text-gray-700">
-                Same as Aadhaar Address
-              </label>
-            </div>
-          </div> */}
-
           {/* Address Section */}
           <AadhaarAddressSection
-            aadhaarAddress={kycData?.address}
+            aadhaarAddress={aadhaarAddress}
             sameAsAadhaar={sameAsAadhaar}
+            onSameAsAadhaarChange={handleSameAddressChange}
           />
         </div>
       </div>

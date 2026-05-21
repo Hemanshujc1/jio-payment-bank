@@ -82,7 +82,7 @@ const AadhaarFieldGrid = () => {
                   <CustomDatePicker
                       name="applicant.dob"
                       maxDate={new Date(new Date().setFullYear(new Date().getFullYear() - 18))}
-                      disabled={true}
+                    disabled={true}
                   />
                   <div className="absolute inset-0 bg-transparent cursor-not-allowed" />
                 </div>

@@ -7,8 +7,19 @@ const SuccessOverlay = ({ applicationNumber }) => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
+      localStorage.clear();
+      sessionStorage.clear();
+
+      document.cookie.split(";").forEach((cookie) => {
+        const eqPos = cookie.indexOf("=");
+        const name = (eqPos > -1 ? cookie.substring(0, eqPos) : cookie).trim();
+        if (name) {
+          document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+        }
+      });
+
       navigate("/");
-    }, 3000);
+    }, 15000);
 
     return () => clearTimeout(timer);
   }, [navigate]);
