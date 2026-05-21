@@ -45,7 +45,7 @@ const SuccessOverlay = ({ applicationNumber }) => {
         <p className="text-white text-[15px] sm:text-[19px] md:text-[21px] font-bold tracking-wide drop-shadow-sm leading-relaxed">
           Your application is submitted successfully!
         </p>
-        <div className="h-px w-10 bg-white/20 my-1"></div>
+        <div className="h-px max-w-fit bg-white/20 my-1"></div>
         <p className="text-white text-[14px] sm:text-[18px] md:text-[20px] font-bold tracking-wide mt-1 drop-shadow-sm opacity-90">
           Application ID:{" "}
           <span className="text-[#36B34A] break-all">
