@@ -1,11 +1,11 @@
 import { z } from 'zod';
 import { differenceInYears } from 'date-fns';
-import { 
-  NAME_REGEX, 
-  LAST_NAME_REGEX, 
-  REPEATING_CHARS_REGEX, 
-  parseDate, 
-  normalizeName, 
+import {
+  NAME_REGEX,
+  LAST_NAME_REGEX,
+  REPEATING_CHARS_REGEX,
+  parseDate,
+  normalizeName,
   checkNamesMatch,
   validateAgeDifference,
   hasConsecutiveLetters
@@ -36,15 +36,15 @@ const addressSchema = z.object({
   addressLine1: z.string()
     .min(5, "Address Line 1 must be at least 5 characters")
     .max(100, "Address Line 1 cannot exceed 100 characters")
-    .regex(/^[a-zA-Z0-9\s,\-\/]+$/, "Only A-Z, a-z, 0-9, space, ',', '-', '/' are allowed"),
+    .regex(/^[a-zA-Z0-9.\s,\-\/]+$/, "Only A-Z, a-z, 0-9, space, ',', '-', '/' are allowed"),
   addressLine2: z.string()
     .optional()
     .or(z.literal(""))
-    .refine(val => !val || /^[a-zA-Z0-9\s]{5,100}$/.test(val), "Must be 5-100 characters, only A-Z, a-z, 0-9, space allowed"),
+    .refine(val => !val || /^[a-zA-Z0-9.\s]{5,100}$/.test(val), "Must be 5-100 characters, only A-Z, a-z, 0-9, space allowed"),
   addressLine3: z.string()
     .optional()
     .or(z.literal(""))
-    .refine(val => !val || /^[a-zA-Z\s]{5,100}$/.test(val), "Must be 5-100 characters, only A-Z, a-z, space allowed"),
+    .refine(val => !val || /^[a-zA-Z.\s]{5,100}$/.test(val), "Must be 5-100 characters, only A-Z, a-z, space allowed"),
   city: z.string()
     .min(4, "City must be at least 4 characters")
     .max(20, "City cannot exceed 20 characters"),
@@ -64,7 +64,7 @@ const personSchema = z.object({
   lastName: nameField(true),
 });
 
-export const  onboardingSchema = z.object({
+export const onboardingSchema = z.object({
   onboarding: z.object({
     productType: z.enum(["savings", "current"]).default("savings"),
     aepsConsent: z.enum(["yes", "no"]).default("yes"),
@@ -156,7 +156,7 @@ export const  onboardingSchema = z.object({
   const applicantFullName = `${data.applicant.firstName} ${data.applicant.middleName || ""} ${data.applicant.lastName}`.replace(/\s+/g, ' ').trim();
   const fatherFullName = `${data.family.fatherName.firstName} ${data.family.fatherName.middleName || ""} ${data.family.fatherName.lastName}`.replace(/\s+/g, ' ').trim();
   const motherFullName = `${data.family.motherName.firstName} ${data.family.motherName.middleName || ""} ${data.family.motherName.lastName}`.replace(/\s+/g, ' ').trim();
-  const spouseFullName = data.applicant.maritalStatus === 'Married' 
+  const spouseFullName = data.applicant.maritalStatus === 'Married'
     ? `${data.family.spouseName?.firstName || ""} ${data.family.spouseName?.middleName || ""} ${data.family.spouseName?.lastName || ""}`.replace(/\s+/g, ' ').trim()
     : "";
 
@@ -189,7 +189,7 @@ export const  onboardingSchema = z.object({
   if (data.nominee.provide === "Yes") {
     const nominee = data.nominee;
     const nomineeFullName = `${nominee.firstName || ""} ${nominee.middleName || ""} ${nominee.lastName || ""}`.replace(/\s+/g, ' ').trim();
-    
+
     // Check Nominee against Applicant, Father, Mother, Spouse
     if (nomineeFullName !== "") {
       for (const familyMember of namesToSync) {
@@ -239,7 +239,7 @@ export const  onboardingSchema = z.object({
   // Explicit Spouse Validation when Married
   if (data.applicant.maritalStatus === 'Married') {
     const spouse = data.family.spouseName;
-    
+
     if (!spouse?.firstName || spouse.firstName.trim() === "") {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -372,7 +372,7 @@ export const  onboardingSchema = z.object({
     if (isNomineeMinor) {
       const g = data.guardian;
       const guardianFullName = `${g.firstName || ""} ${g.middleName || ""} ${g.lastName || ""}`.replace(/\s+/g, ' ').trim();
-      
+
       // Enforce Guardian fields if nominee is minor
       if (!g.firstName || g.firstName.trim() === "") ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Name is required", path: ["guardian", "firstName"] });
       if (!g.lastName || g.lastName.trim() === "") ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Name is required", path: ["guardian", "lastName"] });

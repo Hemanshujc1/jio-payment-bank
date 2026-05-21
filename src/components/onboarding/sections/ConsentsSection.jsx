@@ -75,12 +75,18 @@ const ConsentsSection = ({
                   />
                 </div>
                 <div 
-                  className="text-[12.5px] sm:text-[13px] leading-snug sm:leading-tight text-gray-800 max-w-6xl select-none w-full" 
-                  onClick={() => toggleConsent(consentItem.consentTextCode)}
+                  className="text-[12.5px] sm:text-[13px] leading-snug sm:leading-tight text-gray-800 max-w-6xl select-none w-full [&_a]:text-blue-600 [&_a]:underline" 
+                  onClick={(e) => {
+                    if (e.target.tagName.toUpperCase() === 'A') {
+                      e.stopPropagation();
+                      return;
+                    }
+                    toggleConsent(consentItem.consentTextCode);
+                  }}
                 >
                   {consentItem.text1.split(/\\r\\n|\\n|\r\n|\n/).map((line, i, arr) => (
                     <React.Fragment key={i}>
-                      {line}
+                      <span dangerouslySetInnerHTML={{ __html: line.replace(/<a /gi, "<a target='_blank' rel='noopener noreferrer' ") }} />
                       {i !== arr.length - 1 && <br />}
                     </React.Fragment>
                   ))}
