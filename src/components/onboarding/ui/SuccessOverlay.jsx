@@ -49,7 +49,7 @@ const SuccessOverlay = ({ applicationNumber }) => {
         <p className="text-white text-[14px] sm:text-[18px] md:text-[20px] font-bold tracking-wide mt-1 drop-shadow-sm opacity-90">
           Application ID:{" "}
           <span className="text-[#36B34A] break-all">
-            {applicationNumber || "XXXXXXXXXXXXXXX"}
+            {applicationNumber || ""}
           </span>
         </p>
       </div>
