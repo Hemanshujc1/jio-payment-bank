@@ -141,7 +141,6 @@ const ApplicationReviewTab = ({ goToStep }) => {
       consents: baseConsents,
 
       financialDetails: {
-        sourceOfIncome: formData.financial.sourceOfIncome || "NA",
         annualSalary: formData.financial.annualIncome || "NA",
         occupation: formData.financial.occupation || "NA",
       },
@@ -151,33 +150,33 @@ const ApplicationReviewTab = ({ goToStep }) => {
         const members = [
           {
             relationship: "Father",
-            salutation: "Mr",
+            salutation: "2", // Mr.
             firstName: formData.family.fatherName?.firstName || "",
             middleName: formData.family.fatherName?.middleName || "",
             lastName: formData.family.fatherName?.lastName || "",
             dateOfBirth: "",
-            gender: "Male",
+            gender: "M",
           },
           {
             relationship: "Mother",
-            salutation: "Mrs",
+            salutation: "3", // Mrs.
             firstName: formData.family.motherName?.firstName || "",
             middleName: formData.family.motherName?.middleName || "",
             lastName: formData.family.motherName?.lastName || "",
             dateOfBirth: "",
-            gender: "Female",
+            gender: "F",
           },
         ];
 
         if (isMarried) {
           members.push({
             relationship: "Spouse",
-            salutation: formData.applicant.gender === "Female" ? "Mr" : "Mrs",
+            salutation: formData.applicant.gender === "Female" ? "2" : "3", // Mrs/Mr.
             firstName: formData.family.spouseName?.firstName || "",
             middleName: formData.family.spouseName?.middleName || "",
             lastName: formData.family.spouseName?.lastName || "",
             dateOfBirth: "",
-            gender: formData.applicant.gender === "Female" ? "Male" : "Female",
+            gender: formData.applicant.gender === "Female" ? "M" : "F",
           });
         }
 
@@ -189,12 +188,12 @@ const ApplicationReviewTab = ({ goToStep }) => {
         const appGender = formData.applicant.gender;
         const dob = formData.nominee.dob;
         
-        let nomineeGender = "Male";
-        let salutation = "Mr";
+        let nomineeGender = "M";
+        let salutation = "2"; // Mr.
         
         if (["Mother", "Sister", "Daughter", "Wife"].includes(rel)) {
-          nomineeGender = "Female";
-          salutation = (rel === "Mother" || rel === "Wife") ? "Mrs" : "Ms";
+          nomineeGender = "F";
+          salutation = (rel === "Mother" || rel === "Wife") ? "3" : "1"; // Mrs/Mr.
         }
 
         const age = dob ? differenceInYears(new Date(), parseDate(dob)) : 0;
@@ -202,7 +201,7 @@ const ApplicationReviewTab = ({ goToStep }) => {
 
         return {
           relationship: rel,
-          salutation: salutation,
+          salutation: salutation, // Mr./Mrs. based on relationship
           firstName: formData.nominee.firstName,
           middleName: formData.nominee.middleName,
           lastName: formData.nominee.lastName,
@@ -258,11 +257,11 @@ const ApplicationReviewTab = ({ goToStep }) => {
         const g = formData.guardian;
         const rel = g?.relationship || "";
 
-        let guardianGender = "Male";
-        let salutation = "Mr";
+        let guardianGender = "M";
+        let salutation = "2";
         if (["Mother", "Sister", "Daughter", "Wife"].includes(rel)) {
-          guardianGender = "Female";
-          salutation = (rel === "Mother" || rel === "Wife") ? "Mrs" : "Ms";
+          guardianGender = "F";
+          salutation = (rel === "Mother" || rel === "Wife") ? "3" : "1";
         }
 
         return {
@@ -332,8 +331,7 @@ const ApplicationReviewTab = ({ goToStep }) => {
     setShowBiometricConsent(true);
   };
 
-  // ✅ AUTOMATIC FINAL SUBMISSION
-  // This is triggered ONLY when the Modal successfully verifies the biometric
+  // AUTOMATIC FINAL SUBMISSION
   const handleFinalSubmit = async (consentsArray) => {
     setIsBiometricLoading(true);
 
