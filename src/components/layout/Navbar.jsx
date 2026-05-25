@@ -67,7 +67,6 @@ const Navbar = () => {
     fetchBalance();
 
     const interval = setInterval(fetchBalance, 30000);
-
     return () => clearInterval(interval);
   }, []);
 

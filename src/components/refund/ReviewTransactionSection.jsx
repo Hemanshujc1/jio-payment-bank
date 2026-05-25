@@ -46,10 +46,10 @@ const ReviewTransactionSection = ({
         <div className="w-full flex flex-col gap-5 border-t border-b border-sand-300 py-6">
           {/* Customer Name */}
           <div className="flex justify-between items-start gap-4">
-            <span className="text-[14px] sm:text-[15px] text-sand-500 font-bold min-w-[120px]">
+            <span className="text-[14px] sm:text-[15px] text-sand-500 font-bold min-w-30">
               Customer Name
             </span>
-            <span className="text-[14px] sm:text-[15px] text-sand-900 font-extrabold text-right max-w-[200px] leading-tight">
+            <span className="text-[14px] sm:text-[15px] text-sand-900 font-extrabold text-right max-w-50 leading-tight">
               {customerName}
             </span>
           </div>

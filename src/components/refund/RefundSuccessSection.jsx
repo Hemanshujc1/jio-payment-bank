@@ -68,7 +68,7 @@ const RefundSuccessSection = ({
             <span className="text-[14px] sm:text-[15px] text-sand-500 font-bold">
               Date & Time
             </span>
-            <span className="text-[14px] sm:text-[15px] text-sand-900 font-extrabold text-right max-w-[180px] leading-tight">
+            <span className="text-[14px] sm:text-[15px] text-sand-900 font-extrabold text-right max-w-45 leading-tight">
               {dateTime}
             </span>
           </div>
@@ -85,10 +85,10 @@ const RefundSuccessSection = ({
 
           {/* Customer Name */}
           <div className="flex justify-between items-start gap-4">
-            <span className="text-[14px] sm:text-[15px] text-sand-500 font-bold min-w-[120px]">
+            <span className="text-[14px] sm:text-[15px] text-sand-500 font-bold min-w-30">
               Customer Name
             </span>
-            <span className="text-[14px] sm:text-[15px] text-sand-900 font-extrabold text-right max-w-[200px] leading-tight">
+            <span className="text-[14px] sm:text-[15px] text-sand-900 font-extrabold text-right max-w-50 leading-tight">
               {customerName}
             </span>
           </div>
