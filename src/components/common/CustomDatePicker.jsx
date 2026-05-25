@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 const CustomDatePicker = ({ name, maxDate, minDate, disabled }) => {
-  const { control, watch, formState: { errors } } = useFormContext();
+  const { control, watch, setValue, formState: { errors } } = useFormContext();
   const value = watch(name);
 
   const getError = (obj, path) => {
@@ -13,12 +13,78 @@ const CustomDatePicker = ({ name, maxDate, minDate, disabled }) => {
 
   const error = getError(errors, name);
 
-  // Parse "DD/MM/YYYY" to Date
+  // Normalize hyphen-separated or yyyy/mm/dd dates to dd/mm/yyyy
+  useEffect(() => {
+    if (value && typeof value === "string") {
+      let normalized = value;
+      if (value.includes("-")) {
+        const parts = value.split("-");
+        if (parts.length === 3) {
+          let dd = "";
+          let mm = "";
+          let yyyy = "";
+          if (parts[0].length === 4) {
+            // yyyy-mm-dd
+            yyyy = parts[0];
+            mm = parts[1].padStart(2, "0");
+            dd = parts[2].padStart(2, "0");
+          } else {
+            // dd-mm-yyyy
+            dd = parts[0].padStart(2, "0");
+            mm = parts[1].padStart(2, "0");
+            yyyy = parts[2];
+          }
+          normalized = `${dd}/${mm}/${yyyy}`;
+        }
+      } else if (value.includes("/")) {
+        const parts = value.split("/");
+        if (parts.length === 3 && parts[0].length === 4) {
+          // yyyy/mm/dd -> dd/mm/yyyy
+          const yyyy = parts[0];
+          const mm = parts[1].padStart(2, "0");
+          const dd = parts[2].padStart(2, "0");
+          normalized = `${dd}/${mm}/${yyyy}`;
+        }
+      }
+      if (normalized !== value) {
+        setValue(name, normalized, { shouldValidate: true });
+      }
+    }
+  }, [value, name, setValue]);
+
+  // Parse "DD/MM/YYYY" or "YYYY-MM-DD" to Date
   const parseToDateObj = (str) => {
     if (!str) return null;
-    const parts = str.split("/");
-    if (parts.length !== 3) return null;
-    return new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
+    if (str instanceof Date) return str;
+
+    if (str.includes("-")) {
+      const parts = str.split("-");
+      if (parts.length === 3) {
+        if (parts[0].length === 4) {
+          // yyyy-mm-dd
+          return new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+        } else {
+          // dd-mm-yyyy
+          return new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
+        }
+      }
+    }
+
+    if (str.includes("/")) {
+      const parts = str.split("/");
+      if (parts.length === 3) {
+        if (parts[0].length === 4) {
+          // yyyy/mm/dd
+          return new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+        } else {
+          // dd/mm/yyyy
+          return new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
+        }
+      }
+    }
+
+    const parsed = new Date(str);
+    return isNaN(parsed.getTime()) ? null : parsed;
   };
 
   // Format Date obj to "DD/MM/YYYY"

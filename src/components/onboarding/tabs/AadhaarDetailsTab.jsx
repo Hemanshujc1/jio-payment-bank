@@ -14,8 +14,31 @@ const AadhaarDetailsTab = ({ onNext, kycData }) => {
 
   const formatDOB = (dob) => {
     if (!dob) return "";
-    const [dd, mm, yyyy] = dob.split("-");
-    return `${dd}/${mm}/${yyyy}`;
+    if (dob.includes("-")) {
+      const parts = dob.split("-");
+      if (parts.length === 3) {
+        if (parts[0].length === 4) {
+          // yyyy-mm-dd
+          return `${parts[2].padStart(2, "0")}/${parts[1].padStart(2, "0")}/${parts[0]}`;
+        } else {
+          // dd-mm-yyyy
+          return `${parts[0].padStart(2, "0")}/${parts[1].padStart(2, "0")}/${parts[2]}`;
+        }
+      }
+    }
+    if (dob.includes("/")) {
+      const parts = dob.split("/");
+      if (parts.length === 3) {
+        if (parts[0].length === 4) {
+          // yyyy/mm/dd
+          return `${parts[2].padStart(2, "0")}/${parts[1].padStart(2, "0")}/${parts[0]}`;
+        } else {
+          // dd/mm/yyyy
+          return `${parts[0].padStart(2, "0")}/${parts[1].padStart(2, "0")}/${parts[2]}`;
+        }
+      }
+    }
+    return dob;
   };
 
   const getImageSrc = (base64) => {

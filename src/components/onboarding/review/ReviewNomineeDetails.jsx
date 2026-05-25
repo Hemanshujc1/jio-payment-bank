@@ -32,7 +32,21 @@ const ReviewNomineeDetails = ({ data, guardian, onEdit }) => {
   const isMinor = (() => {
     if (!data?.dob) return false;
 
-    const [dd, mm, yyyy] = data.dob.split("/");
+    let dobStr = data.dob;
+    if (dobStr.includes("-")) {
+      const parts = dobStr.split("-");
+      if (parts.length === 3) {
+        if (parts[0].length === 4) {
+          // yyyy-mm-dd
+          dobStr = `${parts[2]}/${parts[1]}/${parts[0]}`;
+        } else {
+          // dd-mm-yyyy
+          dobStr = `${parts[0]}/${parts[1]}/${parts[2]}`;
+        }
+      }
+    }
+
+    const [dd, mm, yyyy] = dobStr.split("/");
     const dob = new Date(`${yyyy}-${mm}-${dd}`);
     const age = new Date().getFullYear() - dob.getFullYear();
 

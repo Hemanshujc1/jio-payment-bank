@@ -113,7 +113,7 @@ const RefundFlowPage = () => {
                 Refund Customer Verification
               </h2>
               <p className="text-[13px] sm:text-[14px] md:text-[15px] text-sand-500 mt-1 sm:mt-2 font-medium leading-normal">
-                Please verify contact details to authorize the refund process.
+                Please verify details to authorize the refund process.
               </p>
             </div>
 

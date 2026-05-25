@@ -168,7 +168,20 @@ const NomineeInfo = () => {
               }
 
               if (["Son", "Daughter"].includes(relationship) && applicant?.dob) {
-                const parts = applicant.dob.split("/");
+                let dobStr = applicant.dob;
+                if (dobStr.includes("-")) {
+                  const parts = dobStr.split("-");
+                  if (parts.length === 3) {
+                    if (parts[0].length === 4) {
+                      // yyyy-mm-dd -> dd/mm/yyyy
+                      dobStr = `${parts[2]}/${parts[1]}/${parts[0]}`;
+                    } else {
+                      // dd-mm-yyyy -> dd/mm/yyyy
+                      dobStr = `${parts[0]}/${parts[1]}/${parts[2]}`;
+                    }
+                  }
+                }
+                const parts = dobStr.split("/");
                 if (parts.length === 3) {
                   const appDobDate = new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
                   minDobDate = new Date(appDobDate.getFullYear() + 18, appDobDate.getMonth(), appDobDate.getDate());

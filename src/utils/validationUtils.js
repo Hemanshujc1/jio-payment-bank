@@ -8,8 +8,25 @@ export const isRepeatingDigits = (val) => /^(.)\1{9}$/.test(val);
 
 export const parseDate = (dateStr) => {
   if (!dateStr) return null;
-  const parsed = parse(dateStr, 'dd/MM/yyyy', new Date());
-  return isValid(parsed) ? parsed : null;
+  if (dateStr instanceof Date) return dateStr;
+
+  // Try dd/MM/yyyy first
+  let parsed = parse(dateStr, 'dd/MM/yyyy', new Date());
+  if (isValid(parsed)) return parsed;
+
+  // Try yyyy-MM-dd
+  parsed = parse(dateStr, 'yyyy-MM-dd', new Date());
+  if (isValid(parsed)) return parsed;
+
+  // Try dd-MM-yyyy
+  parsed = parse(dateStr, 'dd-MM-yyyy', new Date());
+  if (isValid(parsed)) return parsed;
+
+  // Try yyyy/MM/dd
+  parsed = parse(dateStr, 'yyyy/MM/dd', new Date());
+  if (isValid(parsed)) return parsed;
+
+  return null;
 };
 
 export const normalizeName = (name) => {
