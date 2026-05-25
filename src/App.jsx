@@ -4,6 +4,7 @@ import Navbar from './components/layout/Navbar'
 import Footer from './components/layout/Footer'
 import SavingsVariantPage from './pages/SavingsVariantPage'
 import OnboardingFlowPage from './pages/OnboardingFlowPage'
+import RefundFlowPage from './pages/RefundFlowPage'
 import { ToastProvider } from './components/ui/Toast'
 
 const App = () => {
@@ -61,6 +62,7 @@ const App = () => {
           <Routes>
             <Route path="/" element={<SavingsVariantPage />} />
             <Route path="/onboarding-flow" element={<OnboardingFlowPage />} />
+            <Route path="/refund-flow" element={<RefundFlowPage />} />
           </Routes>
         </main>
 
