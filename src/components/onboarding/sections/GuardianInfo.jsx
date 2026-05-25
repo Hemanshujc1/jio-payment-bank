@@ -12,6 +12,38 @@ const GuardianInfo = () => {
     control,
   });
 
+  const applicant = useWatch({
+    name: "applicant",
+    control,
+  }) || {};
+
+  const relationshipOptions = [
+    "Sister",
+    "Brother",
+    "Mother",
+    "Father",
+    "Son",
+    "Daughter",
+    "Husband",
+    "Wife",
+  ].filter((opt) => {
+    // Basic gender filtering
+    if (applicant.gender === "Male" && opt === "Husband") return false;
+    if (applicant.gender === "Female" && opt === "Wife") return false;
+
+    // Marital status filtering
+    if (applicant.maritalStatus === "Single") {
+      if (opt === "Husband" || opt === "Wife") return false;
+    }
+
+    // Only show Husband/Wife if Married
+    if (applicant.maritalStatus !== "Married") {
+      if (opt === "Husband" || opt === "Wife") return false;
+    }
+
+    return true;
+  });
+
   return (
     <div className="flex flex-col gap-8 pb-4">
       {/* Guardian Note */}
@@ -68,7 +100,7 @@ const GuardianInfo = () => {
               control={control}
               render={({ field }) => (
                 <CustomDropdown
-                  options={["Father", "Mother","Spouse", "Uncle", "Aunt"]}
+                  options={relationshipOptions}
                   value={field.value}
                   onChange={field.onChange}
                   className="w-full"

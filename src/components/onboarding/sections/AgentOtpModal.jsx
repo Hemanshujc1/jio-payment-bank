@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from "react";
 import onboardingService from "../../../services/onboardingService";
+import { useToast } from "../../ui/Toast";
 
 const AgentOtpModal = ({ isOpen, onVerified }) => {
   const vkid =
     localStorage.getItem("vkid") || sessionStorage.getItem("vkid") || "";
+  const toast = useToast();
 
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
-
-  const [alertMessage, setAlertMessage] = useState("");
-  const [alertType, setAlertType] = useState(""); // success | error
 
   if (!isOpen) return null;
 
@@ -31,25 +30,13 @@ const AgentOtpModal = ({ isOpen, onVerified }) => {
 
       if (res?.status === "SUCCESS") {
         setOtpSent(true);
-        setAlertType("success");
-        setAlertMessage(res?.message || "OTP sent successfully");
-        setTimeout(() => {
-          setAlertMessage("");
-        }, 3000);
+        toast.success(res?.message || "OTP sent successfully");
       } else {
-        setAlertType("error");
-        setAlertMessage(res?.message || "Failed to send OTP");
-        setTimeout(() => {
-          setAlertMessage("");
-        }, 3000);
+        toast.error(res?.message || "Failed to send OTP");
       }
     } catch (err) {
       console.error(err);
-      setAlertType("error");
-      setAlertMessage("Failed to send OTP");
-      setTimeout(() => {
-          setAlertMessage("");
-        }, 3000);
+      toast.error("Failed to send OTP");
     } finally {
       setLoading(false);
     }
@@ -76,15 +63,11 @@ const AgentOtpModal = ({ isOpen, onVerified }) => {
         sessionStorage.setItem("vkid", vkid);
         onVerified();
       } else {
-        setAlertType("error");
-        setAlertMessage(res?.message || "Invalid / Expired OTP");
-        setTimeout(() => {
-          setAlertMessage("");
-        }, 3000);
+        toast.error(res?.message || "Invalid / Expired OTP");
       }
     } catch (err) {
       console.error(err);
-      alert("OTP verification failed");
+      toast.error("OTP verification failed");
     } finally {
       setLoading(false);
     }
@@ -129,19 +112,7 @@ const AgentOtpModal = ({ isOpen, onVerified }) => {
           </div>
         )}
 
-        {/* CUSTOM ALERT */}
-        {alertMessage && (
-          <div
-            className={`w-full rounded-2xl px-4 py-3 text-sm font-semibold border shadow-sm transition-all duration-300
-      ${
-        alertType === "success"
-          ? "bg-green-100 border-green-300 text-green-800"
-          : "bg-red-100 border-red-300 text-red-800"
-      }`}
-          >
-            {alertMessage}
-          </div>
-        )}
+
 
         {/* SEND OTP BUTTON */}
         {!otpSent ? (

@@ -13,6 +13,17 @@ import BiometricVerificationModal from "../review/BiometricVerificationModal";
 import onboardingService from "../../../services/onboardingService";
 import { useToast } from "../../ui/Toast";
 
+const RELATION_LOOKUP = {
+  Father: "R01",
+  Mother: "R02",
+  Wife: "R03",
+  Husband: "R04",
+  Daughter: "R05",
+  Son: "R06",
+  Brother: "R07",
+  Sister: "R08",
+};
+
 const ApplicationReviewTab = ({ goToStep }) => {
   const { getValues } = useFormContext();
   const toast = useToast();
@@ -32,7 +43,7 @@ const ApplicationReviewTab = ({ goToStep }) => {
     <hr className="border-t border-[#A89885] w-full my-4 opacity-60" />
   );
 
-  // ✅ SAFE DATE FORMAT
+  //  DATE FORMAT
   const formatDate = (date) => {
     if (!date) return "";
     if (date.includes("/")) return date; // already dd/mm/yyyy
@@ -51,7 +62,7 @@ const ApplicationReviewTab = ({ goToStep }) => {
     return date;
   };
 
-  // ✅ SAFE DATA EXTRACTION
+  //  DATA EXTRACTION
   const rawData = getValues();
 
   const formData = {
@@ -160,7 +171,7 @@ const ApplicationReviewTab = ({ goToStep }) => {
         const isMarried = formData.applicant.maritalStatus === "Married";
         const members = [
           {
-            relationship: "Father",
+            relationship: RELATION_LOOKUP["Father"],
             salutation: "2", // Mr.
             firstName: formData.family.fatherName?.firstName || "",
             middleName: formData.family.fatherName?.middleName || "",
@@ -169,7 +180,7 @@ const ApplicationReviewTab = ({ goToStep }) => {
             gender: "M",
           },
           {
-            relationship: "Mother",
+            relationship: RELATION_LOOKUP["Mother"],
             salutation: "3", // Mrs.
             firstName: formData.family.motherName?.firstName || "",
             middleName: formData.family.motherName?.middleName || "",
@@ -180,8 +191,9 @@ const ApplicationReviewTab = ({ goToStep }) => {
         ];
 
         if (isMarried) {
+          const spouseRel = formData.applicant.gender === "Female" ? "Husband" : "Wife";
           members.push({
-            relationship: "Spouse",
+            relationship: RELATION_LOOKUP[spouseRel],
             salutation: formData.applicant.gender === "Female" ? "2" : "3", // Mrs/Mr.
             firstName: formData.family.spouseName?.firstName || "",
             middleName: formData.family.spouseName?.middleName || "",
@@ -211,7 +223,7 @@ const ApplicationReviewTab = ({ goToStep }) => {
         const isMinor = age < 18;
 
         return {
-          relationship: rel,
+          relationship: RELATION_LOOKUP[rel],
           salutation: salutation, // Mr./Mrs. based on relationship
           firstName: formData.nominee.firstName,
           middleName: formData.nominee.middleName,
@@ -276,7 +288,7 @@ const ApplicationReviewTab = ({ goToStep }) => {
         }
 
         return {
-          relationship: rel,
+          relationship: RELATION_LOOKUP[rel],
           salutation: salutation,
           firstName: g?.firstName || "",
           middleName: g?.middleName || "",
