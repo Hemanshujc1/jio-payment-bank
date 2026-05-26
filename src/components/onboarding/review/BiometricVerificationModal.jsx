@@ -37,7 +37,7 @@ const BiometricVerificationModal = ({
         const langCode = selectedLang ? selectedLang.code : "EN";
         const res = await onboardingService.getConsents(langCode);
         if (res.status === "SUCCESS" && res.response?.consents) {
-          const filtered = res.response.consents.filter(c => c.consentTextCode !== "C69");
+          const filtered = res.response.consents.filter(c => c.activityType === "FINAL_SUBMISSION" && (!c.language || c.language === langCode));
           setConsentsList(filtered);
           const initial = {};
           filtered.forEach((c) => {

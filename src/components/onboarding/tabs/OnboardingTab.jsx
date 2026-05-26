@@ -84,11 +84,11 @@ const OnboardingTab = ({
         const res = await onboardingService.getConsents(langCode);
         if (res.status === "SUCCESS" && res.response?.consents) {
           const allConsents = res.response.consents;
-          const c69 = allConsents.find(c => c.consentTextCode === "C69");
-          if (c69) {
-            setValue("onboarding.c69ConsentData", c69);
+          const nomineeConsent = allConsents.find(c => c.activityType === "NOMINEE_IN");
+          if (nomineeConsent) {
+            setValue("onboarding.nomineeConsentData", nomineeConsent);
           }
-          const filtered = allConsents.filter(c => c.consentTextCode !== "C69");
+          const filtered = allConsents.filter(c => c.activityType === "AADHAR_PAN" && (!c.language || c.language === langCode));
           setConsentsList(filtered);
           const initial = {};
           filtered.forEach((c) => {

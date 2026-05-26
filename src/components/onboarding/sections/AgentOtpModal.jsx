@@ -13,7 +13,6 @@ const AgentOtpModal = ({ isOpen, onVerified }) => {
 
   if (!isOpen) return null;
 
-  // ✅ SEND OTP
   const handleSendOtp = async () => {
     try {
       setLoading(true);
@@ -42,7 +41,6 @@ const AgentOtpModal = ({ isOpen, onVerified }) => {
     }
   };
 
-  // ✅ VERIFY OTP
   const handleVerifyOtp = async () => {
     try {
       setLoading(true);
@@ -76,7 +74,6 @@ const AgentOtpModal = ({ isOpen, onVerified }) => {
   return (
     <div className="fixed inset-0 z-9999 bg-black/50 flex items-center justify-center px-4 backdrop-blur-[2px]">
       <div className="bg-[#F4E4C1] border border-[#A67C52]/30 rounded-3xl shadow-2xl w-full max-w-md p-7 flex flex-col gap-6 animate-in fade-in zoom-in-95 duration-300">
-        {/* TITLE */}
         <div className="flex flex-col items-center gap-2">
           <h2 className="text-3xl font-extrabold text-[#3E2723] tracking-wide">
             Agent Verification
@@ -87,7 +84,6 @@ const AgentOtpModal = ({ isOpen, onVerified }) => {
           </p>
         </div>
 
-        {/* VKID DISPLAY */}
         <div className="flex items-center justify-between bg-[#FFF8E7] border border-[#B08968] rounded-2xl px-5 py-4 shadow-inner">
           <span className="font-bold text-[15px] text-[#4E342E]">VKID :</span>
           <span className="text-[#3E2723] font-bold text-[16px] tracking-wide">
@@ -95,13 +91,11 @@ const AgentOtpModal = ({ isOpen, onVerified }) => {
           </span>
         </div>
 
-        {/* OTP FIELD */}
         {otpSent && (
           <div className="flex flex-col gap-2">
             <label className="font-bold text-[15px] text-[#4E342E]">
               Enter OTP
             </label>
-
             <input
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
@@ -112,9 +106,6 @@ const AgentOtpModal = ({ isOpen, onVerified }) => {
           </div>
         )}
 
-
-
-        {/* SEND OTP BUTTON */}
         {!otpSent ? (
           <button
             onClick={handleSendOtp}
@@ -157,7 +148,6 @@ const AgentOtpModal = ({ isOpen, onVerified }) => {
           </button>
         )}
 
-        {/* RESEND */}
         {otpSent && (
           <button
             onClick={handleSendOtp}

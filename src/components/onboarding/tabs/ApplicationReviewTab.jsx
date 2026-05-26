@@ -141,12 +141,12 @@ const ApplicationReviewTab = ({ goToStep }) => {
           ? [...formData.onboarding.consents]
           : []);
 
-    if (formData.nominee.provide === "No" && formData.nominee.c69Accepted && formData.onboarding.c69ConsentData) {
-      const c69Data = formData.onboarding.c69ConsentData;
-      if (!baseConsents.some(c => c.code === "C69")) {
+    if (formData.nominee.provide === "No" && formData.nominee.nomineeConsentAccepted && formData.onboarding.nomineeConsentData) {
+      const nomineeConsent = formData.onboarding.nomineeConsentData;
+      if (!baseConsents.some(c => c.code === nomineeConsent.consentTextCode)) {
         baseConsents.push({
-          consent: c69Data.text1,
-          code: c69Data.consentTextCode,
+          consent: nomineeConsent.text1,
+          code: nomineeConsent.consentTextCode,
           version: "1",
           method: "checkbox",
         });

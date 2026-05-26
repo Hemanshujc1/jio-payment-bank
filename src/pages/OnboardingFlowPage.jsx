@@ -145,7 +145,7 @@ const OnboardingFlowPage = () => {
         middleName: "",
         lastName: "",
         dob: "",
-        c69Accepted: false,
+        nomineeConsentAccepted: false,
       },
       guardian: {
         relationship: "",

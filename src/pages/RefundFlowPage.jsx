@@ -23,20 +23,20 @@ const RefundFlowPage = () => {
 
   const [showReview, setShowReview] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-  const [c69ConsentData, setC69ConsentData] = useState(null);
+  const [refundConsentData, setRefundConsentData] = useState(null);
 
   useEffect(() => {
     const fetchConsent = async () => {
       try {
         const res = await onboardingService.getConsents("EN");
         if (res.status === "SUCCESS" && res.response?.consents) {
-          const c69 = res.response.consents.find(
-            (c) => c.consentTextCode === "C69"
+          const refundConsent = res.response.consents.find(
+            (c) => c.activityType === "FINAL_SUBMISSION"
           );
-          if (c69) setC69ConsentData(c69);
+          if (refundConsent) setRefundConsentData(refundConsent);
         }
       } catch (err) {
-        console.error("Failed to fetch C69 consent", err);
+        console.error("Failed to fetch Nominee consent", err);
       }
     };
     fetchConsent();
@@ -93,7 +93,7 @@ const RefundFlowPage = () => {
                 refundStatus="In-Progress"
                 amountToRefund="Rs. 400"
                 mobileNumber={mobileNumber || "9876543210"}
-                c69ConsentData={c69ConsentData}
+                refundConsentData={refundConsentData}
                 onProceed={() => setShowSuccess(true)}
               />
             ) : (

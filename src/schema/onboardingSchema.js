@@ -117,7 +117,7 @@ export const onboardingSchema = z.object({
   }),
   nominee: z.object({
     provide: z.enum(["Yes", "No"]),
-    c69Accepted: z.boolean().optional(),
+    nomineeConsentAccepted: z.boolean().optional(),
     relationship: z.string().optional(),
     firstName: nameField().optional().or(z.literal("")),
     lastName: nameField(true).optional().or(z.literal("")),
@@ -407,12 +407,12 @@ export const onboardingSchema = z.object({
     }
   } else {
     console.log("DEBUG NOMINEE PROVIDE:", data.nominee);
-    // If provide is "No", c69Accepted must be true
-    if (!data.nominee.c69Accepted) {
+    // If provide is "No", nomineeConsentAccepted must be true
+    if (!data.nominee.nomineeConsentAccepted) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: "Please agree to this consent to proceed without a nominee.",
-        path: ["nominee", "c69Accepted"],
+        path: ["nominee", "nomineeConsentAccepted"],
       });
     }
   }

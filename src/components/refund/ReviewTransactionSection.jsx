@@ -10,9 +10,9 @@ const ReviewTransactionSection = ({
   amountToRefund = "Rs. 400",
   mobileNumber = "9876543210",
   onProceed,
-  c69ConsentData,
+  refundConsentData,
 }) => {
-  const [c69Accepted, setC69Accepted] = useState(false);
+  const [refundConsentAccepted, setRefundConsentAccepted] = useState(false);
   const [error, setError] = useState("");
   const [isBiometricVerified, setIsBiometricVerified] = useState(false);
   const [isBiometricLoading, setIsBiometricLoading] = useState(false);
@@ -26,7 +26,7 @@ const ReviewTransactionSection = ({
   };
 
   const handleProceedClick = () => {
-    if (!c69Accepted) {
+    if (!refundConsentAccepted) {
       setError("Please accept the terms and conditions to proceed.");
       return;
     }
@@ -112,9 +112,9 @@ const ReviewTransactionSection = ({
           <div className="mt-1 shrink-0">
             <input
               type="checkbox"
-              checked={c69Accepted}
+              checked={refundConsentAccepted}
               onChange={(e) => {
-                setC69Accepted(e.target.checked);
+                setRefundConsentAccepted(e.target.checked);
                 if (e.target.checked) setError("");
               }}
               className={`w-5 h-5 border-2 accent-black cursor-pointer rounded-sm ${
@@ -123,16 +123,16 @@ const ReviewTransactionSection = ({
             />
           </div>
           <span className="text-[13.5px] sm:text-[14px] leading-snug text-gray-800 select-none">
-            {c69ConsentData
-              ? "I hereby agree and authorise Jio Payments Bank to fetch my personal details from UIDAI. I declare and confirm that no other account has been opened or will be opened using my Aadhaar details to authenticate my identity through OTP verification as a part of the e- KYC process. I authorize Jio Payments Bank to use my Aadhaar details and core biometric/OTP information to authenticate and verify my identity with UIDAI. I hereby give voluntary consent to link my Aadhaar number to all my existing bank accounts andcustomer profiles for the purpose of availing of banking services and operating the account. Jio payments bank has informed me that my identity information would only be used for banking services and my biometrics/OTP will not be stored."
-              : c69ConsentData.text1
+            {refundConsentData
+              ? refundConsentData.text1
                   .split(/\\r\\n|\\n|\r\n|\n/)
                   .map((line, i, arr) => (
                     <React.Fragment key={i}>
                       {line}
                       {i !== arr.length - 1 && <br />}
                     </React.Fragment>
-                  ))}
+                  ))
+              : "Loading consent..."}
             <span className="text-red-500 text-lg ml-1">*</span>
           </span>
         </label>
@@ -194,7 +194,7 @@ const ReviewTransactionSection = ({
         <ProceedButton
           text="PROCEED"
           onClick={handleProceedClick}
-          disabled={!c69Accepted || !isBiometricVerified}
+          disabled={!refundConsentAccepted || !isBiometricVerified}
           className="w-full rounded-xl text-[14px] py-2.5 h-11"
         />
       </div>

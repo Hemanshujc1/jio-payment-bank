@@ -15,7 +15,7 @@ const NomineeDetailsTab = ({ onNext }) => {
   const nomineeVal = useWatch({ name: "nominee" }) || {};
   const guardianVal = useWatch({ name: "guardian" }) || {};
   const applicant = useWatch({ name: "applicant" }) || {};
-  const c69ConsentData = useWatch({ name: "onboarding.c69ConsentData" });
+  const nomineeConsentData = useWatch({ name: "onboarding.nomineeConsentData" });
 
   const provideNominee = nomineeVal.provide;
   const nomineeDob = nomineeVal.dob;
@@ -59,7 +59,7 @@ const NomineeDetailsTab = ({ onNext }) => {
 
   let isProceedDisabled = true;
   if (provideNominee === "No") {
-    isProceedDisabled = !nomineeVal.c69Accepted;
+    isProceedDisabled = !nomineeVal.nomineeConsentAccepted;
   } else if (provideNominee === "Yes") {
     isProceedDisabled = !(
       isNomineeFieldsFilled &&
@@ -92,7 +92,7 @@ const NomineeDetailsTab = ({ onNext }) => {
       "guardian.addressDetails.city",
       "guardian.addressDetails.state",
       "guardian.addressDetails.pincode",
-      "nominee.c69Accepted"
+      "nominee.nomineeConsentAccepted"
     ]);
 
     const data = getValues();
@@ -136,15 +136,15 @@ const NomineeDetailsTab = ({ onNext }) => {
       setValue("guardian.addressDetails.district", "");
       setValue("guardian.addressDetails.pincode", "");
 
-      if (!nomineeVal.c69Accepted) {
-        setError("nominee.c69Accepted", {
+      if (!nomineeVal.nomineeConsentAccepted) {
+        setError("nominee.nomineeConsentAccepted", {
           type: "manual",
           message: "Please agree to this consent to proceed without a nominee.",
         });
         hasValidationError = true;
       }
     } else if (provideNominee === "Yes") {
-      setValue("nominee.c69Accepted", false);
+      setValue("nominee.nomineeConsentAccepted", false);
 
       // Validate nominee fields
       if (!nomineeVal.firstName?.trim()) {
@@ -346,15 +346,15 @@ const NomineeDetailsTab = ({ onNext }) => {
                 <div className="mt-1 shrink-0">
                   <input
                     type="checkbox"
-                    {...register("nominee.c69Accepted")}
+                    {...register("nominee.nomineeConsentAccepted")}
                     className={`w-5 h-5 border-2 accent-black cursor-pointer rounded-sm ${
-                      errors.nominee?.c69Accepted ? 'border-red-500' : 'border-[#D1A054]'
+                      errors.nominee?.nomineeConsentAccepted ? 'border-red-500' : 'border-[#D1A054]'
                     }`}
                   />
                 </div>
                 <span className="text-[13.5px] sm:text-[14px] leading-snug text-gray-800 select-none">
-                  {c69ConsentData ? (
-                    c69ConsentData.text1.split(/\\r\\n|\\n|\r\n|\n/).map((line, i, arr) => (
+                  {nomineeConsentData ? (
+                    nomineeConsentData.text1.split(/\\r\\n|\\n|\r\n|\n/).map((line, i, arr) => (
                       <React.Fragment key={i}>
                         {line}
                         {i !== arr.length - 1 && <br />}
@@ -366,8 +366,8 @@ const NomineeDetailsTab = ({ onNext }) => {
                   <span className="text-red-500 text-lg ml-1">*</span>
                 </span>
               </label>
-              {errors.nominee?.c69Accepted && (
-                <span className="text-red-500 text-[12px] font-medium ml-8">{errors.nominee.c69Accepted.message}</span>
+              {errors.nominee?.nomineeConsentAccepted && (
+                <span className="text-red-500 text-[12px] font-medium ml-8">{errors.nominee.nomineeConsentAccepted.message}</span>
               )}
             </div>
           )}
