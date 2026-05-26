@@ -203,7 +203,7 @@ const OnboardingTab = ({
 
         setValue(
           "applicant.aadhaarAddress.city",
-          aadhaarData?.address?.postOffice || "",
+          aadhaarData?.address?.city || aadhaarData?.address?.postOffice || aadhaarData?.address?.district || "",
         );
 
         setValue(
@@ -241,7 +241,7 @@ const OnboardingTab = ({
         );
         setValue(
           "applicant.communicationAddress.city",
-          aadhaarData?.address?.postOffice || "",
+          aadhaarData?.address?.city || aadhaarData?.address?.postOffice || aadhaarData?.address?.district || "",
         );
         setValue(
           "applicant.communicationAddress.state",

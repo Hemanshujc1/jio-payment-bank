@@ -99,7 +99,7 @@ const AadhaarDetailsTab = ({ onNext, kycData }) => {
         addressLine1: addr.houseNumber || "",
         addressLine2: addr.landmark || "",
         addressLine3: addr.locality || "",
-        city: addr.city || "",
+        city: addr.city || addr.postOffice || addr.district || "",
         state: addr.state || "",
         stateCode: addr.stateCode || "",
         district: addr.district || "",
