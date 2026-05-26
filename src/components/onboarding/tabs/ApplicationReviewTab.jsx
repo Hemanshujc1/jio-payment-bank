@@ -46,20 +46,22 @@ const ApplicationReviewTab = ({ goToStep }) => {
   //  DATE FORMAT
   const formatDate = (date) => {
     if (!date) return "";
-    if (date.includes("/")) return date; // already dd/mm/yyyy
-    if (date.includes("-")) {
-      const parts = date.split("-");
-      if (parts.length === 3) {
-        if (parts[0].length === 4) {
-          // yyyy-mm-dd -> dd/mm/yyyy
-          return `${parts[2]}/${parts[1]}/${parts[0]}`;
-        } else {
-          // dd-mm-yyyy -> dd/mm/yyyy
-          return `${parts[0]}/${parts[1]}/${parts[2]}`;
-        }
+    
+    // Normalize to standard '-' separator
+    let normalizedDate = date.replace(/\//g, "-");
+    const parts = normalizedDate.split("-");
+    
+    if (parts.length === 3) {
+      if (parts[0].length === 4) {
+        // yyyy-mm-dd -> dd-mm-yyyy
+        return `${parts[2]}-${parts[1]}-${parts[0]}`;
+      } else {
+        // dd-mm-yyyy -> dd-mm-yyyy
+        return `${parts[0]}-${parts[1]}-${parts[2]}`;
       }
     }
-    return date;
+    
+    return normalizedDate;
   };
 
   //  DATA EXTRACTION
