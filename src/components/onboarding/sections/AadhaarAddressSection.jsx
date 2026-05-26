@@ -35,7 +35,7 @@ const AadhaarAddressSection = ({ aadhaarAddress, onSameAsAadhaarChange }) => {
       );
       setValue(
         "applicant.communicationAddress.city",
-        aadhaarAddress.district || "",
+        aadhaarAddress.city || "",
         { shouldValidate: true }
       );
       setValue(
