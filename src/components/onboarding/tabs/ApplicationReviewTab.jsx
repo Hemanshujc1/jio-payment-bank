@@ -167,6 +167,7 @@ const ApplicationReviewTab = ({ goToStep }) => {
       financialDetails: { // source of income
         annualSalary: formData.financial.annualIncome || "NA",
         occupation: formData.financial.occupation || "NA",
+        sourceOfIncome: formData.financial.sourceOfIncome || "NA",
       },
 
       familyDetails: (() => {
@@ -259,13 +260,13 @@ const ApplicationReviewTab = ({ goToStep }) => {
         {
           type: "Personal",
           countryCode: "91",
-          mobileNumber: formData.applicant.mobileNumber || "",
-          status: "Active",
-          email: formData.applicant.emailId || "",
+          mobileNumber:  "",
+          status: "",
+          email:"",
         },
         {
           type: "Personal Email",
-          email: formData.applicant.emailId || "",
+          email: "",
         },
       ] : [],
 
