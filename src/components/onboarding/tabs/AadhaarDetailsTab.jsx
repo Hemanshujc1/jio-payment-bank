@@ -52,6 +52,7 @@ const AadhaarDetailsTab = ({ onNext, kycData }) => {
       addr.landmark,
       addr.locality,
       addr.district,
+      addr.city,
       addr.state,
       addr.pincode,
     ]
@@ -98,7 +99,7 @@ const AadhaarDetailsTab = ({ onNext, kycData }) => {
         addressLine1: addr.houseNumber || "",
         addressLine2: addr.landmark || "",
         addressLine3: addr.locality || "",
-        city: addr.district || "",
+        city: addr.city || "",
         state: addr.state || "",
         stateCode: addr.stateCode || "",
         district: addr.district || "",
