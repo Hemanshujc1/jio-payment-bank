@@ -164,7 +164,7 @@ const ApplicationReviewTab = ({ goToStep }) => {
 
       consents: baseConsents,
 
-      financialDetails: {
+      financialDetails: { // source of income
         annualSalary: formData.financial.annualIncome || "NA",
         occupation: formData.financial.occupation || "NA",
       },
@@ -257,7 +257,7 @@ const ApplicationReviewTab = ({ goToStep }) => {
 
       nomineeContactDetails: formData.nominee.provide === "Yes" ? [
         {
-          type: "Mobile",
+          type: "Personal",
           countryCode: "91",
           mobileNumber: formData.applicant.mobileNumber || "",
           status: "Active",

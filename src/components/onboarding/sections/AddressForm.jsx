@@ -190,6 +190,7 @@ const AddressForm = ({ prefix, title, aadhaarAddress }) => {
                     currentAddress?.addressLine2,
                     currentAddress?.addressLine3,
                     currentAddress?.city,
+                    currentAddress?.district,
                     currentAddress?.state,
                   ]
                     .filter(Boolean)

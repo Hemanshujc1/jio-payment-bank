@@ -20,6 +20,7 @@ const ReviewNomineeDetails = ({ data, guardian, onEdit }) => {
       addr.addressLine2,
       addr.addressLine3,
       addr.city,
+      addr.district,
       addr.state,
     ]
       .filter(Boolean)
