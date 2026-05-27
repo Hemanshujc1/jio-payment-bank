@@ -124,7 +124,7 @@ export const getDisplayAddress = (addr) => {
     Boolean,
   );
 
-  let result = parts.join(", ") + `, ${addr.city} - ${addr.pincode}`;;
+  let result = parts.join(", ") + `, ${addr.city} - ${addr.pincode}, ${addr.state}`;
 
   // if (addr.city && addr.pincode) {
   //   result += `, ${addr.city} - ${addr.pincode}`;
