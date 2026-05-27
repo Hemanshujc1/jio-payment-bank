@@ -3,14 +3,14 @@ import ReviewRow from "./ReviewRow";
 
 const ReviewAadhaarDetails = ({ data, onEdit }) => {
 
-  // ✅ Safe full name
+  // Safe full name
   const getFullName = () => {
     return [data?.firstName, data?.middleName, data?.lastName]
       .filter(Boolean)
       .join(" ") || "-";
   };
 
-  // ✅ Safe address formatter using master field names (per Rule 4 Case 2)
+  // Safe address formatter using master field names
   const getFullAddress = () => {
     const addr = data?.communicationAddress || {};
 
@@ -23,7 +23,7 @@ const ReviewAadhaarDetails = ({ data, onEdit }) => {
     return result || "-";
   };
 
-  // ✅ Base64 image support
+  // Base64 image support
   const getImageSrc = () => {
     if (data?.photo) {
       return `data:image/jpeg;base64,${data.photo}`;

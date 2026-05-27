@@ -5,19 +5,24 @@
  *
  * {
  *   addressType: "",
- *   houseNumber: "",
+ *
+ *   houseNumber: "", // blank in case of manual
+ *
  *   line1: "",
  *   line2: "",
  *   line3: "",
- *   locality: "",
- *   street: "",
- *   landmark: "",
+ *
+ *   locality: "", // blank in case of manual
+ *   street: "", // blank in case of manual
+ *   landmark: "", // blank in case of manual
+ *
  *   city: "",
  *   district: "",
  *   state: "",
  *   stateCode: "",
  *   country: "India",
  *   pincode: "",
+ *
  *   sameAsPermanent: false,
  * }
  */
@@ -110,16 +115,13 @@ export const getDisplayAddress = (addr, mode = "others") => {
   if (!addr) return "";
 
   if (mode === "aadhaar") {
-    return [addr.line1, addr.line2, addr.line3].filter(Boolean).join(" | ");
+    return [addr.line1, addr.line2, addr.line3].filter(Boolean).join(" , ");
   }
 
   // "others" mode
-  const parts = [
-    addr.line1,
-    addr.line2,
-    addr.line3,
-    addr.district,
-  ].filter(Boolean);
+  const parts = [addr.line1, addr.line2, addr.line3, addr.district].filter(
+    Boolean,
+  );
 
   let result = parts.join(", ");
 
@@ -147,7 +149,12 @@ export const getDisplayAddress = (addr, mode = "others") => {
  * @param {Object} addr - master address object
  * @param {boolean} shouldValidate
  */
-export const setAddressFields = (setValue, prefix, addr, shouldValidate = true) => {
+export const setAddressFields = (
+  setValue,
+  prefix,
+  addr,
+  shouldValidate = true,
+) => {
   const a = addr ?? emptyAddress();
   const opts = { shouldValidate };
   setValue(`${prefix}.addressType`, a.addressType, opts);

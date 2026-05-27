@@ -77,16 +77,13 @@ const ApplicationReviewTab = ({ goToStep }) => {
     guardian: rawData?.guardian || {},
   };
 
-  // ✅ Build person address array from master address fields
-  // Per StepsTOStoreData.md Rule 9: exact same payload format, master structure only
+  // Build person address array from master address fields
   const buildPersonAddress = () => {
     const aadhaarAddress = formData.applicant?.aadhaarAddress || {};
     const communicationAddress = formData.applicant?.communicationAddress || {};
 
-    // Deep clone with addressType override — no reconstruction, no transformation
     const permanentAddr = cloneAddress(aadhaarAddress, "PERMANENT", false);
 
-    // Determine sameAsPermanent: compare pincode + state + city + line1
     const isSame =
       aadhaarAddress.pincode === communicationAddress.pincode &&
       aadhaarAddress.state === communicationAddress.state &&
@@ -98,7 +95,6 @@ const ApplicationReviewTab = ({ goToStep }) => {
     return [permanentAddr, currentAddr];
   };
 
-  // ✅ FINAL PAYLOAD BUILDER
   const buildFinalPayload = (consentsArray) => {
     let baseConsents = Array.isArray(consentsArray) && consentsArray.length > 0
       ? consentsArray
@@ -219,7 +215,7 @@ const ApplicationReviewTab = ({ goToStep }) => {
         subDistrict: formData.nominee.addressDetails?.district || "",
         state: formData.nominee.addressDetails?.state || "",
         stateCode: formData.nominee.addressDetails?.stateCode || "",
-        country: formData.nominee.addressDetails?.country || "India",
+        country:"India",
         pincode: formData.nominee.addressDetails?.pincode || "",
       } : null,
 
@@ -289,7 +285,7 @@ const ApplicationReviewTab = ({ goToStep }) => {
         subDistrict: formData.guardian?.addressDetails?.district || "",
         state: formData.guardian?.addressDetails?.state || "",
         stateCode: formData.guardian?.addressDetails?.stateCode || "",
-        country: formData.guardian?.addressDetails?.country || "India",
+        country: "India",
         pincode: formData.guardian?.addressDetails?.pincode || "",
       } : null,
 
