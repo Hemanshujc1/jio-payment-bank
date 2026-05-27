@@ -115,7 +115,7 @@ export const getDisplayAddress = (addr, mode = "others") => {
   if (!addr) return "";
 
   if (mode === "aadhaar") {
-    return [addr.line1, addr.line2, addr.line3].filter(Boolean).join(" , ");
+    return [addr.line1, addr.line2, addr.line3].filter(Boolean).join(", ");
   }
 
   // "others" mode
