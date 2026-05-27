@@ -36,7 +36,7 @@ const AgentOtpModal = ({ isOpen, onVerified }) => {
 
       if (res?.status === "SUCCESS") {
         setOtpSent(true);
-        // Removed toast.success to fix duplicate toast issue; UI change implies success.
+          toast.success(res?.message || "OTP Send Successfully");        
       } else {
         toast.error(res?.message || "Failed to send OTP");
       }
