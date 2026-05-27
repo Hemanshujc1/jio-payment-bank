@@ -11,7 +11,11 @@ import LanguageSelection from "../sections/LanguageSelection";
 import { cloneAddress, setAddressFields } from "../../../utils/addressUtils";
 import BiometricSection from "../sections/BiometricSection";
 import { useToast } from "../../ui/Toast";
-import { MOBILE_REGEX, isRepeatingDigits, focusFirstError } from "../../../utils/validationUtils";
+import {
+  MOBILE_REGEX,
+  isRepeatingDigits,
+  focusFirstError,
+} from "../../../utils/validationUtils";
 
 const OnboardingTab = ({
   onNext,
@@ -56,6 +60,7 @@ const OnboardingTab = ({
   const [isBiometricLoading, setIsBiometricLoading] = useState(false);
   const [isBiometricVerified, setIsBiometricVerified] = useState(false);
   const [isVerifyingDocuments, setIsVerifyingDocuments] = useState(false);
+  const [showConsentModal, setShowConsentModal] = useState(false);
 
   const [consentsList, setConsentsList] = useState([]);
   const [selectedConsents, setSelectedConsents] = useState({});
@@ -85,11 +90,17 @@ const OnboardingTab = ({
         const res = await onboardingService.getConsents(langCode);
         if (res.status === "SUCCESS" && res.response?.consents) {
           const allConsents = res.response.consents;
-          const nomineeConsent = allConsents.find(c => c.activityType === "NOMINEE_IN");
+          const nomineeConsent = allConsents.find(
+            (c) => c.activityType === "NOMINEE_IN"
+          );
           if (nomineeConsent) {
             setValue("onboarding.nomineeConsentData", nomineeConsent);
           }
-          const filtered = allConsents.filter(c => c.activityType === "AADHAR_PAN" && (!c.language || c.language === langCode));
+          const filtered = allConsents.filter(
+            (c) =>
+              c.activityType === "AADHAR_PAN" &&
+              (!c.language || c.language === langCode)
+          );
           setConsentsList(filtered);
           const initial = {};
           filtered.forEach((c) => {
@@ -106,7 +117,9 @@ const OnboardingTab = ({
 
   const isAllConsentsSelected =
     consentsList.length > 0 &&
-    consentsList.every((c) => c.mandatory !== "Y" || selectedConsents[c.consentTextCode]);
+    consentsList.every(
+      (c) => c.mandatory !== "Y" || selectedConsents[c.consentTextCode]
+    );
 
   const captureBiometric = async (biometricXml) => {
     setIsBiometricLoading(true);
@@ -178,7 +191,7 @@ const OnboardingTab = ({
         // GENDER
         setValue(
           "applicant.gender",
-          aadhaarData?.gender === "M" ? "Male" : "Female",
+          aadhaarData?.gender === "M" ? "Male" : "Female"
         );
 
         //  CONSENTS
@@ -189,8 +202,17 @@ const OnboardingTab = ({
 
         //  AADHAAR ADDRESS — Store raw API response as master structure
         const rawAadhaarAddr = aadhaarData?.address || {};
-        const aadhaarMasterAddr = cloneAddress(rawAadhaarAddr, "PERMANENT", false);
-        setAddressFields(setValue, "applicant.aadhaarAddress", aadhaarMasterAddr, false);
+        const aadhaarMasterAddr = cloneAddress(
+          rawAadhaarAddr,
+          "PERMANENT",
+          false
+        );
+        setAddressFields(
+          setValue,
+          "applicant.aadhaarAddress",
+          aadhaarMasterAddr,
+          false
+        );
 
         // MOBILE (FROM OTP FLOW)
         setValue("applicant.mobileNumber", mobileNumber || "");
@@ -208,7 +230,10 @@ const OnboardingTab = ({
         setIsBiometricVerified(false);
         setDocumentStatus("mismatch");
         setPanAadhaarFailed(true);
-        const msg = response.error?.message || response.message || "Identity verification failed.";
+        const msg =
+          response.error?.message ||
+          response.message ||
+          "Identity verification failed.";
         setVerificationErrorMessage(msg);
         toast.error(msg);
       }
@@ -236,7 +261,7 @@ const OnboardingTab = ({
       try {
         const response = await onboardingService.generateOtp(
           mobileNumber,
-          emailId,
+          emailId
         );
 
         // Always try to capture IDs if returned, as they might be needed for other retries
@@ -248,7 +273,11 @@ const OnboardingTab = ({
         if (response.status === "SUCCESS") {
           setShowOtp(true);
         } else {
-          toast.error(response.error?.message || response.message || "Failed to generate mobile OTP. Please try again.");
+          toast.error(
+            response.error?.message ||
+              response.message ||
+              "Failed to generate mobile OTP. Please try again."
+          );
         }
       } catch (error) {
         toast.error(error.message || "An error occurred while generating OTP.");
@@ -273,7 +302,11 @@ const OnboardingTab = ({
       if (response.status === "SUCCESS") {
         setIsMobileVerified(true);
       } else {
-        toast.error(response.error?.message || response.message || "Invalid OTP. Please try again.");
+        toast.error(
+          response.error?.message ||
+            response.message ||
+            "Invalid OTP. Please try again."
+        );
       }
     } catch (error) {
       toast.error(error.message || "An error occurred while verifying OTP.");
@@ -284,7 +317,9 @@ const OnboardingTab = ({
 
   const handleSendEmailOtp = async () => {
     if (!applicationNumber) {
-      toast.warning("Please generate mobile OTP first to start the application.");
+      toast.warning(
+        "Please generate mobile OTP first to start the application."
+      );
       return;
     }
     if (emailId.length > 0) {
@@ -299,10 +334,16 @@ const OnboardingTab = ({
         if (response.status === "SUCCESS") {
           setShowEmailOtp(true);
         } else {
-          toast.error(response.error?.message || response.message || "Failed to send email OTP. Please try again.");
+          toast.error(
+            response.error?.message ||
+              response.message ||
+              "Failed to send email OTP. Please try again."
+          );
         }
       } catch (error) {
-        toast.error(error.message || "An error occurred while sending email OTP.");
+        toast.error(
+          error.message || "An error occurred while sending email OTP."
+        );
       } finally {
         setIsEmailApiLoading(false);
       }
@@ -328,10 +369,16 @@ const OnboardingTab = ({
       if (response.status === "SUCCESS") {
         setIsEmailVerified(true);
       } else {
-        toast.error(response.error?.message || response.message || "Invalid Email OTP. Please try again.");
+        toast.error(
+          response.error?.message ||
+            response.message ||
+            "Invalid Email OTP. Please try again."
+        );
       }
     } catch (error) {
-      toast.error(error.message || "An error occurred while verifying email OTP.");
+      toast.error(
+        error.message || "An error occurred while verifying email OTP."
+      );
     } finally {
       setIsVerifyingEmailOtp(false);
     }
@@ -347,7 +394,11 @@ const OnboardingTab = ({
       if (response.status === "SUCCESS") {
         toast.success("Mobile OTP resent successfully.");
       } else {
-        toast.error(response.error?.message || response.message || "Failed to resend OTP. Please try again.");
+        toast.error(
+          response.error?.message ||
+            response.message ||
+            "Failed to resend OTP. Please try again."
+        );
       }
     } catch (error) {
       toast.error(error.message || "An error occurred while resending OTP.");
@@ -369,10 +420,16 @@ const OnboardingTab = ({
       if (response.status === "SUCCESS") {
         toast.success("Email OTP resent successfully.");
       } else {
-        toast.error(response.error?.message || response.message || "Failed to resend email OTP. Please try again.");
+        toast.error(
+          response.error?.message ||
+            response.message ||
+            "Failed to resend email OTP. Please try again."
+        );
       }
     } catch (error) {
-      toast.error(error.message || "An error occurred while resending email OTP.");
+      toast.error(
+        error.message || "An error occurred while resending email OTP."
+      );
     } finally {
       setIsEmailApiLoading(false);
     }
@@ -432,10 +489,8 @@ const OnboardingTab = ({
   const displayAadhaar = showAadhaar
     ? formatAadhaar(aadhaar)
     : aadhaar
-      ? formatAadhaar(aadhaar).replace(/[0-9]/g, "X")
-      : "";
-
-
+    ? formatAadhaar(aadhaar).replace(/[0-9]/g, "X")
+    : "";
 
   const handleProceed = async () => {
     const isValid = await trigger("onboarding");
@@ -450,36 +505,92 @@ const OnboardingTab = ({
       toast.error("Please enter valid information in all fields.");
       focusFirstError();
     } else if (!panAadhaarSuccess) {
-      toast.warning("Please complete biometric verification successfully first.");
+      toast.warning(
+        "Please complete biometric verification successfully first."
+      );
     }
   };
 
   if (!isVerificationComplete) {
     return (
-      <MobileOtpSection
-        mobileNumber={mobileNumber}
-        setMobileNumber={setMobileNumber}
-        email={emailId}
-        setEmail={setEmail}
-        showMobileOtp={showOtp}
-        handleGenerateMobileOtp={handleGenerateOtp}
-        isMobileVerified={isMobileVerified}
-        setIsMobileVerified={setIsMobileVerified}
-        showEmailOtp={showEmailOtp}
-        isEmailVerified={isEmailVerified}
-        setIsEmailVerified={setIsEmailVerified}
-        onProceed={() => setIsVerificationComplete(true)}
-        isApiLoading={isApiLoading}
-        isVerifyingOtp={isVerifyingOtp}
-        handleVerifyMobileOtp={handleVerifyMobileOtp}
-        isEmailApiLoading={isEmailApiLoading}
-        handleGenerateEmailOtp={handleSendEmailOtp}
-        isVerifyingEmailOtp={isVerifyingEmailOtp}
-        handleVerifyEmailOtp={handleVerifyEmailOtp}
-        handleResendMobileOtp={handleResendMobileOtp}
-        handleResendEmailOtp={handleResendEmailOtp}
-        applicationNumber={applicationNumber}
-      />
+      <>
+        <MobileOtpSection
+          mobileNumber={mobileNumber}
+          setMobileNumber={setMobileNumber}
+          email={emailId}
+          setEmail={setEmail}
+          showMobileOtp={showOtp}
+          handleGenerateMobileOtp={handleGenerateOtp}
+          isMobileVerified={isMobileVerified}
+          setIsMobileVerified={setIsMobileVerified}
+          showEmailOtp={showEmailOtp}
+          isEmailVerified={isEmailVerified}
+          setIsEmailVerified={setIsEmailVerified}
+          onProceed={() => setShowConsentModal(true)}
+          isApiLoading={isApiLoading}
+          isVerifyingOtp={isVerifyingOtp}
+          handleVerifyMobileOtp={handleVerifyMobileOtp}
+          isEmailApiLoading={isEmailApiLoading}
+          handleGenerateEmailOtp={handleSendEmailOtp}
+          isVerifyingEmailOtp={isVerifyingEmailOtp}
+          handleVerifyEmailOtp={handleVerifyEmailOtp}
+          handleResendMobileOtp={handleResendMobileOtp}
+          handleResendEmailOtp={handleResendEmailOtp}
+          applicationNumber={applicationNumber}
+        />
+
+        {showConsentModal && (
+          <div className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+            <div className="w-full max-w-4xl bg-[#F4E4C1] rounded-3xl border border-[#A67C52]/30 shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
+              {/* Header */}
+              <div className="px-6 pt-6 pb-4 text-center">
+                <h2 className="text-3xl font-extrabold text-[#3E2723]">
+                  Terms & Conditions
+                </h2>
+
+                <p className="text-[#5D4037] text-sm mt-2">
+                  Please review and accept the terms to proceed.
+                </p>
+              </div>
+
+              {/* Body */}
+              <div className="px-6 pb-6 flex flex-col gap-5 max-h-[70vh] overflow-y-auto custom-scrollbar">
+                <div className="bg-white rounded-xl p-3 border border-[#B08968]/30 shadow-inner">
+                  <LanguageSelection
+                    language={language}
+                    setLanguage={(val) => setValue("onboarding.language", val)}
+                    languages={languagesList}
+                  />
+                </div>
+
+                <div className="bg-white rounded-2xl p-3 border border-[#B08968]/30 shadow-inner">
+                  <ConsentsSection
+                    consents={consentsList}
+                    selectedConsents={selectedConsents}
+                    setSelectedConsents={setSelectedConsents}
+                    errors={errors.onboarding}
+                  />
+                </div>
+
+                <button
+                  onClick={() => {
+                    setShowConsentModal(false);
+                    setIsVerificationComplete(true);
+                  }}
+                  disabled={!isAllConsentsSelected}
+                  className={`w-full py-4 rounded-2xl font-bold text-[16px] transition-all duration-300 ${
+                    isAllConsentsSelected
+                      ? "bg-[#4E342E] hover:bg-[#3E2723] text-white"
+                      : "bg-[#8D6E63]/50 text-white/70 cursor-not-allowed"
+                  }`}
+                >
+                  I AGREE & CONTINUE
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </>
     );
   }
 
@@ -506,19 +617,6 @@ const OnboardingTab = ({
         errors={errors.onboarding}
       />
 
-      <ConsentsSection
-        consents={consentsList}
-        selectedConsents={selectedConsents}
-        setSelectedConsents={setSelectedConsents}
-        errors={errors.onboarding}
-      />
-
-      <LanguageSelection
-        language={language}
-        setLanguage={(val) => setValue("onboarding.language", val)}
-        languages={languagesList}
-      />
-
       {/* Biometric Integration Step */}
       <BiometricSection
         isBiometricVerified={isBiometricVerified}
@@ -528,8 +626,6 @@ const OnboardingTab = ({
         documentStatus={documentStatus}
         onCaptureSuccess={captureBiometric}
       />
-
-
 
       {panAadhaarSuccess && (
         <div className="w-full max-w-4xl mx-auto mt-4 px-4 py-3 bg-green-50 border border-green-200 rounded-xl flex items-start gap-3">
