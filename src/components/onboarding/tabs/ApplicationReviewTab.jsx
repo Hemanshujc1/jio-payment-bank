@@ -338,11 +338,11 @@ const ApplicationReviewTab = ({ goToStep }) => {
         // Show success checkmark in the modal
         setIsBiometricVerified(true);
 
-        // Wait 1.5 seconds so the user can see the green checkmark, then show final success overlay
+        // Wait 1.2 seconds so the user can see the green checkmark, then show final success overlay
         setTimeout(() => {
           setIsSuccess(true);
           setShowBiometricConsent(false);
-        }, 1500);
+        }, 1200);
       } else {
         toast.error(res.message || "Application submission failed. Please try again.");
       }

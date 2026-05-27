@@ -66,6 +66,7 @@ const AgentOtpModal = ({ isOpen, onVerified }) => {
       if (res?.status === "SUCCESS") {
         sessionStorage.setItem("agentVerified", "true");
         sessionStorage.setItem("vkid", vkid);
+        toast.success(res?.message || "OTP Verified Successfully");        
         onVerified();
       } else {
         toast.error(res?.message || "Invalid / Expired OTP");
