@@ -46,13 +46,12 @@ const optionalLastNameField = z
   .refine((val) => !val || !hasConsecutiveLetters(val), "Enter valid name");
 
 // Master address schema — mirrors the MASTER ADDRESS STRUCTURE in StepsTOStoreData.md
-// line1/line2/line3 replace the old addressLine1/2/3 field names.
 const addressSchema = z.object({
   addressType: z.string().optional().or(z.literal("")),
   houseNumber: z.string().optional().or(z.literal("")),
   line1: z
     .string()
-    .min(5, "Address Line 1 must be at least 5 characters")
+    .min(4, "Address Line 1 must be at least 4 characters")
     .max(100, "Address Line 1 cannot exceed 100 characters")
     .regex(
       /^[a-zA-Z0-9.\s,\-\/]+$/,
