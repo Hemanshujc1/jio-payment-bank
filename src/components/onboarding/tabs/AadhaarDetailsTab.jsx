@@ -46,7 +46,6 @@ const AadhaarDetailsTab = ({ onNext, kycData }) => {
     return base64 ? `data:image/jpeg;base64,${base64}` : "/jpb/2.jpeg";
   };
 
-  // ✅ Per Rule 4 Case 1: display Aadhaar address using line1/line2/line3
   const formatAddress = (addr) => {
     if (!addr) return "";
     return getDisplayAddress(addr, "aadhaar");
@@ -71,21 +70,16 @@ const AadhaarDetailsTab = ({ onNext, kycData }) => {
     setValue("applicant.gender", kycData.gender === "M" ? "Male" : "Female");
     setValue("applicant.dob", formatDOB(kycData.dob) || "");
 
-    // ℹ️ Communication address fields are intentionally NOT set here.
-    // They are populated only when the user ticks "Same as Aadhaar Address",
-    // or filled manually by the user.
   }, [kycData, setValue]);
 
   const handleSameAddressChange = (checked) => {
     setSameAsAadhaar(checked);
 
     if (checked && aadhaarAddress) {
-      // ✅ Rule 1: deep clone — NO transformation, NO modification
       const cloned = cloneAddress(aadhaarAddress, "CURRENT", true);
       console.log("[SameAsAadhaar] Communication Address deep-cloned:", cloned);
       setAddressFields(setValue, "applicant.communicationAddress", cloned, true);
     } else {
-      // Clear all fields when unchecked
       setAddressFields(setValue, "applicant.communicationAddress", null, false);
     }
   };

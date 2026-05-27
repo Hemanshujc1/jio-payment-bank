@@ -23,7 +23,7 @@ const AddressForm = ({ prefix, title, aadhaarAddress }) => {
 
   const addressType = watch(`${prefix}.address`);
   const currentAddress = watch(`${prefix}.addressDetails`);
-  // ✅ Read communication address using master field names (line1, etc.)
+  //Read communication address using master field names (line1, etc.)
   const applicantAddress = watch("applicant.communicationAddress");
 
   const getError = (path) => {
@@ -36,15 +36,15 @@ const AddressForm = ({ prefix, title, aadhaarAddress }) => {
     return current;
   };
 
-  // ✅ Rules 1 & 3: deep clone with NO transformation
+  // clone with NO transformation
   useEffect(() => {
     let targetAddress = null;
 
     if (addressType === "Same as my communication address" && applicantAddress) {
-      // Rule 3: exact copy of communication address
+      // exact copy of communication address
       targetAddress = cloneAddress(applicantAddress);
     } else if (addressType === "Same as my Aadhaar address" && aadhaarAddress) {
-      // Rule 1: exact copy of Aadhaar address
+      // exact copy of Aadhaar address
       targetAddress = cloneAddress(aadhaarAddress);
     }
 
@@ -57,6 +57,7 @@ const AddressForm = ({ prefix, title, aadhaarAddress }) => {
     } else if (!addressType || addressType === "Others") {
       // When switching to Others, clear auto-filled fields (keep manually entered)
       // Only clear if we were previously in a copy mode
+
     }
   }, [
     addressType,
@@ -69,7 +70,7 @@ const AddressForm = ({ prefix, title, aadhaarAddress }) => {
 
   const pincode = watch(`${prefix}.addressDetails.pincode`);
 
-  // ✅ Rule 2: Pincode lookup — ONLY for "Others" mode
+  //  Pincode lookup — ONLY for "Others" mode
   useEffect(() => {
     const lookupPincode = async () => {
       if (addressType !== "Others") return;
@@ -111,7 +112,7 @@ const AddressForm = ({ prefix, title, aadhaarAddress }) => {
 
   const error = getError(prefix);
 
-  // ✅ Rule 4 display: "aadhaar" mode for Aadhaar copy, "others" for rest
+  // "aadhaar" mode for Aadhaar copy, "others" for rest
   const displayMode = addressType === "Same as my Aadhaar address" ? "aadhaar" : "others";
   const displayAddress = getDisplayAddress(currentAddress, displayMode);
 
@@ -173,7 +174,7 @@ const AddressForm = ({ prefix, title, aadhaarAddress }) => {
             </div>
           )}
 
-          {/* ✅ Rule 4: display-only address string (not stored/sent in payload) */}
+          {/* display-only address string (not stored/sent in payload) */}
           {addressType &&
             addressType !== "Others" &&
             (currentAddress?.line1 || currentAddress?.city || currentAddress?.pincode) && (
@@ -184,7 +185,7 @@ const AddressForm = ({ prefix, title, aadhaarAddress }) => {
             )}
         </div>
 
-        {/* ✅ "Others" — manual entry using master field names */}
+        {/*  — manual entry using master field names */}
         {addressType === "Others" && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-5 sm:p-6 rounded-2xl items-start">
             {/* Line 1 */}

@@ -146,7 +146,7 @@ const OnboardingTab = ({
         const aadhaarData = apiData?.aadhaar;
         const financialData = apiData?.financialDetails;
 
-        // ✅ KEEP EXISTING KYC FLOW
+        // KEEP EXISTING KYC FLOW
         const formattedKyc = {
           name: aadhaarData?.name,
           dob: aadhaarData?.dob,
@@ -158,13 +158,13 @@ const OnboardingTab = ({
 
         setKycData(formattedKyc);
 
-        // ✅ PAN
+        //  PAN
         setValue("applicant.pan", financialData?.panNumber || "");
 
-        // ✅ Aadhaar (masked)
+        //  Aadhaar (masked)
         setValue("applicant.aadhaar", aadhaarData?.maskedAadhaar || "");
 
-        // ✅ NAME SPLIT
+        // NAME SPLIT
         const fullName = aadhaarData?.name || "";
         const names = fullName.split(" ");
 
@@ -172,38 +172,33 @@ const OnboardingTab = ({
         setValue("applicant.middleName", names.slice(1, -1).join(" ") || "");
         setValue("applicant.lastName", names[names.length - 1] || "");
 
-        // ✅ DOB
+        //  DOB
         setValue("applicant.dob", aadhaarData?.dob || "");
 
-        // ✅ GENDER
+        // GENDER
         setValue(
           "applicant.gender",
           aadhaarData?.gender === "M" ? "Male" : "Female",
         );
 
-        // ✅ CONSENTS
+        //  CONSENTS
         setValue("onboarding.consents", finalConsents);
 
-        // ✅ IMAGE (BASE64)
+        //  IMAGE (BASE64)
         setValue("applicant.photo", aadhaarData?.photo || "");
 
-        // ✅ AADHAAR ADDRESS — Store raw API response as master structure (NO transformation)
-        // Per Rule 1 of StepsTOStoreData.md: use deep clone only, no modification
+        //  AADHAAR ADDRESS — Store raw API response as master structure
         const rawAadhaarAddr = aadhaarData?.address || {};
         const aadhaarMasterAddr = cloneAddress(rawAadhaarAddr, "PERMANENT", false);
         setAddressFields(setValue, "applicant.aadhaarAddress", aadhaarMasterAddr, false);
 
-        // ℹ️ Communication address is NOT pre-filled here.
-        // It is populated only when the user selects "Same as Aadhaar Address"
-        // or enters manually in AadhaarDetailsTab.
-
-        // ✅ MOBILE (FROM OTP FLOW)
+        // MOBILE (FROM OTP FLOW)
         setValue("applicant.mobileNumber", mobileNumber || "");
 
-        // ✅ EMAIL (FROM OTP FLOW)
+        // EMAIL (FROM OTP FLOW)
         setValue("applicant.emailId", emailId || "");
 
-        console.log("✅ FINAL APPLICANT STORED:", {
+        console.log(" FINAL APPLICANT STORED:", {
           pan: financialData?.panNumber,
           aadhaar: aadhaarData?.maskedAadhaar,
           mobile: mobileNumber,

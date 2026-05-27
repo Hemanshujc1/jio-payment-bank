@@ -39,7 +39,7 @@ const ApplicationReviewTab = ({ goToStep }) => {
   const [isBiometricLoading, setIsBiometricLoading] = useState(false); 
   const [isBiometricVerified, setIsBiometricVerified] = useState(false);
 
-  // ✅ Divider
+  // Divider
   const Divider = () => (
     <hr className="border-t border-[#A89885] w-full my-4 opacity-60" />
   );
@@ -309,7 +309,7 @@ const ApplicationReviewTab = ({ goToStep }) => {
     };
   };
 
-  // ✅ SUBMIT FLOW
+  // SUBMIT FLOW
   const handleSubmit = () => {
     setShowChargeVerification(true);
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -399,7 +399,7 @@ const ApplicationReviewTab = ({ goToStep }) => {
         issuanceFee={formData.onboarding?.issuanceFee}
       />
 
-      {/* ✅ UPDATED MODAL PROPS */}
+      {/*  UPDATED MODAL PROPS */}
       <BiometricVerificationModal
         isOpen={showBiometricConsent}
         onClose={() => setShowBiometricConsent(false)}

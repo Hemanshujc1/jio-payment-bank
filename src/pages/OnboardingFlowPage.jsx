@@ -158,7 +158,6 @@ const OnboardingFlowPage = () => {
         occupation: "",
         sourceOfIncome: "",
         annualIncome: "",
-        // fatcaDeclared: false,
       },
     },
   });

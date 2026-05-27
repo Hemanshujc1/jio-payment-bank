@@ -50,7 +50,6 @@ export const emptyAddress = () => ({
 
 /**
  * Deep-clones an address object into the master structure.
- * Per Rule 1 & 3: NO transformation, NO rebuilding.
  * Use this for:
  *   - "Same as Aadhaar Address"
  *   - "Same as Communication Address"
@@ -75,7 +74,7 @@ export const cloneAddress = (addr, addressType, sameAsPermanent = false) => {
     district: addr.district ?? "",
     state: addr.state ?? "",
     stateCode: addr.stateCode !== undefined ? String(addr.stateCode) : "",
-    country: addr.country ?? "India",
+    country: "India",
     pincode: addr.pincode ?? "",
     sameAsPermanent,
   };

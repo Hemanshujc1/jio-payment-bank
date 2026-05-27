@@ -3,14 +3,13 @@ import ReviewRow from "./ReviewRow";
 
 const ReviewAadhaarDetails = ({ data, onEdit }) => {
 
-  // Safe full name
   const getFullName = () => {
     return [data?.firstName, data?.middleName, data?.lastName]
       .filter(Boolean)
       .join(" ") || "-";
   };
 
-  // Safe address formatter using master field names
+  //address formatter 
   const getFullAddress = () => {
     const addr = data?.communicationAddress || {};
 

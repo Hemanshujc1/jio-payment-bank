@@ -19,12 +19,11 @@ const AadhaarAddressSection = ({ aadhaarAddress, onSameAsAadhaarChange }) => {
   } = useFormContext();
 
   const sameAsAadhaar = watch("applicant.sameAsAadhaar");
-  // ✅ Watch pincode from the master field (not addressLine* anymore)
+  // Watch pincode from the master field (not addressLine* anymore)
   const pincode = watch("applicant.communicationAddress.pincode");
   const prevSameAsAadhaar = useRef(sameAsAadhaar);
   const [isPincodeLoading, setIsPincodeLoading] = useState(false);
 
-  // ✅ Rule 1: When sameAsAadhaar toggled on — deep clone, no transformation
   useEffect(() => {
     if (sameAsAadhaar && aadhaarAddress) {
       const cloned = cloneAddress(aadhaarAddress, "CURRENT", true);
@@ -36,7 +35,7 @@ const AadhaarAddressSection = ({ aadhaarAddress, onSameAsAadhaarChange }) => {
     prevSameAsAadhaar.current = sameAsAadhaar;
   }, [sameAsAadhaar, aadhaarAddress, setValue]);
 
-  // ✅ Rule 2: Pincode lookup — ONLY when not sameAsAadhaar (Others mode)
+  // Pincode lookup — ONLY when not sameAsAadhaar (Others mode)
   useEffect(() => {
     const lookupPincode = async () => {
       if (sameAsAadhaar) return; // Rule 1: no API call when copying Aadhaar
@@ -46,7 +45,6 @@ const AadhaarAddressSection = ({ aadhaarAddress, onSameAsAadhaarChange }) => {
           const res = await onboardingService.getPincodeDetails(pincode);
           if (res.cityName && res.stateName) {
             const mapped = mapPincodeResponse(res);
-            // Rule 2: only set city, district, state, stateCode from pincode API
             setValue("applicant.communicationAddress.city", mapped.city, { shouldValidate: true });
             setValue("applicant.communicationAddress.district", mapped.district, { shouldValidate: true });
             setValue("applicant.communicationAddress.state", mapped.state, { shouldValidate: true });
@@ -107,7 +105,7 @@ const AadhaarAddressSection = ({ aadhaarAddress, onSameAsAadhaarChange }) => {
         </div>
       )}
 
-      {/* ✅ Manual entry form — hidden when sameAsAadhaar checked */}
+      {/*  Manual entry form — hidden when sameAsAadhaar checked */}
       <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4 ${sameAsAadhaar ? "hidden" : ""}`}>
 
         {/* Line 1 (mapped to houseNumber/primary address) */}
