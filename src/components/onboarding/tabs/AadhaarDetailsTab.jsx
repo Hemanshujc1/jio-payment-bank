@@ -48,7 +48,8 @@ const AadhaarDetailsTab = ({ onNext, kycData }) => {
 
   const formatAddress = (addr) => {
     if (!addr) return "";
-    return getDisplayAddress(addr, "aadhaar");
+    // return getDisplayAddress(addr, "aadhaar");
+    return getDisplayAddress(addr);
   };
 
   const aadhaarAddress = kycData?.address || null;

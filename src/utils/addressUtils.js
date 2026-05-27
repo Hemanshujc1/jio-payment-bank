@@ -110,31 +110,33 @@ export const mapPincodeResponse = (res) => ({
  * @param {"aadhaar"|"others"} mode
  * @returns {string}
  */
-export const getDisplayAddress = (addr, mode = "others") => {
+// export const getDisplayAddress = (addr, mode = "others") => {
+export const getDisplayAddress = (addr) => {
+
   if (!addr) return "";
 
-  if (mode === "aadhaar") {
-    return [addr.line1, addr.line2, addr.line3].filter(Boolean).join(", ");
-  }
+  // if (mode === "aadhaar") {
+  //   return [addr.line1, addr.line2, addr.line3].filter(Boolean).join(", ");
+  // }
 
   // "others" mode
   const parts = [addr.line1, addr.line2, addr.line3, addr.district].filter(
     Boolean,
   );
 
-  let result = parts.join(", ");
+  let result = parts.join(", ") + `, ${addr.city} - ${addr.pincode}`;;
 
-  if (addr.city && addr.pincode) {
-    result += `, ${addr.city} - ${addr.pincode}`;
-  } else if (addr.city) {
-    result += `, ${addr.city}`;
-  } else if (addr.pincode) {
-    result += ` - ${addr.pincode}`;
-  }
+  // if (addr.city && addr.pincode) {
+  //   result += `, ${addr.city} - ${addr.pincode}`;
+  // } else if (addr.city) {
+  //   result += `, ${addr.city}`;
+  // } else if (addr.pincode) {
+  //   result += ` - ${addr.pincode}`;
+  // }
 
-  if (addr.state) {
-    result += `, ${addr.state}`;
-  }
+  // if (addr.state) {
+  //   result += `, ${addr.state}`;
+  // }
 
   return result;
 };

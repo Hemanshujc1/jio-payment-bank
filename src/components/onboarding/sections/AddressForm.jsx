@@ -113,8 +113,9 @@ const AddressForm = ({ prefix, title, aadhaarAddress }) => {
   const error = getError(prefix);
 
   // "aadhaar" mode for Aadhaar copy, "others" for rest
-  const displayMode = addressType === "Same as my Aadhaar address" ? "aadhaar" : "others";
-  const displayAddress = getDisplayAddress(currentAddress, displayMode);
+  // const displayMode = addressType === "Same as my Aadhaar address" ? "aadhaar" : "others";
+  // const displayAddress = getDisplayAddress(currentAddress, displayMode);
+  const displayAddress = getDisplayAddress(currentAddress);
 
   return (
     <div className="flex flex-col gap-4 mt-2 sm:mt-4">
