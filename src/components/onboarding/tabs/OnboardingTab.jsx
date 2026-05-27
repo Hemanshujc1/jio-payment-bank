@@ -268,7 +268,7 @@ const OnboardingTab = ({
         setIsBiometricVerified(false);
         setDocumentStatus("mismatch");
         setPanAadhaarFailed(true);
-        const msg = response.message || "Identity verification failed.";
+        const msg = response.error?.message || response.message || "Identity verification failed.";
         setVerificationErrorMessage(msg);
         toast.error(msg);
       }

@@ -11,11 +11,18 @@ const AgentOtpModal = ({ isOpen, onVerified }) => {
   const [loading, setLoading] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
 
-  if (!isOpen) return null;
+  const handleSendOtp = async (isResend = false) => {
+    if (isResend !== true) {
+      const lastSent = sessionStorage.getItem("lastAgentOtpSentTime");
+      if (lastSent && Date.now() - Number(lastSent) < 2000) {
+        setOtpSent(true);
+        return;
+      }
+    }
 
-  const handleSendOtp = async () => {
     try {
       setLoading(true);
+      sessionStorage.setItem("lastAgentOtpSentTime", Date.now().toString());
 
       const payload = {
         vkid,
@@ -71,6 +78,15 @@ const AgentOtpModal = ({ isOpen, onVerified }) => {
     }
   };
 
+  useEffect(() => {
+    if (isOpen) {
+      handleSendOtp(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen]);
+
+  if (!isOpen) return null;
+
   return (
     <div className="fixed inset-0 z-9999 bg-black/50 flex items-center justify-center px-4 backdrop-blur-[2px]">
       <div className="bg-[#F4E4C1] border border-[#A67C52]/30 rounded-3xl shadow-2xl w-full max-w-md p-7 flex flex-col gap-6 animate-in fade-in zoom-in-95 duration-300">
@@ -78,18 +94,14 @@ const AgentOtpModal = ({ isOpen, onVerified }) => {
           <h2 className="text-3xl font-extrabold text-[#3E2723] tracking-wide">
             Agent Verification
           </h2>
-
-          <p className="text-[15px] text-[#6D4C41] text-center font-medium">
-            Verify VKID before starting onboarding
-          </p>
         </div>
 
-        <div className="flex items-center justify-between bg-[#FFF8E7] border border-[#B08968] rounded-2xl px-5 py-4 shadow-inner">
+        {/* <div className="flex items-center justify-between bg-[#FFF8E7] border border-[#B08968] rounded-2xl px-5 py-4 shadow-inner">
           <span className="font-bold text-[15px] text-[#4E342E]">VKID :</span>
           <span className="text-[#3E2723] font-bold text-[16px] tracking-wide">
             {vkid}
           </span>
-        </div>
+        </div> */}
 
         {otpSent && (
           <div className="flex flex-col gap-2">
@@ -108,7 +120,8 @@ const AgentOtpModal = ({ isOpen, onVerified }) => {
 
         {!otpSent ? (
           <button
-            onClick={handleSendOtp}
+            // onLoad={handleSendOtp}
+            onClick={() => handleSendOtp(true)}
             disabled={loading}
             className={`h-14 rounded-2xl font-bold text-[16px] tracking-wide transition-all duration-200 shadow-lg flex items-center justify-center gap-3
             ${
@@ -150,7 +163,7 @@ const AgentOtpModal = ({ isOpen, onVerified }) => {
 
         {otpSent && (
           <button
-            onClick={handleSendOtp}
+            onClick={() => handleSendOtp(true)}
             disabled={loading}
             className="text-sm font-semibold text-[#6D4C41] underline hover:text-[#3E2723] transition"
           >

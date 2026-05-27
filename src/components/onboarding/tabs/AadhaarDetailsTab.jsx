@@ -77,17 +77,13 @@ const AadhaarDetailsTab = ({ onNext, kycData }) => {
     setValue("applicant.middleName", middleName);
     setValue("applicant.lastName", lastName);
 
-    setValue(
-      "applicant.gender",
-      kycData.gender === "M" ? "Male" : "Female"
-    );
+    setValue("applicant.gender", kycData.gender === "M" ? "Male" : "Female");
 
     setValue("applicant.dob", formatDOB(kycData.dob) || "");
 
     // ℹ️ Communication address fields are intentionally NOT set here.
     // They are populated only when the user ticks "Same as Aadhaar Address",
     // or filled manually by the user.
-
   }, [kycData, setValue]);
 
   const handleSameAddressChange = (checked) => {
@@ -107,16 +103,51 @@ const AadhaarDetailsTab = ({ onNext, kycData }) => {
       };
 
       // 📋 Log communication address copied from Aadhaar
-      console.log("[SameAsAadhaar] Communication Address copied:", communicationAddress);
+      console.log(
+        "[SameAsAadhaar] Communication Address copied:",
+        communicationAddress,
+      );
 
-      setValue("applicant.communicationAddress.addressLine1", communicationAddress.addressLine1, { shouldValidate: true });
-      setValue("applicant.communicationAddress.addressLine2", communicationAddress.addressLine2, { shouldValidate: true });
-      setValue("applicant.communicationAddress.addressLine3", communicationAddress.addressLine3, { shouldValidate: true });
-      setValue("applicant.communicationAddress.city", communicationAddress.city, { shouldValidate: true });
-      setValue("applicant.communicationAddress.state", communicationAddress.state, { shouldValidate: true });
-      setValue("applicant.communicationAddress.stateCode", communicationAddress.stateCode, { shouldValidate: true });
-      setValue("applicant.communicationAddress.district", communicationAddress.district, { shouldValidate: true });
-      setValue("applicant.communicationAddress.pincode", communicationAddress.pincode, { shouldValidate: true });
+      setValue(
+        "applicant.communicationAddress.addressLine1",
+        communicationAddress.addressLine1,
+        { shouldValidate: true },
+      );
+      setValue(
+        "applicant.communicationAddress.addressLine2",
+        communicationAddress.addressLine2,
+        { shouldValidate: true },
+      );
+      setValue(
+        "applicant.communicationAddress.addressLine3",
+        communicationAddress.addressLine3,
+        { shouldValidate: true },
+      );
+      setValue(
+        "applicant.communicationAddress.city",
+        communicationAddress.city,
+        { shouldValidate: true },
+      );
+      setValue(
+        "applicant.communicationAddress.state",
+        communicationAddress.state,
+        { shouldValidate: true },
+      );
+      setValue(
+        "applicant.communicationAddress.stateCode",
+        communicationAddress.stateCode,
+        { shouldValidate: true },
+      );
+      setValue(
+        "applicant.communicationAddress.district",
+        communicationAddress.district,
+        { shouldValidate: true },
+      );
+      setValue(
+        "applicant.communicationAddress.pincode",
+        communicationAddress.pincode,
+        { shouldValidate: true },
+      );
     } else {
       // Clear fields when unchecked
       setValue("applicant.communicationAddress.addressLine1", "");
@@ -133,8 +164,10 @@ const AadhaarDetailsTab = ({ onNext, kycData }) => {
   const handleProceed = async () => {
     // Check UIDAI address completeness
     const addr = kycData?.address || {};
-    const isMandatoryMissing = !addr.district || !addr.state || !addr.pincode || !addr.city ;
-    const isAllLocalMissing = !addr.houseNumber && !addr.locality && !addr.landmark && !addr.street;
+    const isMandatoryMissing =
+      !addr.district || !addr.state || !addr.pincode || !addr.city;
+    const isAllLocalMissing =
+      !addr.houseNumber && !addr.locality && !addr.landmark && !addr.street;
 
     if (isMandatoryMissing || isAllLocalMissing) {
       toast.error("Incomplete address details. Cannot proceed further.");
@@ -159,14 +192,12 @@ const AadhaarDetailsTab = ({ onNext, kycData }) => {
 
   return (
     <div className="w-full flex flex-col px-4 md:px-8 pt-4 pb-2 items-center text-black font-sans">
-
       {/* Title */}
       <h2 className="font-bold text-2xl mb-4 text-center text-gray-800">
         Details as per Aadhaar
       </h2>
 
       <div className="flex flex-col md:flex-row gap-10 w-full max-w-5xl">
-
         {/* Image */}
         <div className="w-40 h-48 bg-gray-100 rounded-xl border p-2 shadow-sm">
           <img
@@ -177,7 +208,6 @@ const AadhaarDetailsTab = ({ onNext, kycData }) => {
         </div>
 
         <div className="flex flex-col gap-6 w-full">
-
           {/* Identity */}
           <AadhaarFieldGrid />
 
