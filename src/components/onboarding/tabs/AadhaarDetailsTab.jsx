@@ -13,12 +13,6 @@ const AadhaarDetailsTab = ({ onNext, kycData }) => {
 
   const [sameAsAadhaar, setSameAsAadhaar] = React.useState(false);
 
-  const formattedAadhaarAddress = aadhaarAddress
-  ? formatAddress(aadhaarAddress)
-  : "Loading...";
-
-console.log("Formatted Aadhaar Address:", formattedAadhaarAddress);
-
   const formatDOB = (dob) => {
     if (!dob) return "";
     if (dob.includes("-")) {
@@ -145,7 +139,7 @@ console.log("Formatted Aadhaar Address:", formattedAadhaarAddress);
               Aadhaar Address
             </h3>
             <p className="text-sm text-gray-700 leading-relaxed">
-              {formattedAadhaarAddress};
+              {aadhaarAddress ? formatAddress(aadhaarAddress) : "Loading..."}
             </p>
           </div>
 
