@@ -11,22 +11,17 @@ const ReviewNomineeDetails = ({ data, guardian, onEdit }) => {
       .join(" ");
   };
 
-  // ✅ ADDRESS FORMATTER
+  // ✅ ADDRESS FORMATTER — uses master field names (per Rule 4 Case 2)
   const formatAddress = (addr) => {
     if (!addr) return "-";
 
-    const full = [
-      addr.addressLine1,
-      addr.addressLine2,
-      addr.addressLine3,
-      addr.city,
-      addr.district,
-      addr.state,
-    ]
-      .filter(Boolean)
-      .join(", ");
+    const parts = [addr.line1, addr.line2, addr.line3, addr.district].filter(Boolean);
+    let result = parts.join(", ");
+    if (addr.city && addr.pincode) result += `, ${addr.city} - ${addr.pincode}`;
+    else if (addr.city) result += `, ${addr.city}`;
+    if (addr.state) result += `, ${addr.state}`;
 
-    return full ? `${full} - ${addr.pincode || ""}` : "-";
+    return result || "-";
   };
 
   // ✅ MINOR CHECK (based on DOB)

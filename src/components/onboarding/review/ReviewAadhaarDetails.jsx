@@ -10,21 +10,17 @@ const ReviewAadhaarDetails = ({ data, onEdit }) => {
       .join(" ") || "-";
   };
 
-  // ✅ Safe address formatter
+  // ✅ Safe address formatter using master field names (per Rule 4 Case 2)
   const getFullAddress = () => {
     const addr = data?.communicationAddress || {};
 
-    const address = [
-      addr.addressLine1,
-      addr.addressLine2,
-      addr.addressLine3,
-      addr.city,
-      addr.district,
-      addr.state,
-      addr.pincode
-    ].filter(Boolean).join(", ");
+    const parts = [addr.line1, addr.line2, addr.line3, addr.district].filter(Boolean);
+    let result = parts.join(", ");
+    if (addr.city && addr.pincode) result += `, ${addr.city} - ${addr.pincode}`;
+    else if (addr.city) result += `, ${addr.city}`;
+    if (addr.state) result += `, ${addr.state}`;
 
-    return address || "-";
+    return result || "-";
   };
 
   // ✅ Base64 image support

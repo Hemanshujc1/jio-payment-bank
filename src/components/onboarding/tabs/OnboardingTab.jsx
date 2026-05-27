@@ -8,6 +8,7 @@ import ProductSelection from "../sections/ProductSelection";
 import IdentityInputs from "../sections/IdentityInputs";
 import ConsentsSection from "../sections/ConsentsSection";
 import LanguageSelection from "../sections/LanguageSelection";
+import { cloneAddress, setAddressFields } from "../../../utils/addressUtils";
 import BiometricSection from "../sections/BiometricSection";
 import { useToast } from "../../ui/Toast";
 import { MOBILE_REGEX, isRepeatingDigits, focusFirstError } from "../../../utils/validationUtils";
@@ -186,71 +187,15 @@ const OnboardingTab = ({
         // ✅ IMAGE (BASE64)
         setValue("applicant.photo", aadhaarData?.photo || "");
 
-        setValue(
-          "applicant.aadhaarAddress.addressLine1",
-          aadhaarData?.address?.houseNumber || "",
-        );
+        // ✅ AADHAAR ADDRESS — Store raw API response as master structure (NO transformation)
+        // Per Rule 1 of StepsTOStoreData.md: use deep clone only, no modification
+        const rawAadhaarAddr = aadhaarData?.address || {};
+        const aadhaarMasterAddr = cloneAddress(rawAadhaarAddr, "PERMANENT", false);
+        setAddressFields(setValue, "applicant.aadhaarAddress", aadhaarMasterAddr, false);
 
-        setValue(
-          "applicant.aadhaarAddress.addressLine2",
-          aadhaarData?.address?.landmark || "",
-        );
-
-        setValue(
-          "applicant.aadhaarAddress.addressLine3",
-          aadhaarData?.address?.locality || "",
-        );
-
-        setValue(
-          "applicant.aadhaarAddress.city",
-          aadhaarData?.address?.city || aadhaarData?.address?.postOffice || aadhaarData?.address?.district || "",
-        );
-
-        setValue(
-          "applicant.aadhaarAddress.state",
-          aadhaarData?.address?.state || "",
-        );
-
-        setValue(
-          "applicant.aadhaarAddress.pincode",
-          aadhaarData?.address?.pincode || "",
-        );
-
-        setValue(
-          "applicant.aadhaarAddress.district",
-          aadhaarData?.address?.district || "",
-        );
-
-        setValue(
-          "applicant.aadhaarAddress.landmark",
-          aadhaarData?.address?.landmark || "",
-        );
-
-        // ✅ ADDRESS
-        setValue(
-          "applicant.communicationAddress.addressLine1",
-          aadhaarData?.address?.houseNumber || "",
-        );
-        setValue(
-          "applicant.communicationAddress.addressLine2",
-          aadhaarData?.address?.landmark || "",
-        );
-        setValue(
-          "applicant.communicationAddress.addressLine3",
-          aadhaarData?.address?.locality || "",
-        );
-        setValue(
-          "applicant.communicationAddress.city",
-          aadhaarData?.address?.city || aadhaarData?.address?.postOffice || aadhaarData?.address?.district || "",
-        );
-        setValue(
-          "applicant.communicationAddress.state",
-          aadhaarData?.address?.state || "",
-        );
-        setValue(
-          "applicant.communicationAddress.pincode",
-          aadhaarData?.address?.pincode || "",
-        );
+        // ℹ️ Communication address is NOT pre-filled here.
+        // It is populated only when the user selects "Same as Aadhaar Address"
+        // or enters manually in AadhaarDetailsTab.
 
         // ✅ MOBILE (FROM OTP FLOW)
         setValue("applicant.mobileNumber", mobileNumber || "");

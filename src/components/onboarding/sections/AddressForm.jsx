@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import onboardingService from "../../../services/onboardingService";
-import { parseDate } from "../../../utils/validationUtils";
+import {
+  cloneAddress,
+  setAddressFields,
+  clearAddressFields,
+  mapPincodeResponse,
+  getDisplayAddress,
+} from "../../../utils/addressUtils";
 
 const AddressForm = ({ prefix, title, aadhaarAddress }) => {
   const {
@@ -17,6 +23,7 @@ const AddressForm = ({ prefix, title, aadhaarAddress }) => {
 
   const addressType = watch(`${prefix}.address`);
   const currentAddress = watch(`${prefix}.addressDetails`);
+  // ✅ Read communication address using master field names (line1, etc.)
   const applicantAddress = watch("applicant.communicationAddress");
 
   const getError = (path) => {
@@ -29,37 +36,27 @@ const AddressForm = ({ prefix, title, aadhaarAddress }) => {
     return current;
   };
 
+  // ✅ Rules 1 & 3: deep clone with NO transformation
   useEffect(() => {
     let targetAddress = null;
 
-    if (
-      addressType === "Same as my communication address" &&
-      applicantAddress
-    ) {
-      targetAddress = applicantAddress;
-    } else if (
-      addressType === "Same as my Aadhaar address" &&
-      aadhaarAddress
-    ) {
-      targetAddress = aadhaarAddress;
+    if (addressType === "Same as my communication address" && applicantAddress) {
+      // Rule 3: exact copy of communication address
+      targetAddress = cloneAddress(applicantAddress);
+    } else if (addressType === "Same as my Aadhaar address" && aadhaarAddress) {
+      // Rule 1: exact copy of Aadhaar address
+      targetAddress = cloneAddress(aadhaarAddress);
     }
 
     if (targetAddress) {
       const currentJSON = JSON.stringify(currentAddress || {});
       const targetJSON = JSON.stringify(targetAddress || {});
-
       if (currentJSON !== targetJSON) {
-        setValue(`${prefix}.addressDetails`, targetAddress);
-
-        setValue(`${prefix}.addressDetails.addressLine1`, targetAddress?.addressLine1 || "");
-        setValue(`${prefix}.addressDetails.addressLine2`, targetAddress?.addressLine2 || "");
-        setValue(`${prefix}.addressDetails.addressLine3`, targetAddress?.addressLine3 || "");
-        setValue(`${prefix}.addressDetails.city`, targetAddress?.city || "");
-        setValue(`${prefix}.addressDetails.state`, targetAddress?.state || "");
-        setValue(`${prefix}.addressDetails.stateCode`, targetAddress?.stateCode || "");
-        setValue(`${prefix}.addressDetails.district`, targetAddress?.district || "");
-        setValue(`${prefix}.addressDetails.pincode`, targetAddress?.pincode || "");
+        setAddressFields(setValue, `${prefix}.addressDetails`, targetAddress, false);
       }
+    } else if (!addressType || addressType === "Others") {
+      // When switching to Others, clear auto-filled fields (keep manually entered)
+      // Only clear if we were previously in a copy mode
     }
   }, [
     addressType,
@@ -72,26 +69,21 @@ const AddressForm = ({ prefix, title, aadhaarAddress }) => {
 
   const pincode = watch(`${prefix}.addressDetails.pincode`);
 
-  // Pincode logic
+  // ✅ Rule 2: Pincode lookup — ONLY for "Others" mode
   useEffect(() => {
     const lookupPincode = async () => {
-      if (pincode?.length === 6 && addressType === "Others") {
+      if (addressType !== "Others") return;
+      if (pincode?.length === 6) {
         setIsPincodeLoading(true);
         try {
           const res = await onboardingService.getPincodeDetails(pincode);
           if (res.cityName && res.stateName) {
-            setValue(`${prefix}.addressDetails.city`, res.cityName, {
-              shouldValidate: true,
-            });
-            setValue(`${prefix}.addressDetails.state`, res.stateName, {
-              shouldValidate: true,
-            });
-            setValue(`${prefix}.addressDetails.stateCode`, res.stateCode, {
-              shouldValidate: true,
-            });
-            setValue(`${prefix}.addressDetails.district`, res.district, {
-              shouldValidate: true,
-            });
+            const mapped = mapPincodeResponse(res);
+            // Rule 2: only set city/district/state/stateCode from pincode API
+            setValue(`${prefix}.addressDetails.city`, mapped.city, { shouldValidate: true });
+            setValue(`${prefix}.addressDetails.district`, mapped.district, { shouldValidate: true });
+            setValue(`${prefix}.addressDetails.state`, mapped.state, { shouldValidate: true });
+            setValue(`${prefix}.addressDetails.stateCode`, mapped.stateCode, { shouldValidate: true });
             clearErrors(`${prefix}.addressDetails.pincode`);
           } else if (res.error) {
             setError(`${prefix}.addressDetails.pincode`, {
@@ -100,6 +92,7 @@ const AddressForm = ({ prefix, title, aadhaarAddress }) => {
             });
             setValue(`${prefix}.addressDetails.city`, "");
             setValue(`${prefix}.addressDetails.state`, "");
+            setValue(`${prefix}.addressDetails.district`, "");
           }
         } catch (err) {
           console.error("Pincode lookup failed", err);
@@ -117,6 +110,10 @@ const AddressForm = ({ prefix, title, aadhaarAddress }) => {
   }, [pincode, addressType, setValue, setError, clearErrors, prefix]);
 
   const error = getError(prefix);
+
+  // ✅ Rule 4 display: "aadhaar" mode for Aadhaar copy, "others" for rest
+  const displayMode = addressType === "Same as my Aadhaar address" ? "aadhaar" : "others";
+  const displayAddress = getDisplayAddress(currentAddress, displayMode);
 
   return (
     <div className="flex flex-col gap-4 mt-2 sm:mt-4">
@@ -167,105 +164,96 @@ const AddressForm = ({ prefix, title, aadhaarAddress }) => {
             </span>
           )}
 
+          {/* Error when copied address is invalid */}
           {addressType && addressType !== "Others" && error?.addressDetails && (
             <div className="p-3 flex items-center animate-in fade-in slide-in-from-top-1">
               <p className="text-red-600 text-[12px] font-medium">
-                The selected address is invalid. Please select "Others" to enter manually.
+                The selected address is invalid. Please select &quot;Others&quot; to enter manually.
               </p>
             </div>
           )}
 
+          {/* ✅ Rule 4: display-only address string (not stored/sent in payload) */}
           {addressType &&
             addressType !== "Others" &&
-            (currentAddress?.addressLine1 ||
-              currentAddress?.city ||
-              currentAddress?.pincode) && (
+            (currentAddress?.line1 || currentAddress?.city || currentAddress?.pincode) && (
               <div className="text-[13px] sm:text-[14px] text-gray-600 max-w-3xl leading-relaxed">
-                <span className="font-bold text-gray-800">
-                  Selected Address:{" "}
-                </span>
-                <span className="font-medium">
-                  {[
-                    currentAddress?.addressLine1,
-                    currentAddress?.addressLine2,
-                    currentAddress?.addressLine3,
-                    currentAddress?.city,
-                    currentAddress?.district,
-                    currentAddress?.state,
-                  ]
-                    .filter(Boolean)
-                    .join(", ")}
-                  {currentAddress?.pincode
-                    ? ` - ${currentAddress.pincode}`
-                    : ""}
-                </span>
+                <span className="font-bold text-gray-800">Selected Address: </span>
+                <span className="font-medium">{displayAddress}</span>
               </div>
             )}
         </div>
 
-        {/* "Others" */}
+        {/* ✅ "Others" — manual entry using master field names */}
         {addressType === "Others" && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-5 sm:p-6 rounded-2xl items-start">
+            {/* Line 1 */}
             <div className="flex flex-col gap-1.5">
               <span className="font-bold text-[13px] sm:text-[14px] text-gray-700 ml-0.5">
                 Address Line 1<span className="text-red-500">*</span>:{" "}
               </span>
               <input
-                {...register(`${prefix}.addressDetails.addressLine1`)}
-                maxLength={100}
-                className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${error?.addressDetails?.addressLine1
+                {...register(`${prefix}.addressDetails.line1`)}
+                maxLength={200}
+                className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${
+                  error?.addressDetails?.line1
                     ? "border-red-500"
                     : "border-neutral-light focus-within:border-gray-900"
-                  } text-[14px] font-medium text-gray-900`}
+                } text-[14px] font-medium text-gray-900`}
                 placeholder="Address Line 1"
               />
-              {error?.addressDetails?.addressLine1 && (
+              {error?.addressDetails?.line1 && (
                 <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-1">
-                  {error.addressDetails.addressLine1.message}
+                  {error.addressDetails.line1.message}
                 </span>
               )}
             </div>
 
+            {/* Line 2 */}
             <div className="flex flex-col gap-1.5">
               <span className="font-bold text-[13px] sm:text-[14px] text-gray-700 ml-0.5">
                 Address Line 2 (Optional)
               </span>
               <input
-                {...register(`${prefix}.addressDetails.addressLine2`)}
-                maxLength={100}
-                className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${error?.addressDetails?.addressLine2
+                {...register(`${prefix}.addressDetails.line2`)}
+                maxLength={200}
+                className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${
+                  error?.addressDetails?.line2
                     ? "border-red-500"
                     : "border-neutral-light focus-within:border-gray-900"
-                  } text-[14px] font-medium text-gray-900`}
+                } text-[14px] font-medium text-gray-900`}
                 placeholder="Address Line 2"
               />
-              {error?.addressDetails?.addressLine2 && (
+              {error?.addressDetails?.line2 && (
                 <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-1">
-                  {error.addressDetails.addressLine2.message}
+                  {error.addressDetails.line2.message}
                 </span>
               )}
             </div>
 
+            {/* Line 3 */}
             <div className="flex flex-col gap-1.5">
               <span className="font-bold text-[13px] sm:text-[14px] text-gray-700 ml-0.5">
                 Address Line 3 (Optional)
               </span>
               <input
-                {...register(`${prefix}.addressDetails.addressLine3`)}
-                maxLength={100}
-                className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${error?.addressDetails?.addressLine3
+                {...register(`${prefix}.addressDetails.line3`)}
+                maxLength={200}
+                className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${
+                  error?.addressDetails?.line3
                     ? "border-red-500"
                     : "border-neutral-light focus-within:border-gray-900"
-                  } text-[14px] font-medium text-gray-900`}
+                } text-[14px] font-medium text-gray-900`}
                 placeholder="Address Line 3"
               />
-              {error?.addressDetails?.addressLine3 && (
+              {error?.addressDetails?.line3 && (
                 <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-1">
-                  {error.addressDetails.addressLine3.message}
+                  {error.addressDetails.line3.message}
                 </span>
               )}
             </div>
 
+            {/* Pincode */}
             <div className="flex flex-col gap-1.5">
               <span className="font-bold text-[13px] sm:text-[14px] text-gray-700 ml-0.5">
                 Pincode<span className="text-red-500">*</span>
@@ -277,10 +265,11 @@ const AddressForm = ({ prefix, title, aadhaarAddress }) => {
                   onInput={(e) => {
                     e.target.value = e.target.value.replace(/[^0-9]/g, "");
                   }}
-                  className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all w-full focus:outline-none ${error?.addressDetails?.pincode
+                  className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all w-full focus:outline-none ${
+                    error?.addressDetails?.pincode
                       ? "border-red-500"
                       : "border-neutral-light focus-within:border-gray-900"
-                    } text-[14px] font-medium text-gray-900`}
+                  } text-[14px] font-medium text-gray-900`}
                   placeholder="6-digit Pincode"
                 />
                 {isPincodeLoading && (
@@ -296,18 +285,19 @@ const AddressForm = ({ prefix, title, aadhaarAddress }) => {
               )}
             </div>
 
+            {/* City — auto-filled from pincode API */}
             <div className="flex flex-col gap-1.5">
               <span className="font-bold text-[13px] sm:text-[14px] text-gray-700 ml-0.5">
                 City<span className="text-red-500">*</span>
               </span>
               <input
                 {...register(`${prefix}.addressDetails.city`)}
-                maxLength={20}
                 readOnly
-                className={`bg-gray-100 rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${error?.addressDetails?.city
+                className={`bg-gray-100 rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${
+                  error?.addressDetails?.city
                     ? "border-red-500"
                     : "border-neutral-light"
-                  } text-[14px] font-medium text-gray-500 cursor-not-allowed`}
+                } text-[14px] font-medium text-gray-500 cursor-not-allowed`}
                 placeholder="City"
               />
               {error?.addressDetails?.city && (
@@ -317,18 +307,19 @@ const AddressForm = ({ prefix, title, aadhaarAddress }) => {
               )}
             </div>
 
+            {/* State — auto-filled from pincode API */}
             <div className="flex flex-col gap-1.5">
               <span className="font-bold text-[13px] sm:text-[14px] text-gray-700 ml-0.5">
                 State<span className="text-red-500">*</span>
               </span>
               <input
                 {...register(`${prefix}.addressDetails.state`)}
-                maxLength={20}
                 readOnly
-                className={`bg-gray-100 rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${error?.addressDetails?.state
+                className={`bg-gray-100 rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${
+                  error?.addressDetails?.state
                     ? "border-red-500"
                     : "border-neutral-light"
-                  } text-[14px] font-medium text-gray-500 cursor-not-allowed`}
+                } text-[14px] font-medium text-gray-500 cursor-not-allowed`}
                 placeholder="State"
               />
               {error?.addressDetails?.state && (

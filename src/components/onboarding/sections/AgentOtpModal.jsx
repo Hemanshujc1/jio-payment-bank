@@ -36,7 +36,7 @@ const AgentOtpModal = ({ isOpen, onVerified }) => {
 
       if (res?.status === "SUCCESS") {
         setOtpSent(true);
-        toast.success(res?.message || "OTP sent successfully");
+        // Removed toast.success to fix duplicate toast issue; UI change implies success.
       } else {
         toast.error(res?.message || "Failed to send OTP");
       }
@@ -119,26 +119,19 @@ const AgentOtpModal = ({ isOpen, onVerified }) => {
         )}
 
         {!otpSent ? (
-          <button
-            // onLoad={handleSendOtp}
-            onClick={() => handleSendOtp(true)}
-            disabled={loading}
-            className={`h-14 rounded-2xl font-bold text-[16px] tracking-wide transition-all duration-200 shadow-lg flex items-center justify-center gap-3
-            ${
-              loading
-                ? "bg-[#8D6E63]/70 text-white cursor-not-allowed"
-                : "bg-[#4E342E] hover:bg-[#3E2723] text-white hover:scale-[1.01]"
-            }`}
-          >
-            {loading ? (
-              <>
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                Sending OTP...
-              </>
-            ) : (
-              "SEND OTP"
-            )}
-          </button>
+          loading ? (
+            <div className="h-14 rounded-2xl bg-[#8D6E63]/10 flex items-center justify-center gap-3 shadow-inner">
+              <div className="w-5 h-5 border-2 border-[#4E342E] border-t-transparent rounded-full animate-spin"></div>
+              <span className="font-bold text-[#4E342E] text-[16px] tracking-wide">Sending OTP...</span>
+            </div>
+          ) : (
+            <button
+              onClick={() => handleSendOtp(true)}
+              className="h-14 rounded-2xl font-bold text-[16px] tracking-wide transition-all duration-200 shadow-lg flex items-center justify-center gap-3 bg-[#4E342E] hover:bg-[#3E2723] text-white hover:scale-[1.01]"
+            >
+              RETRY SENDING OTP
+            </button>
+          )
         ) : (
           <button
             onClick={handleVerifyOtp}

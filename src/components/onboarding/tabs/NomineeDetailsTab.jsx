@@ -34,7 +34,7 @@ const NomineeDetailsTab = ({ onNext }) => {
   const isNomineeAddressFilled =
     nomineeVal.address !== "Others" ||
     !!(
-      nomineeVal.addressDetails?.addressLine1?.trim() &&
+      nomineeVal.addressDetails?.line1?.trim() &&
       nomineeVal.addressDetails?.city?.trim() &&
       nomineeVal.addressDetails?.state?.trim() &&
       nomineeVal.addressDetails?.pincode?.trim()
@@ -51,7 +51,7 @@ const NomineeDetailsTab = ({ onNext }) => {
   const isGuardianAddressFilled = !isMinor ||
     guardianVal.address !== "Others" ||
     !!(
-      guardianVal.addressDetails?.addressLine1?.trim() &&
+      guardianVal.addressDetails?.line1?.trim() &&
       guardianVal.addressDetails?.city?.trim() &&
       guardianVal.addressDetails?.state?.trim() &&
       guardianVal.addressDetails?.pincode?.trim()
@@ -79,7 +79,7 @@ const NomineeDetailsTab = ({ onNext }) => {
       "nominee.relationship",
       "nominee.dob",
       "nominee.address",
-      "nominee.addressDetails.addressLine1",
+      "nominee.addressDetails.line1",
       "nominee.addressDetails.city",
       "nominee.addressDetails.state",
       "nominee.addressDetails.pincode",
@@ -88,7 +88,7 @@ const NomineeDetailsTab = ({ onNext }) => {
       "guardian.relationship",
       "guardian.dob",
       "guardian.address",
-      "guardian.addressDetails.addressLine1",
+      "guardian.addressDetails.line1",
       "guardian.addressDetails.city",
       "guardian.addressDetails.state",
       "guardian.addressDetails.pincode",
@@ -111,9 +111,9 @@ const NomineeDetailsTab = ({ onNext }) => {
       setValue("nominee.lastName", "");
       setValue("nominee.dob", "");
       setValue("nominee.address", "");
-      setValue("nominee.addressDetails.addressLine1", "");
-      setValue("nominee.addressDetails.addressLine2", "");
-      setValue("nominee.addressDetails.addressLine3", "");
+      setValue("nominee.addressDetails.line1", "");
+      setValue("nominee.addressDetails.line2", "");
+      setValue("nominee.addressDetails.line3", "");
       setValue("nominee.addressDetails.city", "");
       setValue("nominee.addressDetails.state", "");
       setValue("nominee.addressDetails.stateCode", "");
@@ -127,9 +127,9 @@ const NomineeDetailsTab = ({ onNext }) => {
       setValue("guardian.lastName", "");
       setValue("guardian.dob", "");
       setValue("guardian.address", "");
-      setValue("guardian.addressDetails.addressLine1", "");
-      setValue("guardian.addressDetails.addressLine2", "");
-      setValue("guardian.addressDetails.addressLine3", "");
+      setValue("guardian.addressDetails.line1", "");
+      setValue("guardian.addressDetails.line2", "");
+      setValue("guardian.addressDetails.line3", "");
       setValue("guardian.addressDetails.city", "");
       setValue("guardian.addressDetails.state", "");
       setValue("guardian.addressDetails.stateCode", "");
@@ -167,11 +167,11 @@ const NomineeDetailsTab = ({ onNext }) => {
         setError("nominee.address", { type: "manual", message: "Please select an address option" });
         hasValidationError = true;
       } else if (nomineeVal.address === "Others") {
-        if (!nomineeVal.addressDetails?.addressLine1?.trim()) {
-          setError("nominee.addressDetails.addressLine1", { type: "manual", message: "Address Line 1 is required" });
+        if (!nomineeVal.addressDetails?.line1?.trim()) {
+          setError("nominee.addressDetails.line1", { type: "manual", message: "Address Line 1 is required" });
           hasValidationError = true;
-        } else if (nomineeVal.addressDetails.addressLine1.trim().length < 5) {
-          setError("nominee.addressDetails.addressLine1", { type: "manual", message: "Address Line 1 must be at least 5 characters" });
+        } else if (nomineeVal.addressDetails.line1.trim().length < 5) {
+          setError("nominee.addressDetails.line1", { type: "manual", message: "Address Line 1 must be at least 5 characters" });
           hasValidationError = true;
         }
         if (!nomineeVal.addressDetails?.city?.trim()) {
@@ -222,11 +222,11 @@ const NomineeDetailsTab = ({ onNext }) => {
           setError("guardian.address", { type: "manual", message: "Please select an address option" });
           hasValidationError = true;
         } else if (guardianVal.address === "Others") {
-          if (!guardianVal.addressDetails?.addressLine1?.trim()) {
-            setError("guardian.addressDetails.addressLine1", { type: "manual", message: "Address Line 1 is required" });
+          if (!guardianVal.addressDetails?.line1?.trim()) {
+            setError("guardian.addressDetails.line1", { type: "manual", message: "Address Line 1 is required" });
             hasValidationError = true;
-          } else if (guardianVal.addressDetails.addressLine1.trim().length < 5) {
-            setError("guardian.addressDetails.addressLine1", { type: "manual", message: "Address Line 1 must be at least 5 characters" });
+          } else if (guardianVal.addressDetails.line1.trim().length < 5) {
+            setError("guardian.addressDetails.line1", { type: "manual", message: "Address Line 1 must be at least 5 characters" });
             hasValidationError = true;
           }
           if (!guardianVal.addressDetails?.city?.trim()) {

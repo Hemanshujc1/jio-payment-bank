@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { differenceInYears } from "date-fns";
 import { parseDate } from "../../../utils/validationUtils";
+import { cloneAddress } from "../../../utils/addressUtils";
 import ReviewAadhaarDetails from "../review/ReviewAadhaarDetails";
 import ReviewFamilyDetails from "../review/ReviewFamilyDetails";
 import ReviewFinancialDetails from "../review/ReviewFinancialDetails";
@@ -76,64 +77,26 @@ const ApplicationReviewTab = ({ goToStep }) => {
     guardian: rawData?.guardian || {},
   };
 
+  // ✅ Build person address array from master address fields
+  // Per StepsTOStoreData.md Rule 9: exact same payload format, master structure only
   const buildPersonAddress = () => {
-  const aadhaarAddress = formData.applicant?.aadhaarAddress || {};
-  const communicationAddress =
-    formData.applicant?.communicationAddress || {};
+    const aadhaarAddress = formData.applicant?.aadhaarAddress || {};
+    const communicationAddress = formData.applicant?.communicationAddress || {};
 
-  const mapAddress = (address, type, sameAsPermanent = false) => ({
-    city: address.city || "",
-    line1: [
-      address.addressLine1,
-      address.addressLine2,
-      address.landmark,
-    ]
-      .filter(Boolean)
-      .join(", "),
+    // Deep clone with addressType override — no reconstruction, no transformation
+    const permanentAddr = cloneAddress(aadhaarAddress, "PERMANENT", false);
 
-    line2: [
-      address.addressLine3,
-      address.city,
-      address.district,
-    ]
-      .filter(Boolean)
-      .join(", "),
+    // Determine sameAsPermanent: compare pincode + state + city + line1
+    const isSame =
+      aadhaarAddress.pincode === communicationAddress.pincode &&
+      aadhaarAddress.state === communicationAddress.state &&
+      aadhaarAddress.city === communicationAddress.city &&
+      aadhaarAddress.line1 === communicationAddress.line1;
 
-    line3: [
-      address.state,
-      address.pincode,
-      "India",
-    ]
-      .filter(Boolean)
-      .join(", "),
+    const currentAddr = cloneAddress(communicationAddress, "CURRENT", isSame);
 
-    state: address.state || "",
-    stateCode: address.stateCode || "",
-    street: address.addressLine2 || "",
-    country: "India",
-    pincode: address.pincode || "",
-    city: address.city || address.district || "",
-    district: address.district || "",
-    landmark: address.landmark || "",
-    locality: address.addressLine3 || "",
-    addressType: type,
-    houseNumber: address.addressLine1 || "",
-    sameAsPermanent,
-  });
-
-  return [
-    // ✅ Aadhaar / Permanent Address
-    mapAddress(aadhaarAddress, "PERMANENT", false),
-
-    // ✅ Communication / Current Address
-    mapAddress(
-      communicationAddress,
-      "CURRENT",
-      JSON.stringify({ ...aadhaarAddress, stateCode: undefined }) ===
-        JSON.stringify({ ...communicationAddress, stateCode: undefined })
-    ),
-  ];
-};
+    return [permanentAddr, currentAddr];
+  };
 
   // ✅ FINAL PAYLOAD BUILDER
   const buildFinalPayload = (consentsArray) => {
@@ -239,20 +202,24 @@ const ApplicationReviewTab = ({ goToStep }) => {
         };
       })() : null,
 
+      // ✅ Nominee address — use master field names from addressDetails
       nomineeAddress: formData.nominee.provide === "Yes" ? {
-        addressType: "Permanent",
+        addressType: formData.nominee.addressDetails?.addressType || "Permanent",
         careOf: "None",
-        houseNumber: formData.nominee.addressDetails?.addressLine1 || "",
-        street: formData.nominee.addressDetails?.addressLine2 || "",
-        landmark: formData.nominee.addressDetails?.addressLine2 || "",
-        locality: formData.nominee.addressDetails?.addressLine3 || "",
+        houseNumber: formData.nominee.addressDetails?.houseNumber || "",
+        line1: formData.nominee.addressDetails?.line1 || "",
+        line2: formData.nominee.addressDetails?.line2 || "",
+        line3: formData.nominee.addressDetails?.line3 || "",
+        street: formData.nominee.addressDetails?.street || "",
+        landmark: formData.nominee.addressDetails?.landmark || "",
+        locality: formData.nominee.addressDetails?.locality || "",
         city: formData.nominee.addressDetails?.city || "",
         postOffice: formData.nominee.addressDetails?.city || "",
         district: formData.nominee.addressDetails?.district || "",
         subDistrict: formData.nominee.addressDetails?.district || "",
         state: formData.nominee.addressDetails?.state || "",
         stateCode: formData.nominee.addressDetails?.stateCode || "",
-        country: "India",
+        country: formData.nominee.addressDetails?.country || "India",
         pincode: formData.nominee.addressDetails?.pincode || "",
       } : null,
 
@@ -301,24 +268,28 @@ const ApplicationReviewTab = ({ goToStep }) => {
         };
       })() : null,
 
+      // ✅ Guardian address — use master field names from addressDetails
       guardianAddress: (formData.nominee.provide === "Yes" && (() => {
         const dob = formData.nominee.dob;
         const age = dob ? differenceInYears(new Date(), parseDate(dob)) : 0;
         return age < 18;
       })()) ? {
-        addressType: "Permanent",
+        addressType: formData.guardian?.addressDetails?.addressType || "Permanent",
         careOf: "None",
-        houseNumber: formData.guardian?.addressDetails?.addressLine1 || "",
-        street: formData.guardian?.addressDetails?.addressLine2 || "",
-        landmark: formData.guardian?.addressDetails?.addressLine2 || "",
-        locality: formData.guardian?.addressDetails?.addressLine3 || "",
+        houseNumber: formData.guardian?.addressDetails?.houseNumber || "",
+        line1: formData.guardian?.addressDetails?.line1 || "",
+        line2: formData.guardian?.addressDetails?.line2 || "",
+        line3: formData.guardian?.addressDetails?.line3 || "",
+        street: formData.guardian?.addressDetails?.street || "",
+        landmark: formData.guardian?.addressDetails?.landmark || "",
+        locality: formData.guardian?.addressDetails?.locality || "",
         city: formData.guardian?.addressDetails?.city || "",
         postOffice: formData.guardian?.addressDetails?.city || "",
         district: formData.guardian?.addressDetails?.district || "",
         subDistrict: formData.guardian?.addressDetails?.district || "",
         state: formData.guardian?.addressDetails?.state || "",
         stateCode: formData.guardian?.addressDetails?.stateCode || "",
-        country: "India",
+        country: formData.guardian?.addressDetails?.country || "India",
         pincode: formData.guardian?.addressDetails?.pincode || "",
       } : null,
 

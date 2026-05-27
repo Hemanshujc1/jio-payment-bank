@@ -5,6 +5,7 @@ import AadhaarFieldGrid from "../sections/AadhaarFieldGrid";
 import AadhaarAddressSection from "../sections/AadhaarAddressSection";
 import { useToast } from "../../ui/Toast";
 import { focusFirstError } from "../../../utils/validationUtils";
+import { cloneAddress, setAddressFields, getDisplayAddress } from "../../../utils/addressUtils";
 
 const AadhaarDetailsTab = ({ onNext, kycData }) => {
   const { trigger, setValue } = useFormContext();
@@ -18,10 +19,10 @@ const AadhaarDetailsTab = ({ onNext, kycData }) => {
       const parts = dob.split("-");
       if (parts.length === 3) {
         if (parts[0].length === 4) {
-          // yyyy-mm-dd
+          // yyyy-mm-dd → dd/mm/yyyy
           return `${parts[2].padStart(2, "0")}/${parts[1].padStart(2, "0")}/${parts[0]}`;
         } else {
-          // dd-mm-yyyy
+          // dd-mm-yyyy → dd/mm/yyyy
           return `${parts[0].padStart(2, "0")}/${parts[1].padStart(2, "0")}/${parts[2]}`;
         }
       }
@@ -30,10 +31,10 @@ const AadhaarDetailsTab = ({ onNext, kycData }) => {
       const parts = dob.split("/");
       if (parts.length === 3) {
         if (parts[0].length === 4) {
-          // yyyy/mm/dd
+          // yyyy/mm/dd → dd/mm/yyyy
           return `${parts[2].padStart(2, "0")}/${parts[1].padStart(2, "0")}/${parts[0]}`;
         } else {
-          // dd/mm/yyyy
+          // dd/mm/yyyy → dd/mm/yyyy (already correct)
           return `${parts[0].padStart(2, "0")}/${parts[1].padStart(2, "0")}/${parts[2]}`;
         }
       }
@@ -45,19 +46,10 @@ const AadhaarDetailsTab = ({ onNext, kycData }) => {
     return base64 ? `data:image/jpeg;base64,${base64}` : "/jpb/2.jpeg";
   };
 
+  // ✅ Per Rule 4 Case 1: display Aadhaar address using line1/line2/line3
   const formatAddress = (addr) => {
     if (!addr) return "";
-    return [
-      addr.houseNumber,
-      addr.landmark,
-      addr.locality,
-      addr.district,
-      addr.city,
-      addr.state,
-      addr.pincode,
-    ]
-      .filter(Boolean)
-      .join(", ");
+    return getDisplayAddress(addr, "aadhaar");
   };
 
   const aadhaarAddress = kycData?.address || null;
@@ -76,9 +68,7 @@ const AadhaarDetailsTab = ({ onNext, kycData }) => {
     setValue("applicant.firstName", firstName);
     setValue("applicant.middleName", middleName);
     setValue("applicant.lastName", lastName);
-
     setValue("applicant.gender", kycData.gender === "M" ? "Male" : "Female");
-
     setValue("applicant.dob", formatDOB(kycData.dob) || "");
 
     // ℹ️ Communication address fields are intentionally NOT set here.
@@ -90,86 +80,23 @@ const AadhaarDetailsTab = ({ onNext, kycData }) => {
     setSameAsAadhaar(checked);
 
     if (checked && aadhaarAddress) {
-      const addr = aadhaarAddress;
-      const communicationAddress = {
-        addressLine1: addr.houseNumber || "",
-        addressLine2: addr.landmark || "",
-        addressLine3: addr.locality || "",
-        city: addr.city || addr.postOffice || addr.district || "",
-        state: addr.state || "",
-        stateCode: addr.stateCode || "",
-        district: addr.district || "",
-        pincode: addr.pincode || "",
-      };
-
-      // 📋 Log communication address copied from Aadhaar
-      console.log(
-        "[SameAsAadhaar] Communication Address copied:",
-        communicationAddress,
-      );
-
-      setValue(
-        "applicant.communicationAddress.addressLine1",
-        communicationAddress.addressLine1,
-        { shouldValidate: true },
-      );
-      setValue(
-        "applicant.communicationAddress.addressLine2",
-        communicationAddress.addressLine2,
-        { shouldValidate: true },
-      );
-      setValue(
-        "applicant.communicationAddress.addressLine3",
-        communicationAddress.addressLine3,
-        { shouldValidate: true },
-      );
-      setValue(
-        "applicant.communicationAddress.city",
-        communicationAddress.city,
-        { shouldValidate: true },
-      );
-      setValue(
-        "applicant.communicationAddress.state",
-        communicationAddress.state,
-        { shouldValidate: true },
-      );
-      setValue(
-        "applicant.communicationAddress.stateCode",
-        communicationAddress.stateCode,
-        { shouldValidate: true },
-      );
-      setValue(
-        "applicant.communicationAddress.district",
-        communicationAddress.district,
-        { shouldValidate: true },
-      );
-      setValue(
-        "applicant.communicationAddress.pincode",
-        communicationAddress.pincode,
-        { shouldValidate: true },
-      );
+      // ✅ Rule 1: deep clone — NO transformation, NO modification
+      const cloned = cloneAddress(aadhaarAddress, "CURRENT", true);
+      console.log("[SameAsAadhaar] Communication Address deep-cloned:", cloned);
+      setAddressFields(setValue, "applicant.communicationAddress", cloned, true);
     } else {
-      // Clear fields when unchecked
-      setValue("applicant.communicationAddress.addressLine1", "");
-      setValue("applicant.communicationAddress.addressLine2", "");
-      setValue("applicant.communicationAddress.addressLine3", "");
-      setValue("applicant.communicationAddress.city", "");
-      setValue("applicant.communicationAddress.state", "");
-      setValue("applicant.communicationAddress.stateCode", "");
-      setValue("applicant.communicationAddress.district", "");
-      setValue("applicant.communicationAddress.pincode", "");
+      // Clear all fields when unchecked
+      setAddressFields(setValue, "applicant.communicationAddress", null, false);
     }
   };
 
   const handleProceed = async () => {
-    // Check UIDAI address completeness
+    // Check UIDAI address completeness (line1 is the key field from the API)
     const addr = kycData?.address || {};
-    const isMandatoryMissing =
-      !addr.district || !addr.state || !addr.pincode || !addr.city;
-    const isAllLocalMissing =
-      !addr.houseNumber && !addr.locality && !addr.landmark && !addr.street;
+    const isMandatoryMissing = !addr.district || !addr.state || !addr.pincode || !addr.city;
+    const isLocalMissing = !addr.line1 && !addr.houseNumber && !addr.locality && !addr.street;
 
-    if (isMandatoryMissing || isAllLocalMissing) {
+    if (isMandatoryMissing || isLocalMissing) {
       toast.error("Incomplete address details. Cannot proceed further.");
       return;
     }
@@ -211,18 +138,17 @@ const AadhaarDetailsTab = ({ onNext, kycData }) => {
           {/* Identity */}
           <AadhaarFieldGrid />
 
-          {/* Aadhaar Address */}
+          {/* Aadhaar Address — display only line1, line2, line3 per Rule 4 Case 1 */}
           <div className="p-4 bg-gray-50 rounded-xl border">
             <h3 className="font-semibold text-gray-800 mb-2">
               Aadhaar Address
             </h3>
-
             <p className="text-sm text-gray-700 leading-relaxed">
               {aadhaarAddress ? formatAddress(aadhaarAddress) : "Loading..."}
             </p>
           </div>
 
-          {/* Address Section */}
+          {/* Communication Address Section */}
           <AadhaarAddressSection
             aadhaarAddress={aadhaarAddress}
             sameAsAadhaar={sameAsAadhaar}

@@ -1,6 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import onboardingService from "../../../services/onboardingService";
+import {
+  cloneAddress,
+  setAddressFields,
+  clearAddressFields,
+  mapPincodeResponse,
+} from "../../../utils/addressUtils";
 
 const AadhaarAddressSection = ({ aadhaarAddress, onSameAsAadhaarChange }) => {
   const {
@@ -11,93 +17,40 @@ const AadhaarAddressSection = ({ aadhaarAddress, onSameAsAadhaarChange }) => {
     setError,
     formState: { errors },
   } = useFormContext();
+
   const sameAsAadhaar = watch("applicant.sameAsAadhaar");
+  // ✅ Watch pincode from the master field (not addressLine* anymore)
   const pincode = watch("applicant.communicationAddress.pincode");
   const prevSameAsAadhaar = useRef(sameAsAadhaar);
   const [isPincodeLoading, setIsPincodeLoading] = useState(false);
 
+  // ✅ Rule 1: When sameAsAadhaar toggled on — deep clone, no transformation
   useEffect(() => {
     if (sameAsAadhaar && aadhaarAddress) {
-      setValue(
-        "applicant.communicationAddress.addressLine1",
-        aadhaarAddress.houseNumber || "",
-        { shouldValidate: true },
-      );
-      setValue(
-        "applicant.communicationAddress.addressLine2",
-        aadhaarAddress.landmark || "",
-        { shouldValidate: true },
-      );
-      setValue(
-        "applicant.communicationAddress.addressLine3",
-        aadhaarAddress.locality || "",
-        { shouldValidate: true },
-      );
-      setValue(
-        "applicant.communicationAddress.city",
-        aadhaarAddress.city ||
-          aadhaarAddress.postOffice ||
-          aadhaarAddress.district ||
-          "",
-        { shouldValidate: true },
-      );
-      setValue(
-        "applicant.communicationAddress.state",
-        aadhaarAddress.state || "",
-        { shouldValidate: true },
-      );
-      setValue(
-        "applicant.communicationAddress.stateCode",
-        aadhaarAddress.stateCode || "",
-        { shouldValidate: true },
-      );
-      setValue(
-        "applicant.communicationAddress.district",
-        aadhaarAddress.district || "",
-        { shouldValidate: true },
-      );
-      setValue(
-        "applicant.communicationAddress.pincode",
-        aadhaarAddress.pincode || "",
-        { shouldValidate: true },
-      );
+      const cloned = cloneAddress(aadhaarAddress, "CURRENT", true);
+      setAddressFields(setValue, "applicant.communicationAddress", cloned, true);
     } else if (!sameAsAadhaar && prevSameAsAadhaar.current === true) {
       // Clear fields when unchecked
-      setValue("applicant.communicationAddress.addressLine1", "");
-      setValue("applicant.communicationAddress.addressLine2", "");
-      setValue("applicant.communicationAddress.addressLine3", "");
-      setValue("applicant.communicationAddress.city", "");
-      setValue("applicant.communicationAddress.state", "");
-      setValue("applicant.communicationAddress.stateCode", "");
-      setValue("applicant.communicationAddress.district", "");
-      setValue("applicant.communicationAddress.pincode", "");
+      clearAddressFields(setValue, "applicant.communicationAddress");
     }
     prevSameAsAadhaar.current = sameAsAadhaar;
   }, [sameAsAadhaar, aadhaarAddress, setValue]);
 
-  // Pincode Lookup logic — skipped entirely when "Same as Aadhaar" is checked
+  // ✅ Rule 2: Pincode lookup — ONLY when not sameAsAadhaar (Others mode)
   useEffect(() => {
     const lookupPincode = async () => {
-      if (sameAsAadhaar) return;
+      if (sameAsAadhaar) return; // Rule 1: no API call when copying Aadhaar
       if (pincode?.length === 6) {
         setIsPincodeLoading(true);
         try {
           const res = await onboardingService.getPincodeDetails(pincode);
           if (res.cityName && res.stateName) {
-            setValue("applicant.communicationAddress.city", res.cityName, {
-              shouldValidate: true,
-            });
-            setValue("applicant.communicationAddress.state", res.stateName, {
-              shouldValidate: true,
-            });
-            setValue(
-              "applicant.communicationAddress.stateCode",
-              res.stateCode,
-              { shouldValidate: true },
-            );
-            setValue("applicant.communicationAddress.district", res.district, {
-              shouldValidate: true,
-            });
+            const mapped = mapPincodeResponse(res);
+            // Rule 2: only set city, district, state, stateCode from pincode API
+            setValue("applicant.communicationAddress.city", mapped.city, { shouldValidate: true });
+            setValue("applicant.communicationAddress.district", mapped.district, { shouldValidate: true });
+            setValue("applicant.communicationAddress.state", mapped.state, { shouldValidate: true });
+            setValue("applicant.communicationAddress.stateCode", mapped.stateCode, { shouldValidate: true });
             clearErrors("applicant.communicationAddress.pincode");
           } else if (res.error) {
             setError("applicant.communicationAddress.pincode", {
@@ -106,6 +59,7 @@ const AadhaarAddressSection = ({ aadhaarAddress, onSameAsAadhaarChange }) => {
             });
             setValue("applicant.communicationAddress.city", "");
             setValue("applicant.communicationAddress.state", "");
+            setValue("applicant.communicationAddress.district", "");
           }
         } catch (err) {
           console.error("Pincode lookup failed", err);
@@ -134,9 +88,7 @@ const AadhaarAddressSection = ({ aadhaarAddress, onSameAsAadhaarChange }) => {
             {...register("applicant.sameAsAadhaar")}
             defaultChecked={false}
             onChange={(e) => {
-              // Sync to react-hook-form
               register("applicant.sameAsAadhaar").onChange(e);
-              // Notify parent — triggers copy + console.log
               onSameAsAadhaarChange?.(e.target.checked);
             }}
             className="w-5 h-5 border-2 border-[#D1A054] accent-black cursor-pointer rounded-sm"
@@ -155,71 +107,71 @@ const AadhaarAddressSection = ({ aadhaarAddress, onSameAsAadhaarChange }) => {
         </div>
       )}
 
-      <div
-        className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4 ${sameAsAadhaar ? "hidden" : ""}`}
-      >
-        {/* Address Line 1 */}
+      {/* ✅ Manual entry form — hidden when sameAsAadhaar checked */}
+      <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4 ${sameAsAadhaar ? "hidden" : ""}`}>
+
+        {/* Line 1 (mapped to houseNumber/primary address) */}
         <div className="flex flex-col gap-1.5">
           <span className="font-bold text-[13px] sm:text-[14px] text-gray-700 ml-0.5">
             Address Line 1<span className="text-red-500">*</span>
           </span>
           <input
-            {...register("applicant.communicationAddress.addressLine1")}
-            maxLength={100}
+            {...register("applicant.communicationAddress.line1")}
+            maxLength={200}
             className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${
-              errors.applicant?.communicationAddress?.addressLine1
+              errors.applicant?.communicationAddress?.line1
                 ? "border-red-500"
                 : "border-neutral-light focus-within:border-gray-900"
             } text-[14px]`}
             placeholder="Address Line 1"
           />
-          {errors.applicant?.communicationAddress?.addressLine1 && (
+          {errors.applicant?.communicationAddress?.line1 && (
             <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-1">
-              {errors.applicant.communicationAddress.addressLine1.message}
+              {errors.applicant.communicationAddress.line1.message}
             </span>
           )}
         </div>
 
-        {/* Address Line 2 */}
+        {/* Line 2 (Optional) */}
         <div className="flex flex-col gap-1.5">
           <span className="font-bold text-[13px] sm:text-[14px] text-gray-700 ml-0.5">
             Address Line 2 (Optional)
           </span>
           <input
-            {...register("applicant.communicationAddress.addressLine2")}
-            maxLength={100}
+            {...register("applicant.communicationAddress.line2")}
+            maxLength={200}
             className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${
-              errors.applicant?.communicationAddress?.addressLine2
+              errors.applicant?.communicationAddress?.line2
                 ? "border-red-500"
                 : "border-neutral-light focus-within:border-gray-900"
             } text-[14px]`}
             placeholder="Address Line 2"
           />
-          {errors.applicant?.communicationAddress?.addressLine2 && (
+          {errors.applicant?.communicationAddress?.line2 && (
             <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-1">
-              {errors.applicant.communicationAddress.addressLine2.message}
+              {errors.applicant.communicationAddress.line2.message}
             </span>
           )}
         </div>
 
-        {/* Address Line 3 */}
+        {/* Line 3 (Optional) */}
         <div className="flex flex-col gap-1.5">
           <span className="font-bold text-[13px] sm:text-[14px] text-gray-700 ml-0.5">
             Address Line 3 (Optional)
           </span>
           <input
-            {...register("applicant.communicationAddress.addressLine3")}
-            maxLength={100}
+            {...register("applicant.communicationAddress.line3")}
+            maxLength={200}
             className={`bg-white rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${
-              errors.applicant?.communicationAddress?.addressLine3
+              errors.applicant?.communicationAddress?.line3
                 ? "border-red-500"
                 : "border-neutral-light focus-within:border-gray-900"
             } text-[14px]`}
             placeholder="Address Line 3"
           />
-          {errors.applicant?.communicationAddress?.addressLine3 && (
+          {errors.applicant?.communicationAddress?.line3 && (
             <span className="text-red-500 text-[11px] sm:text-[12px] font-medium ml-1">
-              {errors.applicant.communicationAddress.addressLine3.message}
+              {errors.applicant.communicationAddress.line3.message}
             </span>
           )}
         </div>
@@ -255,14 +207,14 @@ const AadhaarAddressSection = ({ aadhaarAddress, onSameAsAadhaarChange }) => {
             </span>
           )}
         </div>
-        {/* City */}
+
+        {/* City — auto-filled from pincode API (read-only) */}
         <div className="flex flex-col gap-1.5">
           <span className="font-bold text-[13px] sm:text-[14px] text-gray-700 ml-0.5">
             City<span className="text-red-500">*</span>
           </span>
           <input
             {...register("applicant.communicationAddress.city")}
-            maxLength={20}
             readOnly
             className={`bg-gray-100 rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${
               errors.applicant?.communicationAddress?.city
@@ -278,14 +230,13 @@ const AadhaarAddressSection = ({ aadhaarAddress, onSameAsAadhaarChange }) => {
           )}
         </div>
 
-        {/* State */}
+        {/* State — auto-filled from pincode API (read-only) */}
         <div className="flex flex-col gap-1.5">
           <span className="font-bold text-[13px] sm:text-[14px] text-gray-700 ml-0.5">
             State<span className="text-red-500">*</span>
           </span>
           <input
             {...register("applicant.communicationAddress.state")}
-            maxLength={20}
             readOnly
             className={`bg-gray-100 rounded-xl px-4 py-3 border shadow-sm transition-all focus:outline-none ${
               errors.applicant?.communicationAddress?.state
