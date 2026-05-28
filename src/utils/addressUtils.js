@@ -27,6 +27,14 @@
  * }
  */
 
+
+
+// my format
+/* 
+line 1, line 2, line 3, district, city - pincode, state
+*/
+
+
 /**
  * Returns a blank master address object.
  */
