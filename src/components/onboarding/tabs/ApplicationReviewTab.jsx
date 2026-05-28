@@ -338,7 +338,7 @@ const ApplicationReviewTab = ({ goToStep }) => {
         // Show success checkmark in the modal
         setIsBiometricVerified(true);
 
-        // Wait 1.2 seconds so the user can see the green checkmark, then show final success overlay
+        // Wait 1.2 seconds
         setTimeout(() => {
           setIsSuccess(true);
           setShowBiometricConsent(false);
@@ -348,7 +348,7 @@ const ApplicationReviewTab = ({ goToStep }) => {
       }
     } catch (err) {
       console.error("Submission Error:", err);
-      toast.error("Something went wrong during final submission.");
+      toast.error(res.message || "Something went wrong during final submission.");
     } finally {
       setIsBiometricLoading(false);
     }

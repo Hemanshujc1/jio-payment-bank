@@ -20,7 +20,7 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""),
       },
-
+      
       "/vakrangee-connect": {
         target: "https://vkmssit.vakrangee.in",
         changeOrigin: true,
