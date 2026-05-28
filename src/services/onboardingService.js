@@ -119,7 +119,9 @@ const onboardingService = {
    */
   panAadhaarVerify: async (payload) => {
     try {
+      console.log("---- panAadhaarVerify PAYLOAD (Aadhaar Address Structure) ----", JSON.stringify(payload, null, 2));
       const response = await apiClient.post("/pan-aadhar-verify", payload);
+      console.log("---- panAadhaarVerify RESPONSE ----", JSON.stringify(response.data, null, 2));
       //const response = await axios.post("http://192.168.200.173:8090/customer/pan-aadhar-verify", payload);
       return response.data;
     } catch (error) {
@@ -207,7 +209,9 @@ const onboardingService = {
    */
   customerBioAuth: async (payload) => {
     try{
+      console.log("---- customerBioAuth PAYLOAD (Aadhaar Address Structure) ----", JSON.stringify(payload, null, 2));
       const response = await apiClient.post("/customer-auth", payload);
+      console.log("---- customerBioAuth RESPONSE ----", JSON.stringify(response.data, null, 2));
       //const response = await axios.post("http://192.168.200.173:8090/customer/customer-auth", payload);
       return response.data;
     } catch(error){
@@ -221,7 +225,9 @@ const onboardingService = {
    */
   submitApplication: async (payload) => {
     try {
+      console.log("---- submitApplication PAYLOAD (Aadhaar Address Structure) ----", JSON.stringify(payload, null, 2));
       const response = await apiClient.post("/submit-application", payload);
+      console.log("---- submitApplication RESPONSE ----", JSON.stringify(response.data, null, 2));
       //const response = await axios.post("http://192.168.200.173:8090/customer/submit-application", payload);
       return response.data;
     } catch (error) {
