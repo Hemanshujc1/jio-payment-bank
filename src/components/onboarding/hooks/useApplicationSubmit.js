@@ -299,7 +299,7 @@ export const useApplicationSubmit = ({ formData, toast }) => {
       }
     } catch (err) {
       console.error("Submission Error:", err);
-      toast.error(err.message || "Something went wrong during final submission.");
+      toast.error(res.error?.message || err.message || "Something went wrong during final submission.");
     } finally {
       setIsBiometricLoading(false);
     }
