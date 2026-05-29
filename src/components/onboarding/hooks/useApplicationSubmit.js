@@ -295,7 +295,7 @@ export const useApplicationSubmit = ({ formData, toast }) => {
           setShowBiometricConsent(false);
         }, 1200);
       } else {
-        toast.error(response.error?.message || res.message || "Application submission failed. Please try again.");
+        toast.error(res.error?.message || res.message || "Application submission failed. Please try again.");
       }
     } catch (err) {
       console.error("Submission Error:", err);
