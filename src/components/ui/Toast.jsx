@@ -14,7 +14,13 @@ export const ToastProvider = ({ children }) => {
 
   const showToast = useCallback((message, type = 'info', duration = 4000) => {
     const id = Math.random().toString(36).substr(2, 9);
-    setToasts((prev) => [...prev, { id, message, type, duration }]);
+    setToasts((prev) => {
+      // Prevent duplicate toasts from stacking up
+      if (prev.some((t) => t.message === message && t.type === type)) {
+        return prev;
+      }
+      return [...prev, { id, message, type, duration }];
+    });
   }, []);
 
   const removeToast = useCallback((id) => {
