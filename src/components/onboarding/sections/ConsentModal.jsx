@@ -17,7 +17,7 @@ const ConsentModal = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-9999 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
       <div className="w-full max-w-4xl bg-[#F4E4C1] rounded-3xl border border-[#A67C52]/30 shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
         <div className="px-6 pt-4 pb-4 text-center">
           <h2 className="text-3xl font-extrabold text-[#3E2723]">

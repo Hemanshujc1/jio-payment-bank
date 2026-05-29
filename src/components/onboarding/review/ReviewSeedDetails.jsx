@@ -25,7 +25,7 @@ const ReviewSeedDetails = ({ consents, dbtRecords, onEdit }) => {
 
       <div className="flex flex-col gap-6 w-full mx-auto mt-4 sm:px-2">
         <div className="flex items-start gap-3">
-          <div className="w-5 h-5 shrink-0 mt-[2px] flex items-center justify-center bg-gray-700 text-white rounded-[3px] shadow-sm">
+          <div className="w-5 h-5 shrink-0 mt-0.5 flex items-center justify-center bg-gray-700 text-white rounded-[3px] shadow-sm">
             <IoMdCheckmark className="text-sm font-bold" />
           </div>
           <p className="text-gray-900 font-medium text-[14.5px] leading-snug">
