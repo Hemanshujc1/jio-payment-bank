@@ -3,7 +3,7 @@ import ReviewHeader from "./ReviewHeader";
 import { IoMdCheckmark } from "react-icons/io";
 import ReviewRow from "./ReviewRow";
 
-const ReviewSeedDetails = ({ consents, onEdit }) => {
+const ReviewSeedDetails = ({ consents, dbtRecords, onEdit }) => {
   // Check if c44 consent exists in the provided consents array
   const c44Consent = consents?.find(
     (c) =>
@@ -16,9 +16,8 @@ const ReviewSeedDetails = ({ consents, onEdit }) => {
     return null;
   }
 
-  // Use mock data as the API is not ready yet
-  const mockBankName = "State Bank of India";
-  const mockBankIIN = "123456";
+  const bankName = dbtRecords?.[0]?.bankName || "-";
+  const bankIIN = dbtRecords?.[0]?.bankIIN || "-";
 
   return (
     <section className="w-full relative px-1 sm:px-0">
@@ -42,12 +41,12 @@ const ReviewSeedDetails = ({ consents, onEdit }) => {
 
           <ReviewRow
             label="Seeded Bank Name"
-            value={mockBankName}
+            value={bankName}
           />
 
           <ReviewRow
-            label="Seeded Bank IN"
-            value={mockBankIIN}
+            label="Seeded Bank IIN"
+            value={bankIIN}
           />
 
         </div>

@@ -61,6 +61,7 @@ export const useBiometricVerification = ({
         const apiData = response?.data?.persons;
         const aadhaarData = apiData?.aadhaar;
         const financialData = apiData?.financialDetails;
+        const dbtRecords = apiData?.dbtRecords || [];
 
         const formattedKyc = {
           name: aadhaarData?.name,
@@ -86,6 +87,7 @@ export const useBiometricVerification = ({
         setValue("applicant.gender", aadhaarData?.gender === "M" ? "Male" : "Female");
 
         setValue("onboarding.consents", finalConsents);
+        setValue("onboarding.dbtRecords", dbtRecords);
         setValue("applicant.photo", aadhaarData?.photo || "");
 
         const rawAadhaarAddr = aadhaarData?.address || {};

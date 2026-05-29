@@ -79,6 +79,7 @@ const ApplicationReviewTab = ({ goToStep }) => {
 
       <ReviewSeedDetails
         consents={formData.onboarding?.consents}
+        dbtRecords={formData.onboarding?.dbtRecords}
         onEdit={() => goToStep(1)}
       />
 
