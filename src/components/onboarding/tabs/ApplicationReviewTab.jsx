@@ -13,6 +13,7 @@ import ChargeVerificationModal from "../review/ChargeVerificationModal";
 import BiometricVerificationModal from "../review/BiometricVerificationModal";
 import onboardingService from "../../../services/onboardingService";
 import { useToast } from "../../ui/Toast";
+import ReviewSeedDetails from "../review/ReviewSeedDetails";
 
 const RELATION_LOOKUP = {
   Father: "R01",
@@ -385,6 +386,13 @@ const ApplicationReviewTab = ({ goToStep }) => {
         onEdit={() => goToStep(4)}
       />
       <Divider />
+
+      <ReviewSeedDetails
+        consents={formData.onboarding?.consents}
+        onEdit={() => goToStep(1)}
+      />
+
+      {/* <Divider /> */}
 
       <ReviewTermsConditions
         onSubmit={handleSubmit}
