@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { useFormContext, useWatch } from "react-hook-form";
 import ProceedButton from "../../common/ProceedButton";
 import NomineeChoice from "../sections/NomineeChoice";
@@ -23,6 +23,17 @@ const NomineeDetailsTab = ({ onNext }) => {
   const nomineeDob = nomineeVal.dob;
 
   const isMinor = nomineeDob ? differenceInYears(new Date(), parseDate(nomineeDob)) < 18 : false;
+
+  const prevProvideRef = useRef(provideNominee);
+
+  useEffect(() => {
+    if (prevProvideRef.current === "Yes" && provideNominee === "No") {
+      setValue("nominee", { provide: "No" });
+      setValue("guardian", {});
+      clearErrors(["nominee", "guardian"]);
+    }
+    prevProvideRef.current = provideNominee;
+  }, [provideNominee, setValue, clearErrors]);
 
   const { handleProceed } = useNomineeValidation({
     onNext,

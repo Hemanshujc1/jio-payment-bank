@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from "react";
 import { useFormContext } from 'react-hook-form';
 import ProceedButton from "../../common/ProceedButton";
 import FamilyDetails from "../sections/FamilyDetails";
@@ -7,8 +7,19 @@ import { useToast } from "../../ui/Toast";
 import { useFamilyFinancialValidation } from "../hooks/useFamilyFinancialValidation";
 
 const FamilyFinancialDetailsTab = ({ onNext }) => {
-  const { trigger, watch, getValues, setError, clearErrors } = useFormContext();
+  const { trigger, watch, getValues, setError, clearErrors, setValue } = useFormContext();
   const toast = useToast();
+
+  const maritalStatus = watch("applicant.maritalStatus");
+  const prevMaritalStatusRef = useRef(maritalStatus);
+
+  useEffect(() => {
+    if (prevMaritalStatusRef.current === "Married" && maritalStatus === "Single") {
+      setValue("family.spouseName", {});
+      clearErrors("family.spouseName");
+    }
+    prevMaritalStatusRef.current = maritalStatus;
+  }, [maritalStatus, setValue, clearErrors]);
 
   const { handleProceed } = useFamilyFinancialValidation({
     trigger,
@@ -38,3 +49,4 @@ const FamilyFinancialDetailsTab = ({ onNext }) => {
 };
 
 export default FamilyFinancialDetailsTab;
+ 

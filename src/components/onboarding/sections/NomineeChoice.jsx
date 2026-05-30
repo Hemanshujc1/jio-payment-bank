@@ -31,9 +31,7 @@ const NomineeChoice = () => {
         </div>
       </div>
       <p className="text-[14px] text-gray-800 tracking-tight leading-snug">
-        Having a nominee in account helps the account holders family to claims
-        the funds lying in the account in case of the demise of the account
-        holder.
+        Having a nominee in account helps the account holder's family to claim the funds lying in the account in case of the demise of the account holder.
       </p>
     </div>
   );
