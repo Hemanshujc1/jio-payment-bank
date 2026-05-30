@@ -3,6 +3,9 @@ import { FaFingerprint } from "react-icons/fa";
 import onboardingService from "../../../services/onboardingService";
 import ConsentsSection from "../sections/ConsentsSection";
 import LanguageSelection from "../sections/LanguageSelection";
+import DeviceSelector from "../sections/DeviceSelector";
+import { useDeviceCapture } from "../hooks/useDeviceCapture";
+import { useConsents } from "../hooks/useConsents";
 
 const BiometricVerificationModal = ({
   isOpen,
@@ -13,262 +16,25 @@ const BiometricVerificationModal = ({
   apiPayloadData,
 }) => {
   const [selectedDevice, setSelectedDevice] = useState("mantra");
-  const [statusMessage, setStatusMessage] = useState("");
-  const [localLoading, setLocalLoading] = useState(false);
 
   const [language, setLanguage] = useState("English");
-  const [consentsList, setConsentsList] = useState([]);
-  const [selectedConsents, setSelectedConsents] = useState({});
 
-  const languagesList = [
-    { name: "English", code: "EN" },
-    { name: "Hindi", code: "HI" },
-    { name: "Telugu", code: "TA" },
-    { name: "Tamil", code: "TE" },
-    { name: "Kannada", code: "KN" },
-    { name: "Marathi", code: "MR" },
-    { name: "Bengali", code: "BN" },
-  ];
+  const {
+    languagesList,
+    consentsList,
+    selectedConsents,
+    setSelectedConsents,
+    isAllConsentsSelected,
+  } = useConsents(language, null, "FINAL_SUBMISSION");
 
-  useEffect(() => {
-    const fetchConsents = async () => {
-      try {
-        const selectedLang = languagesList.find((l) => l.name === language);
-        const langCode = selectedLang ? selectedLang.code : "EN";
-        const res = await onboardingService.getConsents(langCode);
-        if (res.status === "SUCCESS" && res.response?.consents) {
-          const filtered = res.response.consents.filter(c => c.activityType === "FINAL_SUBMISSION" && (!c.language || c.language === langCode));
-          setConsentsList(filtered);
-          const initial = {};
-          filtered.forEach((c) => {
-            initial[c.consentTextCode] = false;
-          });
-          setSelectedConsents(initial);
-        }
-      } catch (err) {
-        console.error("Failed to fetch consents", err);
-      }
-    };
-    if (isOpen) {
-      fetchConsents();
-    }
-  }, [language, isOpen]);
-
-  const isAllConsentsSelected =
-    consentsList.length > 0 &&
-    consentsList.every(
-      (c) => c.mandatory !== "Y" || selectedConsents[c.consentTextCode],
-    );
+  const { handleCaptureClick, statusMessage, setStatusMessage, localLoading } = useDeviceCapture({
+    selectedDevice,
+    consentsList,
+    selectedConsents,
+    onCaptureSuccess,
+  });
 
   if (!isOpen) return null;
-
-  const handleCaptureClick = async () => {
-    setLocalLoading(true);
-    setStatusMessage(`Checking ${selectedDevice} RD Service...`);
-    let devicePort = null;
-
-  //  RD PORTS
-const RD_PORTS = {
-  mantra: [11100, 11101, 11102, 10094],
-  morpho: [11100, 11101, 11102, 10093],
-  startek: [11100, 11101, 11102, 8005],
-};
-
-//  CHECK RD SERVICE
-const ports = RD_PORTS[selectedDevice] || [];
-
-for (let port of ports) {
-  try {
-    const response = await fetch(`http://127.0.0.1:${port}`, {
-      method: "RDSERVICE",
-    });
-
-    const text = await response.text();
-
-    console.log(
-      `${selectedDevice} RD SERVICE RESPONSE ON PORT ${port}:`,
-      text
-    );
-
-    if (
-      text &&
-      (
-        text.includes("RDService") ||
-        text.includes("Mantra") ||
-        text.includes("Morpho") ||
-        text.includes("Startek") ||
-        text.includes("StarTek")
-      )
-    ) {
-      devicePort = port;
-      break;
-    }
-  } catch (error) {
-    console.log(`${selectedDevice} NOT FOUND ON PORT ${port}`);
-  }
-}
-
-    if (!devicePort) {
-      setStatusMessage(
-        `Error: ${selectedDevice.charAt(0).toUpperCase() + selectedDevice.slice(1)} RD Service is not running or device is disconnected.`,
-      );
-      setLocalLoading(false);
-      return;
-    }
-
-    setStatusMessage(
-      "Device ready. Please place your finger on the scanner...",
-    );
-
-    let pidOptions = "";
-    let captureUrl = "";
-    let captureMethod = "";
-
-    //  MANTRA CONFIG
-    if (selectedDevice === "mantra") {
-      pidOptions = `
-    <PidOptions ver="1.0">
-      <Opts
-        env="PP"
-        fCount="1"
-        fType="2"
-        iCount="0"
-        pCount="0"
-        format="0"
-        pidVer="2.0"
-        timeout="10000"
-      />
-    </PidOptions>
-  `;
-
-      captureUrl = `http://127.0.0.1:${devicePort}/rd/capture`;
-
-      captureMethod = "CAPTURE";
-    }
-
-    //  MORPHO CONFIG
-    else if (selectedDevice === "morpho") {
-      pidOptions =
-        '<PidOptions ver="1.0">' +
-        "<Opts " +
-        'env="PP" ' +
-        'fCount="1" ' +
-        'fType="2" ' +
-        'iCount="0" ' +
-        'iType="0" ' +
-        'pCount="0" ' +
-        'pType="0" ' +
-        'format="0" ' +
-        'pidVer="2.0" ' +
-        'timeout="10000" ' +
-        'posh="UNKNOWN"/>' +
-        "</PidOptions>";
-
-      captureUrl = `http://127.0.0.1:${devicePort}/capture`;
-
-      captureMethod = "CAPTURE";
-    }
-
-    //  STARTEK CONFIG
-    else if (selectedDevice === "startek") {
-      pidOptions = `<PidOptions ver="1.0">
-      <Opts
-        env="PP"
-        fCount="1"
-        fType="2"
-        iCount="0"
-        pCount="0"
-        format="0"
-        pidVer="2.0"
-        timeout="20000"
-        otp=""
-        posh=""
-      />
-    </PidOptions>
-    `;
-
-      captureUrl = `http://127.0.0.1:${devicePort}/rd/capture`;
-      captureMethod = "CAPTURE";
-    }
-
-    // 2. Capture Biometric Data
-    try {
-      const captureResponse = await fetch(captureUrl, {
-        method: captureMethod,
-        headers: {
-          Accept: "text/xml",
-          "Content-Type": "text/xml",
-        },
-        body: pidOptions,
-      });
-
-      if (captureResponse.ok) {
-        const captureXml = await captureResponse.text();
-
-        // 3. Check for success code in XML (errCode="0")
-        if (captureXml.includes('errCode="0"')) {
-          setStatusMessage("Biometric captured! Authenticating with server...");
-
-          // ========================================================
-          // 4. API CALL WITH SPECIFIED PAYLOAD FORMAT
-          // ========================================================
-          try {
-            const formattedConsents = consentsList
-              .filter((c) => selectedConsents[c.consentTextCode])
-              .map((c) => ({
-                consent: c.text1,
-                code: c.consentTextCode,
-                version: "1",
-                method: "checkbox",
-              }));
-
-            const payload = {
-              vkid: localStorage.getItem("vkid"),
-              applicationNumber: sessionStorage.getItem("applicationNumber"),
-              externalAppRefNumber: sessionStorage.getItem(
-                "externalAppRefNumber",
-              ),
-              // latitude: "19.118027857360293", // Hardcoded
-              // longitude: "72.8733474523108",  // Hardcoded
-              bioMetricData: captureXml,
-              consents: formattedConsents,
-            };
-
-            const apiResponse =
-              await onboardingService.customerBioAuth(payload);
-
-            if (apiResponse.status === "SUCCESS") {
-              setStatusMessage("Biometric Verified Successfully!");
-              if (onCaptureSuccess) {
-                onCaptureSuccess(formattedConsents);
-              }
-            } else {
-              setStatusMessage("Biometric Verification Failed!");
-            }
-          } catch (apiError) {
-            console.error("API Authentication Failed:", apiError);
-            setStatusMessage(
-              "Authentication Error: Failed to verify biometric data on the server.",
-            );
-          }
-        } else {
-          const errorMatch = captureXml.match(/errInfo="([^"]+)"/);
-          const errorMsg = errorMatch
-            ? errorMatch[1]
-            : "Capture failed. Please try again.";
-          setStatusMessage(`Capture Error: ${errorMsg}`);
-        }
-      } else {
-        setStatusMessage(
-          "Error: Failed to communicate with the capture service.",
-        );
-      }
-    } catch (error) {
-      setStatusMessage("Error: Capture service unreachable.");
-    }
-
-    setLocalLoading(false);
-  };
 
   const isButtonDisabled = !isAllConsentsSelected || isLoading || localLoading;
 
@@ -288,55 +54,13 @@ for (let port of ports) {
         Customer Biometric Verification
         </h2>
 
-        <div className="w-full bg-gray-50 border border-gray-200 p-4 rounded-lg flex flex-col gap-3 shrink-0">
-          <label className="font-bold text-[14px] text-gray-800">
-            Select Fingerprint Device:
-          </label>
-          <div className="flex gap-6">
-            <label className="flex items-center gap-2 cursor-pointer text-[14px] font-medium">
-              <input
-                type="radio"
-                name="device"
-                value="mantra"
-                checked={selectedDevice === "mantra"}
-                onChange={(e) => {
-                  setSelectedDevice(e.target.value);
-                  setStatusMessage("");
-                }}
-                className="w-4 h-4 accent-black cursor-pointer"
-              />
-              Mantra
-            </label>
-            <label className="flex items-center gap-2 cursor-pointer text-[14px] font-medium">
-              <input
-                type="radio"
-                name="device"
-                value="morpho"
-                checked={selectedDevice === "morpho"}
-                onChange={(e) => {
-                  setSelectedDevice(e.target.value);
-                  setStatusMessage("");
-                }}
-                className="w-4 h-4 accent-black cursor-pointer"
-              />
-              Morpho
-            </label>
-            <label className="flex items-center gap-2 cursor-pointer text-[14px] font-medium">
-              <input
-                type="radio"
-                name="device"
-                value="startek"
-                checked={selectedDevice === "startek"}
-                onChange={(e) => {
-                  setSelectedDevice(e.target.value);
-                  setStatusMessage("");
-                }}
-                className="w-4 h-4 accent-black cursor-pointer"
-              />
-              Startek
-            </label>
-          </div>
-        </div>
+        <DeviceSelector
+          selectedDevice={selectedDevice}
+          onDeviceChange={(device) => {
+            setSelectedDevice(device);
+            setStatusMessage("");
+          }}
+        />
 
         <div className="w-full shrink-0">
           <ConsentsSection

@@ -9,6 +9,7 @@ import { differenceInYears } from "date-fns";
 import { parseDate } from "../../../utils/validationUtils";
 import { useToast } from "../../ui/Toast";
 import { useNomineeValidation } from "../hooks/useNomineeValidation";
+import { useConsents } from "../hooks/useConsents";
 
 const NomineeDetailsTab = ({ onNext }) => {
   const { getValues, setValue, register, setError, clearErrors, formState: { errors } } = useFormContext();
@@ -17,7 +18,10 @@ const NomineeDetailsTab = ({ onNext }) => {
   const nomineeVal = useWatch({ name: "nominee" }) || {};
   const guardianVal = useWatch({ name: "guardian" }) || {};
   const applicantVal = useWatch({ name: "applicant" }) || {};
-  const nomineeConsentData = useWatch({ name: "onboarding.nomineeConsentData" });
+  const language = useWatch({ name: "onboarding.language" }) || "English";
+
+  const { consentsList } = useConsents(language, null, "NOMINEE_IN");
+  const nomineeConsentData = consentsList.length > 0 ? consentsList[0] : null;
 
   const provideNominee = nomineeVal.provide;
   const nomineeDob = nomineeVal.dob;

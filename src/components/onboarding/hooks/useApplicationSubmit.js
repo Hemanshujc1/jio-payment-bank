@@ -284,7 +284,7 @@ export const useApplicationSubmit = ({ formData, toast }) => {
 
     try {
       const payload = buildFinalPayload(consentsArray);
-      console.log("🚀 FINAL PAYLOAD:", payload);
+      console.log("FINAL PAYLOAD:", payload);
 
       const res = await onboardingService.submitApplication(payload);
 
