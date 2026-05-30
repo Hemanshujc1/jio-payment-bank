@@ -67,14 +67,14 @@ const BiometricVerificationModal = ({
     setStatusMessage(`Checking ${selectedDevice} RD Service...`);
     let devicePort = null;
 
-  // ✅ RD PORTS
+  //  RD PORTS
 const RD_PORTS = {
   mantra: [11100, 11101, 11102, 10094],
   morpho: [11100, 11101, 11102, 10093],
   startek: [11100, 11101, 11102, 8005],
 };
 
-// ✅ CHECK RD SERVICE
+//  CHECK RD SERVICE
 const ports = RD_PORTS[selectedDevice] || [];
 
 for (let port of ports) {
@@ -124,7 +124,7 @@ for (let port of ports) {
     let captureUrl = "";
     let captureMethod = "";
 
-    // ✅ MANTRA CONFIG
+    //  MANTRA CONFIG
     if (selectedDevice === "mantra") {
       pidOptions = `
     <PidOptions ver="1.0">
@@ -146,7 +146,7 @@ for (let port of ports) {
       captureMethod = "CAPTURE";
     }
 
-    // ✅ MORPHO CONFIG
+    //  MORPHO CONFIG
     else if (selectedDevice === "morpho") {
       pidOptions =
         '<PidOptions ver="1.0">' +
@@ -169,7 +169,7 @@ for (let port of ports) {
       captureMethod = "CAPTURE";
     }
 
-    // ✅ STARTEK CONFIG
+    //  STARTEK CONFIG
     else if (selectedDevice === "startek") {
       pidOptions = `<PidOptions ver="1.0">
       <Opts

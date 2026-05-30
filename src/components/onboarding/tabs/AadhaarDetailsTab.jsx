@@ -4,8 +4,6 @@ import ProceedButton from "../../common/ProceedButton";
 import AadhaarFieldGrid from "../sections/AadhaarFieldGrid";
 import AadhaarAddressSection from "../sections/AadhaarAddressSection";
 import { useToast } from "../../ui/Toast";
-
-// Custom Hooks
 import { useAadhaarDetails } from "../hooks/useAadhaarDetails";
 
 const AadhaarDetailsTab = ({ onNext, kycData }) => {

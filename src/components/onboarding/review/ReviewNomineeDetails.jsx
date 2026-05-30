@@ -3,7 +3,7 @@ import ReviewRow from "./ReviewRow";
 
 const ReviewNomineeDetails = ({ data, guardian, onEdit }) => {
 
-  // ✅ FULL NAME HELPER
+  //  FULL NAME HELPER
   const getFullName = (obj) => {
     if (!obj) return "-";
     return [obj.firstName, obj.middleName, obj.lastName]
@@ -11,7 +11,7 @@ const ReviewNomineeDetails = ({ data, guardian, onEdit }) => {
       .join(" ");
   };
 
-  // ✅ ADDRESS FORMATTER — uses master field names (per Rule 4 Case 2)
+  //  ADDRESS FORMATTER — uses master field names (per Rule 4 Case 2)
   const formatAddress = (addr) => {
     if (!addr) return "-";
 
@@ -24,7 +24,7 @@ const ReviewNomineeDetails = ({ data, guardian, onEdit }) => {
     return result || "-";
   };
 
-  // ✅ MINOR CHECK (based on DOB)
+  //  MINOR CHECK (based on DOB)
   const isMinor = (() => {
     if (!data?.dob) return false;
 

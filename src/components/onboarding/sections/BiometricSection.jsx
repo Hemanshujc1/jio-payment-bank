@@ -18,14 +18,14 @@ const BiometricSection = ({
     message: "",
   });
 
-  // ✅ COMMON RD SERVICE PORTS
+  //  COMMON RD SERVICE PORTS
   const RD_PORTS = {
     MANTRA: [11100, 11101, 11102, 10094],
     MORPHO: [11100, 11101, 11102, 10093],
     STARTEK: [11100, 11101, 11102, 8005],
   };
 
-  // ✅ CHECK ACTIVE RD SERVICE PORT
+  //  CHECK ACTIVE RD SERVICE PORT
   const checkRDService = async (deviceType) => {
     const ports = RD_PORTS[deviceType] || [];
 
@@ -41,7 +41,7 @@ const BiometricSection = ({
 
         console.log(`${deviceType} RD SERVICE RESPONSE ON PORT ${port}:`, text);
 
-        // ✅ VALID RD SERVICE FOUND
+        //  VALID RD SERVICE FOUND
         if (
           text &&
           (text.includes("RDService") ||
@@ -66,22 +66,22 @@ const BiometricSection = ({
     };
   };
 
-  // ✅ CAPTURE BIOMETRIC
+  //  CAPTURE BIOMETRIC
   const captureBiometric = async (deviceType) => {
     setShowDeviceModal(false);
     setIsBiometricLoading(true);
 
-    // ✅ CHECK RD SERVICE
+    //  CHECK RD SERVICE
     const rdCheck = await checkRDService(deviceType);
 
-    // ✅ REQUEST METHOD
+    //  REQUEST METHOD
     let method = "CAPTURE";
 
     if (deviceType === "MORPHO") {
       method = "CAPTURE";
     }
 
-    // ❌ RD SERVICE NOT FOUND
+    // RD SERVICE NOT FOUND
     if (!rdCheck.status) {
       setIsBiometricLoading(false);
 
@@ -93,7 +93,7 @@ const BiometricSection = ({
       return;
     }
 
-    // ✅ ACTIVE PORT
+    //  ACTIVE PORT
     const rdPort = rdCheck.port;
 
     console.log("ACTIVE RD PORT:", rdPort);
@@ -102,7 +102,7 @@ const BiometricSection = ({
       let url = "";
       let xmlRequest = "";
 
-      // ✅ MANTRA CONFIG
+      //  MANTRA CONFIG
       if (deviceType === "MANTRA") {
         url = `http://127.0.0.1:${rdPort}/rd/capture`;
 
@@ -122,7 +122,7 @@ const BiometricSection = ({
         `;
       }
 
-      // ✅ MORPHO CONFIG
+      //  MORPHO CONFIG
       else if (deviceType === "MORPHO") {
         url = `http://127.0.0.1:${rdPort}/capture`;
 
@@ -145,7 +145,7 @@ const BiometricSection = ({
         // `;
       }
 
-      // ✅ STARTEK CONFIG
+      //  STARTEK CONFIG
       else if (deviceType === "STARTEK") {
         url = `http://127.0.0.1:${rdPort}/rd/capture`;
 
@@ -173,10 +173,10 @@ const BiometricSection = ({
 
       const xhr = new XMLHttpRequest();
 
-      // ✅ OPEN REQUEST
+      //  OPEN REQUEST
       xhr.open(method, url, true);
 
-      // ✅ RESPONSE
+      //  RESPONSE
       xhr.onload = function () {
         console.log("CAPTURE RESPONSE:", xhr.responseText);
 
@@ -194,7 +194,7 @@ const BiometricSection = ({
           console.log("ERR CODE:", errCode);
           console.log("ERR INFO:", errInfo);
 
-          // ✅ SUCCESS
+          // SUCCESS
           if (errCode === "0") {
             setIsBiometricVerified(true);
 
@@ -203,7 +203,7 @@ const BiometricSection = ({
             }
           }
 
-          // ❌ FAILED
+          // FAILED
           else {
             setRdError({
               show: true,
@@ -220,7 +220,7 @@ const BiometricSection = ({
         setIsBiometricLoading(false);
       };
 
-      // ❌ CONNECTION ERROR
+      // CONNECTION ERROR
       xhr.onerror = function () {
         console.error("XHR ERROR");
 
@@ -233,7 +233,7 @@ const BiometricSection = ({
         setIsBiometricLoading(false);
       };
 
-      // ✅ SEND REQUEST
+      //  SEND REQUEST
       xhr.send(xmlRequest);
     } catch (err) {
       console.error("CAPTURE ERROR:", err);
@@ -249,7 +249,7 @@ const BiometricSection = ({
 
   return (
     <>
-      {/* ✅ MAIN BUTTON */}
+      {/*  MAIN BUTTON */}
       <div className="w-full flex items-center justify-center mb-1 max-w-4xl mx-auto">
         {!isBiometricVerified ? (
           <button
@@ -306,7 +306,7 @@ const BiometricSection = ({
         )}
       </div>
 
-      {/* ✅ DEVICE MODAL */}
+      {/*  DEVICE MODAL */}
       {showDeviceModal && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl w-[90%] max-w-md p-6 shadow-2xl animate-in zoom-in-95 duration-300">
@@ -324,7 +324,7 @@ const BiometricSection = ({
             </div>
 
             <div className="space-y-4">
-              {/* ✅ MANTRA */}
+              {/*  MANTRA */}
               <div
                 onClick={() => captureBiometric("MANTRA")}
                 className="cursor-pointer p-4 border rounded-xl hover:bg-red-50 hover:border-red-400 transition-all flex items-center justify-between"
@@ -340,7 +340,7 @@ const BiometricSection = ({
                 <FaFingerprint className="text-red-500 text-xl" />
               </div>
 
-              {/* ✅ MORPHO */}
+              {/*  MORPHO */}
               <div
                 onClick={() => captureBiometric("MORPHO")}
                 className="cursor-pointer p-4 border rounded-xl hover:bg-blue-50 hover:border-blue-400 transition-all flex items-center justify-between"
@@ -356,7 +356,7 @@ const BiometricSection = ({
                 <FaFingerprint className="text-blue-500 text-xl" />
               </div>
 
-              {/* ✅ STARTEK */}
+              {/*  STARTEK */}
               <div
                 onClick={() => captureBiometric("STARTEK")}
                 className="cursor-pointer p-4 border rounded-xl hover:bg-green-50 hover:border-green-400 transition-all flex items-center justify-between"
@@ -373,7 +373,7 @@ const BiometricSection = ({
               </div>
             </div>
 
-            {/* ✅ CANCEL */}
+            {/*  CANCEL */}
             <button
               onClick={() => setShowDeviceModal(false)}
               className="mt-6 w-full py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium"
@@ -384,7 +384,7 @@ const BiometricSection = ({
         </div>
       )}
 
-      {/* ✅ ERROR POPUP */}
+      {/*  ERROR POPUP */}
       {rdError.show && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/40 backdrop-blur-sm">
           <div className="bg-white w-[90%] max-w-sm p-6 rounded-2xl shadow-2xl animate-in zoom-in-95 duration-300">

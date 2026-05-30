@@ -3,7 +3,7 @@ import ReviewRow from "./ReviewRow";
 
 const ReviewFamilyDetails = ({ data, applicant, onEdit }) => {
   
-  // ✅ Helper to build full name safely
+  //Helper to build full name safely
   const getFullName = (obj) => {
     if (!obj) return "-";
     return [obj.firstName, obj.middleName, obj.lastName]
