@@ -70,8 +70,8 @@ const MobileOtpSection = ({
     setEmailTimer(30);
   };
 
-  // Regex for basic email format
-  const isValidEmail = email.length === 0 || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  // Regex for specific email format
+  const isValidEmail = email.length === 0 || /^(?!.*\.\.)[A-Za-z0-9][A-Za-z0-9._]{0,62}[A-Za-z0-9]@(?:gmail|hotmail|yahoo|zohomail|outlook|live|icloud|aol|proton|protonmail|rediff|zoho)\.(?:com|co\.in|io|co|in)$/.test(email);
 
   return (
     <div className="w-full flex justify-center py-2 sm:py-0 px-2 sm:px-4 md:px-8 animate-in fade-in duration-500">
