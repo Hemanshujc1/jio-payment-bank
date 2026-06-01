@@ -13,7 +13,7 @@ const occupationOptions = [
   { label: "Homemaker", value: "JP8" },
   { label: "Student", value: "JP9" },
   { label: "Farmer", value: "JP10" },
-  { label: "Others", value: "JP11" },
+  // { label: "Others", value: "JP11" },
 ];
 
 const sourceOfIncomeOptions = [
@@ -24,7 +24,7 @@ const sourceOfIncomeOptions = [
   { label: "Savings", value: "A05" },
   { label: "Family Wealth", value: "A06" },
   { label: "Inheritance", value: "A07" },
-  { label: "Others", value: "A08" },
+  // { label: "Others", value: "A08" },
 ];
 
 const annualIncomeOptions = [
