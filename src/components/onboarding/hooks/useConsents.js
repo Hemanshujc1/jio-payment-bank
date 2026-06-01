@@ -8,8 +8,8 @@ export const useConsents = (language, setValue = null, activityType = "AADHAR_PA
   const languagesList = [
     { name: "English", code: "EN" },
     { name: "Hindi", code: "HI" },
-    { name: "Telugu", code: "TA" },
-    { name: "Tamil", code: "TE" },
+    { name: "Telugu", code: "TE" },
+    { name: "Tamil", code: "TA" },
     { name: "Kannada", code: "KN" },
     { name: "Marathi", code: "MR" },
     { name: "Bengali", code: "BN" },
