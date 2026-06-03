@@ -189,7 +189,7 @@ const OnboardingFlowPage = () => {
           activeStep={currentStep - 1}
           steps={STEPS}
           onStepClick={(step) => {
-            const IS_TESTING = true;
+            const IS_TESTING = false;
             if (IS_TESTING || step <= maxStepReached) {
               setCurrentStep(step);
             }
