@@ -25,11 +25,11 @@ const SavingsVariantPage = () => {
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        localStorage.setItem("latitude",28.4210);
-        // localStorage.setItem("latitude", position.coords.latitude.toString().substring(0, 6));
+        // localStorage.setItem("latitude",28.4210);
+        localStorage.setItem("latitude", position.coords.latitude.toString().substring(0, 6));
 
-        localStorage.setItem("longitude", 77.1100);
-        // localStorage.setItem("longitude", position.coords.longitude.toString().substring(0, 6));
+        // localStorage.setItem("longitude", 77.1100);
+        localStorage.setItem("longitude", position.coords.longitude.toString().substring(0, 6));
 
         // Forcefully set VKID so it overwrites the old cached value
         localStorage.setItem("vkid", import.meta.env.VITE_USER_ID);
