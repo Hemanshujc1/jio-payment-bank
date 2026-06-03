@@ -145,6 +145,7 @@ export const useOtpVerification = ({
     try {
       const response = await onboardingService.resendOtp({
         applicationNumber,
+        externalAppRefNumber
       });
 
       if (response.status === "SUCCESS") {
