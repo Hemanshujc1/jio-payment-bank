@@ -5,7 +5,7 @@ const onboardingService = {
   
   /**
    * Generate OTP for Agent Verification
-   * @Param {Object} payload {"vkid": "RJ2903071"}
+   * @Param {Object} payload {"vkid": import.meta.env.VITE_USER_ID}
    */
   sendAgentOtp: async (payload) => {
   const res = await apiClient.post("/agent-otp", payload, 
@@ -18,7 +18,7 @@ const onboardingService = {
 
   /**
    * Verifies OTP for Agent Verification
-   * @param {Object} payload {"vkid": "RJ2903071", "otp": "556165"} 
+   * @param {Object} payload {"vkid": import.meta.env.VITE_USER_ID, "otp": "556165"} 
    */
  verifyAgentOtp: async (payload) => {
   const res = await apiClient.post("/verify-agent-otp", payload,

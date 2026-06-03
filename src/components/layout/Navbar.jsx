@@ -46,7 +46,7 @@ const Navbar = () => {
   // -----------------------------------------
   useEffect(() => {
     const fetchBalance = async () => {
-      const vkid = localStorage.getItem("vkid") || "RJ2903071";
+      const vkid = localStorage.getItem("vkid") || import.meta.env.VITE_USER_ID;
 
       setIsLoading(true);
 
@@ -105,7 +105,7 @@ const Navbar = () => {
           {/* USER ID */}
           <span className="font-bold text-black text-[11px] sm:text-[14px] text-center whitespace-nowrap px-3 py-1 bg-sand-100 rounded-lg border border-sand-300 shadow-sm">
             {/* User ID: {user.user_id ||  "Loading..."} */}
-            User ID: {"RJ2903071" ||  "Loading..."}
+            User ID: {import.meta.env.VITE_USER_ID ||  "Loading..."}
           </span>
 
           {/* USER NAME */}
