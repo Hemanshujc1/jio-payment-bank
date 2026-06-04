@@ -27,6 +27,7 @@ dist.zip/
 *.sw?
 
 .env.*
+.env.sit
 .env.production
 Jio Customer Onboarding APi List.json
 Jio Customer Onboarding APi List .json

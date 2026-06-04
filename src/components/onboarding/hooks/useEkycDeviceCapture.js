@@ -106,7 +106,7 @@ export const useEkycDeviceCapture = ({ setIsBiometricVerified, onCaptureSuccess,
               format="0" 
               pidVer="2.0" 
               timeout="20000" 
-              env="${process.env.PID_ENV}"
+              env="${import.meta.env.VITE_PID_ENV}"
               wadh="E0jzJ/P8UopUHAieZn8CKqS4WPMi5ZSYXgfnlfkWjrc="
             />
           </PidOptions>
@@ -117,7 +117,7 @@ export const useEkycDeviceCapture = ({ setIsBiometricVerified, onCaptureSuccess,
       else if (deviceType === "MORPHO") {
         url = `http://127.0.0.1:${rdPort}/capture`;
 
-        xmlRequest = `<PidOptions ver="1.0"><Opts env="${process.env.PID_ENV}" fCount="1" fType="2" format="0" pidVer="2.0" timeout="10000" otp="" wadh="E0jzJ/P8UopUHAieZn8CKqS4WPMi5ZSYXgfnlfkWjrc=" posh=""/></PidOptions>`;
+        xmlRequest = `<PidOptions ver="1.0"><Opts  env="${import.meta.env.VITE_PID_ENV}" fCount="1" fType="2" format="0" pidVer="2.0" timeout="10000" otp="" wadh="E0jzJ/P8UopUHAieZn8CKqS4WPMi5ZSYXgfnlfkWjrc=" posh=""/></PidOptions>`;
       }
 
       //  STARTEK CONFIG
@@ -127,7 +127,7 @@ export const useEkycDeviceCapture = ({ setIsBiometricVerified, onCaptureSuccess,
         xmlRequest = `
           <PidOptions ver="1.0">
             <Opts
-              env="${process.env.PID_ENV}"
+              env="${import.meta.env.VITE_PID_ENV}"
               fCount="1"
               fType="2"
               iCount="0"

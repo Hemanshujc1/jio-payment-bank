@@ -73,7 +73,7 @@ export const useDeviceCapture = ({
       pidOptions = `
     <PidOptions ver="1.0">
       <Opts
-        env="${process.env.PID_ENV}"
+        env="${import.meta.env.VITE_PID_ENV}"
         fCount="1"
         fType="2"
         iCount="0"
@@ -93,7 +93,7 @@ export const useDeviceCapture = ({
       pidOptions =
         '<PidOptions ver="1.0">' +
         "<Opts " +
-        'env="${process.env.PID_ENV}" ' +
+        `env="${import.meta.env.VITE_PID_ENV}" ` +
         'fCount="1" ' +
         'fType="2" ' +
         'iCount="0" ' +
@@ -113,7 +113,7 @@ export const useDeviceCapture = ({
     else if (selectedDevice === "startek") {
       pidOptions = `<PidOptions ver="1.0">
       <Opts
-        env="${process.env.PID_ENV}"
+        env="${import.meta.env.VITE_PID_ENV}"
         fCount="1"
         fType="2"
         iCount="0"
