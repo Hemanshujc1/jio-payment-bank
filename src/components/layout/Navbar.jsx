@@ -5,14 +5,14 @@ import { Link } from "react-router-dom";
 import onboardingService from "../../services/onboardingService";
 
 const Navbar = () => {
-  // const [balance, setBalance] = useState(null);
-  // const [isLoading, setIsLoading] = useState(false);
+  const [balance, setBalance] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // const [user, setUser] = useState({
-  //   user_id: "",
-  //   user_name: "",
-  //   email_id: "",
-  // });
+  const [user, setUser] = useState({
+    user_id: "",
+    user_name: "",
+    email_id: "",
+  });
 
   // -----------------------------------------
   // FETCH LOGGED-IN USER
