@@ -1,37 +1,65 @@
 import React, { useState } from "react";
 import ProceedButton from "../common/ProceedButton";
-import { FaFingerprint } from "react-icons/fa";
+import BiometricSection from "../onboarding/sections/BiometricSection";
+import refundService from "../../../services/refundService";
+import { useToast } from "../../ui/Toast";
 
 const ReviewTransactionSection = ({
   customerName = "Sai Vinayak Shekhar Bangera",
-  applicationStatus = "Rejected",
+  // applicationStatus = "Rejected",
+  applicationNumber,
   transactionType = "Savings Account",
-  refundStatus = "In-Progress",
+  // refundStatus = "In-Progress",
   amountToRefund = "Rs. 400",
   mobileNumber = "9876543210",
   onProceed,
+  voucherCode,
   refundConsentData,
+  externalAppRefNumber,
 }) => {
+  const toast = useToast();
   const [refundConsentAccepted, setRefundConsentAccepted] = useState(false);
   const [error, setError] = useState("");
   const [isBiometricVerified, setIsBiometricVerified] = useState(false);
-  const [isBiometricLoading, setIsBiometricLoading] = useState(false);
+  const [bioMetricData, setBioMetricData] = useState("");
+  const [isApiLoading, setIsApiLoading] = useState(false);
 
-  const handleCaptureClick = () => {
-    setIsBiometricLoading(true);
-    setTimeout(() => {
-      setIsBiometricLoading(false);
-      setIsBiometricVerified(true);
-    }, 1000);
-  };
-
-  const handleProceedClick = () => {
+  const handleProceedClick = async () => {
     if (!refundConsentAccepted) {
       setError("Please accept the terms and conditions to proceed.");
       return;
     }
     setError("");
-    if (onProceed) onProceed();
+    setIsApiLoading(true);
+
+    try {
+      const payload = {
+        externalAppRefNumber,
+        applicationNumber,
+        mobileNumber,
+        voucherCode,
+        bioMetricData,
+        consents: [
+          {
+            consent: refundConsentData?.text1 || "",
+            code: refundConsentData?.consentTextCode || "C68",
+            version: "1",
+            method: "checkbox",
+          },
+        ],
+      };
+
+      const res = await refundService.redeemVoucher(payload);
+      if (res.status === "SUCCESS") {
+        if (onProceed) onProceed(res);
+      } else {
+        toast.error(res.message || res.error?.message || "Voucher redeem failed.");
+      }
+    } catch (err) {
+      toast.error(err?.data?.message || err?.message || "Voucher redeem failed.");
+    } finally {
+      setIsApiLoading(false);
+    }
   };
 
   return (
@@ -44,23 +72,23 @@ const ReviewTransactionSection = ({
 
         {/* Details Grid */}
         <div className="w-full flex flex-col gap-5 border-t border-b border-sand-300 py-6">
+          {/* Application Number */}
+          <div className="flex justify-between items-center gap-4">
+            <span className="text-[14px] sm:text-[15px] text-sand-500 font-bold">
+              Application Number
+            </span>
+            <span className="text-[14px] sm:text-[15px] text-sand-900 font-extrabold text-right">
+              {applicationNumber}
+            </span>
+          </div>
+
           {/* Customer Name */}
           <div className="flex justify-between items-start gap-4">
             <span className="text-[14px] sm:text-[15px] text-sand-500 font-bold min-w-30">
               Customer Name
             </span>
-            <span className="text-[14px] sm:text-[15px] text-sand-900 font-extrabold text-right max-w-50 leading-tight">
+            <span className="text-[14px] sm:text-[15px] text-sand-900 font-extrabold text-right leading-tight">
               {customerName}
-            </span>
-          </div>
-
-          {/* Application Status */}
-          <div className="flex justify-between items-center gap-4">
-            <span className="text-[14px] sm:text-[15px] text-sand-500 font-bold">
-              Application Status
-            </span>
-            <span className="text-[14px] sm:text-[15px] text-sand-900 font-extrabold text-right">
-              {applicationStatus}
             </span>
           </div>
 
@@ -77,10 +105,10 @@ const ReviewTransactionSection = ({
           {/* Refund Status */}
           <div className="flex justify-between items-center gap-4">
             <span className="text-[14px] sm:text-[15px] text-sand-500 font-bold">
-              Refund Status
+              Voucher Code
             </span>
             <span className="text-[14px] sm:text-[15px] text-sand-900 font-extrabold text-right">
-              {refundStatus}
+              {voucherCode}
             </span>
           </div>
 
@@ -145,57 +173,22 @@ const ReviewTransactionSection = ({
 
       {/* Biometric Integration Step */}
       <div className="w-full mt-4 flex items-center justify-center">
-        {!isBiometricVerified ? (
-          <button
-            type="button"
-            onClick={handleCaptureClick}
-            disabled={isBiometricLoading}
-            className="w-full max-w-xs h-14 flex items-center justify-center gap-3 font-extrabold text-[15px] rounded-xl transition-all shadow-md bg-linear-to-r from-red-500 to-pink-500 text-white hover:scale-[1.02] hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isBiometricLoading ? (
-              <>
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                Capturing Biometric...
-              </>
-            ) : (
-              <>
-                <FaFingerprint className="text-xl" />
-                CAPTURE BIOMETRIC
-              </>
-            )}
-          </button>
-        ) : (
-          <div className="flex flex-col items-center text-center px-4">
-            <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center text-white mb-4 shadow-lg shadow-green-500/30">
-              <svg
-                className="w-8 h-8"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="3"
-                  d="M5 13l4 4L19 7"
-                ></path>
-              </svg>
-            </div>
-
-            <p className="text-green-700 font-black text-[17px] tracking-wide">
-              Biometric capture completed successfully.
-            </p>
-          </div>
-        )}
+        <BiometricSection
+          isBiometricVerified={isBiometricVerified}
+          setIsBiometricVerified={setIsBiometricVerified}
+          onCaptureSuccess={(data) => setBioMetricData(data)}
+          disableDocumentValidation={true}
+          documentStatus="success"
+        />
       </div>
 
       {/* Action Buttons */}
       <div className="w-full flex justify-center mt-2">
         <ProceedButton
-          text="PROCEED"
+          text={isApiLoading ? "PROCEEDING..." : "PROCEED"}
           onClick={handleProceedClick}
-          disabled={!refundConsentAccepted || !isBiometricVerified}
-          className="w-full rounded-xl text-[14px] py-2.5 h-11"
+          disabled={!refundConsentAccepted || !isBiometricVerified || isApiLoading}
+          className="w-full max-w-70 rounded-xl text-[14px] h-14 font-extrabold"
         />
       </div>
     </div>

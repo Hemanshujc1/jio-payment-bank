@@ -110,12 +110,7 @@ const MobileOtpSection = ({
                 <IoMdCheckmarkCircle className="text-green-500 text-2xl absolute right-3" />
               )}
             </div>
-            {mobileNumber.length === 10 && !MOBILE_REGEX.test(mobileNumber) && (
-              <p className="text-red-500 text-[11px] font-bold mt-1 ml-1 animate-in fade-in slide-in-from-top-1 duration-200">
-                Invalid mobile number
-              </p>
-            )}
-            {mobileNumber.length === 10 && isRepeatingDigits(mobileNumber) && (
+            {mobileNumber.length === 10 && (!MOBILE_REGEX.test(mobileNumber) || isRepeatingDigits(mobileNumber)) && (
               <p className="text-red-500 text-[11px] font-bold mt-1 ml-1 animate-in fade-in slide-in-from-top-1 duration-200">
                 Invalid mobile number
               </p>

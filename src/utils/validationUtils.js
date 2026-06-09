@@ -4,7 +4,8 @@ export const NAME_REGEX = /^[A-Za-z\s]+$/;
 export const LAST_NAME_REGEX = /^([A-Za-z\s]+|\.)$/;
 export const REPEATING_CHARS_REGEX = /(.)\1{2,}/i;
 export const MOBILE_REGEX = /^[6-9]\d{9}$/;
-export const isRepeatingDigits = (val) => /^(.)\1{9}$/.test(val);
+// export const isRepeatingDigits = (val) => /^(.)\1{9}$/.test(val);
+export const isRepeatingDigits = (val) => /^(.)\1+$/.test(val);
 
 export const parseDate = (dateStr) => {
   if (!dateStr) return null;

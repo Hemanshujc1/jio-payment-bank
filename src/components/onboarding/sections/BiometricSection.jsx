@@ -11,6 +11,7 @@ const BiometricSection = ({
   pan,
   documentStatus,
   onCaptureSuccess,
+  disableDocumentValidation = false,
 }) => {
   const [showDeviceModal, setShowDeviceModal] = useState(false);
 
@@ -29,13 +30,12 @@ const BiometricSection = ({
             type="button"
             onClick={() => setShowDeviceModal(true)}
             disabled={
-              isBiometricLoading || (aadhaar?.length !== 12 && aadhaar?.length !== 16) || pan?.length !== 10
+              isBiometricLoading || (!disableDocumentValidation && ((aadhaar?.length !== 12 && aadhaar?.length !== 16) || pan?.length !== 10))
             }
             className={`w-full max-w-70 h-14 flex items-center justify-center gap-3 font-extrabold text-[15px] rounded-xl transition-all shadow-md
               ${
                 isBiometricLoading ||
-                (aadhaar?.length !== 12 && aadhaar?.length !== 16) ||
-                pan?.length !== 10
+                (!disableDocumentValidation && ((aadhaar?.length !== 12 && aadhaar?.length !== 16) || pan?.length !== 10))
                   ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                   : "bg-linear-to-r from-red-500 to-pink-500 text-white hover:scale-[1.02] hover:shadow-lg"
               }`}
