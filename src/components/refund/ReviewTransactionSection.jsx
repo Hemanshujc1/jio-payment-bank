@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import ProceedButton from "../common/ProceedButton";
 import BiometricSection from "../onboarding/sections/BiometricSection";
-import refundService from "../../../services/refundService";
-import { useToast } from "../../ui/Toast";
+import refundService from "../../services/refundService";
+import { useToast } from "../ui/Toast";
 
 const ReviewTransactionSection = ({
   customerName = "Sai Vinayak Shekhar Bangera",
