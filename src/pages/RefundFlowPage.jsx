@@ -26,6 +26,7 @@ const RefundFlowPage = () => {
 
   const [showSuccess, setShowSuccess] = useState(false);
   const [refundConsentData, setRefundConsentData] = useState(null);
+  const [redeemData, setRedeemData] = useState(null);
 
   useEffect(() => {
     const fetchConsent = async () => {
@@ -87,10 +88,9 @@ const RefundFlowPage = () => {
           <div className="w-full max-w-md mx-auto">
             {showSuccess ? (
               <RefundSuccessSection
-                applicationNumber={verificationData?.applicationNumber}
-                transactionId={verificationData?.externalAppRefNumber}
-                refundAmount={verificationData ? `Rs. ${verificationData.data.voucherDetails[0].netAmount}` : ""}
-                dateTime={new Date().toString()}
+                applicationNumber={redeemData?.applicationNumber || verificationData?.applicationNumber}
+                transactionId={redeemData?.data?.voucherDetails?.[0]?.transactionId}
+                refundAmount={redeemData?.data?.voucherDetails?.[0]?.netAmount ? `Rs. ${redeemData.data.voucherDetails[0].netAmount}` : ""}
                 mobileNumber={mobileNumber}
                 customerName={verificationData ? `${verificationData.data.persons[0].personalDetails.firstName} ${verificationData.data.persons[0].personalDetails.lastName}` : ""}
                 onClose={() => {
@@ -112,7 +112,10 @@ const RefundFlowPage = () => {
                 amountToRefund={verificationData ? `Rs. ${verificationData.data.voucherDetails[0].netAmount}` : ""}
                 mobileNumber={mobileNumber}
                 refundConsentData={refundConsentData}
-                onProceed={() => setShowSuccess(true)}
+                onProceed={(res) => {
+                  setRedeemData(res);
+                  setShowSuccess(true);
+                }}
               />
             )}
           </div>

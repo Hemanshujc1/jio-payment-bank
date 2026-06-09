@@ -2,12 +2,11 @@ import React from "react";
 import ProceedButton from "../common/ProceedButton";
 
 const RefundSuccessSection = ({
-  applicationNumber = "RA2025043064689",
-  transactionId = "10672512062841834000",
-  refundAmount = "Rs. 305",
-  dateTime = "Wed Apr 30 17:27:27 IST 2025",
-  mobileNumber = "6300470001",
-  customerName = "Sai Vinayak Shekhar Bangera",
+  applicationNumber,
+  transactionId,
+  refundAmount,
+  mobileNumber,
+  customerName,
   onClose,
 }) => {
   return (
@@ -63,15 +62,6 @@ const RefundSuccessSection = ({
             </span>
           </div>
 
-          {/* Date & Time */}
-          <div className="flex justify-between items-start gap-4">
-            <span className="text-[14px] sm:text-[15px] text-sand-500 font-bold">
-              Date & Time
-            </span>
-            <span className="text-[14px] sm:text-[15px] text-sand-900 font-extrabold text-right max-w-45 leading-tight">
-              {dateTime}
-            </span>
-          </div>
 
           {/* Mobile Number */}
           <div className="flex justify-between items-center gap-4">
