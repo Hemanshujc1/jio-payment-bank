@@ -49,8 +49,7 @@ const Navbar = () => {
     if (!user.user_id) return;
 
     const fetchBalance = async () => {
-      const vkid = "RJ2903071";
-
+      const vkid = user.user_id; 
       setIsLoading(true);
 
       try {
@@ -69,9 +68,9 @@ const Navbar = () => {
 
     fetchBalance();
 
-    // const interval = setInterval(fetchBalance, 30000);
-    // return () => clearInterval(interval);
-  });
+    const interval = setInterval(fetchBalance, 100000);
+    return () => clearInterval(interval);
+  },[user.user_id]);
 
   // -----------------------------------------
   // LOGOUT
@@ -105,7 +104,7 @@ const Navbar = () => {
         <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-4">
           {/* USER ID */}
           <span className="font-bold text-black text-[11px] sm:text-[14px] text-center whitespace-nowrap px-3 py-1 bg-sand-100 rounded-lg border border-sand-300 shadow-sm">
-            User ID: {"RJ2903071" || "Loading..."}
+            User ID: {user.user_id || "Loading..."}
           </span>
 
           {/* USER NAME */}
