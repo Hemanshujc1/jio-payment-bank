@@ -14,10 +14,15 @@ const BiometricVerificationModal = ({
   isLoading,
   onCaptureSuccess,
   apiPayloadData,
+  nomineeProvide,
 }) => {
   const [selectedDevice, setSelectedDevice] = useState("mantra");
 
   const [language, setLanguage] = useState("English");
+
+  const activityTypes = React.useMemo(() => {
+    return nomineeProvide === "No" ? ["FINAL_SUBMISSION", "NOMINEE_IN"] : ["FINAL_SUBMISSION"];
+  }, [nomineeProvide]);
 
   const {
     languagesList,
@@ -25,7 +30,7 @@ const BiometricVerificationModal = ({
     selectedConsents,
     setSelectedConsents,
     isAllConsentsSelected,
-  } = useConsents(language, null, "FINAL_SUBMISSION");
+  } = useConsents(language, null, activityTypes);
 
   const { handleCaptureClick, statusMessage, setStatusMessage, localLoading } = useDeviceCapture({
     selectedDevice,

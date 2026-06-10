@@ -12,6 +12,7 @@ const BiometricSection = ({
   documentStatus,
   onCaptureSuccess,
   disableDocumentValidation = false,
+  message,
 }) => {
   const [showDeviceModal, setShowDeviceModal] = useState(false);
 
@@ -72,7 +73,8 @@ const BiometricSection = ({
               </div>
 
               <p className="text-green-700 font-black text-[17px] tracking-wide">
-               Biometric capture completed successfully. Please wait for identity verification to finish.
+                {message || "Biometric capture completed successfully."}
+               {/* Biometric capture completed successfully. Please wait for identity verification to finish. */}
               </p>
             </div>
           )

@@ -256,6 +256,7 @@ const OnboardingTab = ({
         pan={pan}
         documentStatus={documentStatus}
         onCaptureSuccess={captureBiometric}
+        message="Biometric capture completed successfully. Please wait for identity verification to finish."
       />
 
       <VerificationSuccess isSuccess={panAadhaarSuccess} />

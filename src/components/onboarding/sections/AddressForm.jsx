@@ -26,6 +26,8 @@ const AddressForm = ({ prefix, title, aadhaarAddress }) => {
   //Read communication address using master field names (line1, etc.)
   const applicantAddress = watch("applicant.communicationAddress");
 
+  const prevAddressType = React.useRef(addressType);
+
   const getError = (path) => {
     const parts = path.split(".");
     let current = errors;
@@ -54,11 +56,13 @@ const AddressForm = ({ prefix, title, aadhaarAddress }) => {
       if (currentJSON !== targetJSON) {
         setAddressFields(setValue, `${prefix}.addressDetails`, targetAddress, false);
       }
-    } else if (!addressType || addressType === "Others") {
+    } else if (addressType === "Others" && prevAddressType.current !== "Others") {
       // When switching to Others, clear auto-filled fields (keep manually entered)
       // Only clear if we were previously in a copy mode
-
+      clearAddressFields(setValue, `${prefix}.addressDetails`);
     }
+
+    prevAddressType.current = addressType;
   }, [
     addressType,
     applicantAddress,

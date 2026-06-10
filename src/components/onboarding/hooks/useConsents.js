@@ -24,9 +24,11 @@ export const useConsents = (language, setValue = null, activityType = "AADHAR_PA
         if (res.status === "SUCCESS" && res.response?.consents) {
           const allConsents = res.response.consents;
           
+          const typesArray = Array.isArray(activityType) ? activityType : [activityType];
+
           const filtered = allConsents.filter(
             (c) =>
-              c.activityType === activityType &&
+              typesArray.includes(c.activityType) &&
               (!c.language || c.language === langCode)
           );
           setConsentsList(filtered);

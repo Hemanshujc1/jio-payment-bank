@@ -2,7 +2,6 @@ import ReviewHeader from "./ReviewHeader";
 import ReviewRow from "./ReviewRow";
 
 const ReviewNomineeDetails = ({ data, guardian, onEdit }) => {
-
   //  FULL NAME HELPER
   const getFullName = (obj) => {
     if (!obj) return "-";
@@ -15,7 +14,9 @@ const ReviewNomineeDetails = ({ data, guardian, onEdit }) => {
   const formatAddress = (addr) => {
     if (!addr) return "-";
 
-    const parts = [addr.line1, addr.line2, addr.line3, addr.district].filter(Boolean);
+    const parts = [addr.line1, addr.line2, addr.line3, addr.district].filter(
+      Boolean,
+    );
     let result = parts.join(", ");
     if (addr.city && addr.pincode) result += `, ${addr.city} - ${addr.pincode}`;
     else if (addr.city) result += `, ${addr.city}`;
@@ -66,7 +67,9 @@ const ReviewNomineeDetails = ({ data, guardian, onEdit }) => {
                   readOnly
                   className="w-5 h-5 accent-black cursor-default"
                 />
-                <span className="text-[16px] font-medium text-gray-900">Yes</span>
+                <span className="text-[16px] font-medium text-gray-900">
+                  Yes
+                </span>
               </label>
               <label className="flex items-center gap-2 cursor-default">
                 <input
@@ -75,7 +78,9 @@ const ReviewNomineeDetails = ({ data, guardian, onEdit }) => {
                   readOnly
                   className="w-5 h-5 accent-black cursor-default"
                 />
-                <span className="text-[16px] font-medium text-gray-900">No</span>
+                <span className="text-[16px] font-medium text-gray-900">
+                  No
+                </span>
               </label>
             </div>
           </div>
@@ -89,23 +94,12 @@ const ReviewNomineeDetails = ({ data, guardian, onEdit }) => {
       <ReviewHeader title="Nominee Details" onEdit={onEdit} />
 
       <div className="flex flex-col gap-6 w-full mx-auto">
-
         {/* ================= NOMINEE ================= */}
         <div className="flex flex-col gap-5">
-
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-1">
-            <ReviewRow
-              label="Nominee Name"
-              value={getFullName(data)}
-            />
-            <ReviewRow
-              label="Relationship"
-              value={data?.relationship || "-"}
-            />
-            <ReviewRow
-              label="Date Of Birth"
-              value={data?.dob || "-"}
-            />
+            <ReviewRow label="Nominee Name" value={getFullName(data)} />
+            <ReviewRow label="Relationship" value={data?.relationship || "-"} />
+            <ReviewRow label="Date Of Birth" value={data?.dob || "-"} />
             <ReviewRow
               label="Address Option"
               value={data?.addressType || "Permanent"}
@@ -123,13 +117,11 @@ const ReviewNomineeDetails = ({ data, guardian, onEdit }) => {
         {/* ================= GUARDIAN ================= */}
         {isMinor && (
           <div className="mt-4 flex flex-col gap-6 pt-4 border-t border-gray-100/50">
-
             <h4 className="font-bold text-[15px] sm:text-[16px] text-gray-800 text-center">
               Guardian Details
             </h4>
 
             <div className="flex flex-col gap-5">
-
               <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-1">
                 <ReviewRow
                   label="Guardian Name"
@@ -139,10 +131,7 @@ const ReviewNomineeDetails = ({ data, guardian, onEdit }) => {
                   label="Relationship"
                   value={guardian?.relationship || "-"}
                 />
-                <ReviewRow
-                  label="Date Of Birth"
-                  value={guardian?.dob || "-"}
-                />
+                <ReviewRow label="Date Of Birth" value={guardian?.dob || "-"} />
                 <ReviewRow
                   label="Address Option"
                   value={guardian?.addressType || "Permanent"}
@@ -155,11 +144,9 @@ const ReviewNomineeDetails = ({ data, guardian, onEdit }) => {
                   value={formatAddress(guardian?.addressDetails)}
                 />
               </div>
-
             </div>
           </div>
         )}
-
       </div>
     </section>
   );

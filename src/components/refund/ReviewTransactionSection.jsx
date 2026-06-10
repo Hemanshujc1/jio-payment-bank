@@ -179,6 +179,7 @@ const ReviewTransactionSection = ({
           onCaptureSuccess={(data) => setBioMetricData(data)}
           disableDocumentValidation={true}
           documentStatus="success"
+          message="Biometric capture completed successfully"
         />
       </div>
 

@@ -73,6 +73,7 @@ const ApplicationReviewTab = ({ goToStep }) => {
       <ReviewNomineeDetails
         data={formData.nominee}
         guardian={formData.guardian}
+        language={formData.onboarding?.language || "English"}
         onEdit={() => goToStep(4)}
       />
       <Divider />
@@ -106,6 +107,7 @@ const ApplicationReviewTab = ({ goToStep }) => {
           externalAppRefNumber: sessionStorage.getItem("externalAppRefNumber")
         }}
         onCaptureSuccess={handleFinalSubmit} 
+        nomineeProvide={formData.nominee?.provide}
       />
 
       {isSuccess && <SuccessOverlay applicationNumber={sessionStorage.getItem("applicationNumber")} />}

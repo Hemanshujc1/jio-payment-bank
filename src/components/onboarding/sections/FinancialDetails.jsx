@@ -81,6 +81,24 @@ const getAnnualIncomeOptions = (occupation) => {
   }
 };
 
+const calculateAge = (dobString) => {
+  if (!dobString) return 0;
+  const parts = dobString.split("/");
+  if (parts.length !== 3) return 0;
+  const day = parseInt(parts[0], 10);
+  const month = parseInt(parts[1], 10);
+  const year = parseInt(parts[2], 10);
+  
+  const birthDate = new Date(year, month - 1, day);
+  const today = new Date();
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const m = today.getMonth() - birthDate.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  return age;
+};
+
 const FinancialDetails = () => {
   const {
     control,
@@ -92,9 +110,22 @@ const FinancialDetails = () => {
   const selectedOccupation = watch("financial.occupation");
   const selectedSource = watch("financial.sourceOfIncome");
   const selectedIncome = watch("financial.annualIncome");
+  const dob = watch("applicant.dob");
+
+  const age = calculateAge(dob);
+
+  const filteredOccupationOptions = occupationOptions.filter(
+    (opt) => !(opt.value === "JP9" && age > 28)
+  );
 
   const filteredSourceOptions = getSourceOfIncomeOptions(selectedOccupation);
   const filteredIncomeOptions = getAnnualIncomeOptions(selectedOccupation);
+
+  useEffect(() => {
+    if (selectedOccupation === "JP9" && age > 28) {
+      setValue("financial.occupation", "", { shouldValidate: true });
+    }
+  }, [age, selectedOccupation, setValue]);
 
   useEffect(() => {
     if (
@@ -129,7 +160,7 @@ const FinancialDetails = () => {
               control={control}
               render={({ field }) => (
                 <CustomDropdown
-                  options={occupationOptions}
+                  options={filteredOccupationOptions}
                   value={field.value}
                   onChange={field.onChange}
                   className="w-full"
