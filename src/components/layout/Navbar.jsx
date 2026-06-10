@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import jio from "../../assets/jio.svg";
 import vakrangeelogo from "../../assets/vakrangee.svg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import onboardingService from "../../services/onboardingService";
-
 const Navbar = () => {
+  const navigate = useNavigate();
+
   const [balance, setBalance] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -82,6 +83,14 @@ const Navbar = () => {
     window.location.href = `${backendUrl}/logout`;
   };
 
+   // -----------------------------------------
+  // REFUND
+  // -----------------------------------------
+
+  const refund = () => {
+    navigate("/refund-flow");
+  };
+
   return (
     <nav className="w-full min-h-16 sm:min-h-17 py-1 sm:py-0 bg-white flex flex-col sm:flex-row justify-center sm:justify-between items-center px-2 sm:px-6 md:px-12 shadow-md shrink-0 border-b border-neutral-light gap-2 sm:gap-0">
       <Link
@@ -134,6 +143,12 @@ const Navbar = () => {
             className="px-3 py-1 text-white text-[12px] sm:text-[14px] bg-red-500 hover:bg-red-600 rounded-lg shadow-sm"
           >
             Logout
+          </button>
+          <button
+            onClick={refund}
+            className="px-3 py-1 text-white text-[12px] sm:text-[14px] bg-gray-500 hover:bg-gray-600 rounded-lg shadow-sm"
+          >
+            Refund
           </button>
         </div>
       </div>
