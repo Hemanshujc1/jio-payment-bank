@@ -17,38 +17,39 @@ const Navbar = () => {
   // -----------------------------------------
   // FETCH LOGGED-IN USER
   // -----------------------------------------
-  useEffect(() => {
-    const backendUrl =
-      import.meta.env.VITE_BACKEND_URL || "https://localhost:3000";
+  // useEffect(() => {
+  //   const backendUrl =
+  //     import.meta.env.VITE_BACKEND_URL || "https://localhost:3000";
 
-    fetch(`${backendUrl}/profile`, {
-      credentials: "include",
-    })
-      .then((res) => {
-        if (res.status === 401) {
-          window.location.href = `${backendUrl}`;
-          return;
-        }
-        return res.json();
-      })
-      .then((data) => {
-        if (data) {
-          setUser(data);
-          localStorage.setItem("vkid", data.user_id);
-        }
-      })
-      .catch((err) => {
-        console.error("Profile Error:", err);
-      });
-  }, []);
+  //   fetch(`${backendUrl}/profile`, {
+  //     credentials: "include",
+  //   })
+  //     .then((res) => {
+  //       if (res.status === 401) {
+  //         window.location.href = `${backendUrl}`;
+  //         return;
+  //       }
+  //       return res.json();
+  //     })
+  //     .then((data) => {
+  //       if (data) {
+  //         setUser(data);
+  //         localStorage.setItem("vkid", data.user_id);
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       console.error("Profile Error:", err);
+  //     });
+  // }, []);
 
   // -----------------------------------------
   // FETCH WALLET BALANCE
   // -----------------------------------------
   useEffect(() => {
-    if (!user.user_id) return;
+   // if (!user.user_id) return;
 
     const fetchBalance = async () => {
+      user.user_id="RJ2903071";
       const vkid = user.user_id; 
       setIsLoading(true);
 
@@ -75,11 +76,11 @@ const Navbar = () => {
   // -----------------------------------------
   // LOGOUT
   // -----------------------------------------
-  const logout = () => {
-    const backendUrl =
-      import.meta.env.VITE_BACKEND_URL || "https://localhost:3000";
-    window.location.href = `${backendUrl}/logout`;
-  };
+  // const logout = () => {
+  //   const backendUrl =
+  //     import.meta.env.VITE_BACKEND_URL || "https://localhost:3000";
+  //   window.location.href = `${backendUrl}/logout`;
+  // };
 
   return (
     <nav className="w-full min-h-16 sm:min-h-17 py-1 sm:py-0 bg-white flex flex-col sm:flex-row justify-center sm:justify-between items-center px-2 sm:px-6 md:px-12 shadow-md shrink-0 border-b border-neutral-light gap-2 sm:gap-0">
@@ -108,9 +109,9 @@ const Navbar = () => {
           </span>
 
           {/* USER NAME */}
-          <span className="font-bold text-blue-700 text-[11px] sm:text-[14px] text-center whitespace-nowrap px-3 py-1 bg-blue-50 rounded-lg border border-blue-200 shadow-sm">
+          {/* <span className="font-bold text-blue-700 text-[11px] sm:text-[14px] text-center whitespace-nowrap px-3 py-1 bg-blue-50 rounded-lg border border-blue-200 shadow-sm">
             {user.user_name || "User"}
-          </span>
+          </span> */}
 
           {/* WALLET */}
           <div className="flex items-center gap-2 px-3 py-1 bg-green-50 rounded-lg border border-green-200 shadow-sm">
@@ -128,12 +129,12 @@ const Navbar = () => {
           </div>
 
           {/* LOGOUT */}
-          <button
+          {/* <button
             onClick={logout}
             className="px-3 py-1 text-white text-[12px] sm:text-[14px] bg-red-500 hover:bg-red-600 rounded-lg shadow-sm"
           >
             Logout
-          </button>
+          </button> */}
         </div>
       </div>
     </nav>
