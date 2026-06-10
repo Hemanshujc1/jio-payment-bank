@@ -76,11 +76,11 @@ const Navbar = () => {
   // -----------------------------------------
   // LOGOUT
   // -----------------------------------------
-  // const logout = () => {
-  //   const backendUrl =
-  //     import.meta.env.VITE_BACKEND_URL || "https://localhost:3000";
-  //   window.location.href = `${backendUrl}/logout`;
-  // };
+  const logout = () => {
+    const backendUrl =
+      import.meta.env.VITE_BACKEND_URL || "https://localhost:3000";
+    window.location.href = `${backendUrl}/logout`;
+  };
 
   return (
     <nav className="w-full min-h-16 sm:min-h-17 py-1 sm:py-0 bg-white flex flex-col sm:flex-row justify-center sm:justify-between items-center px-2 sm:px-6 md:px-12 shadow-md shrink-0 border-b border-neutral-light gap-2 sm:gap-0">
