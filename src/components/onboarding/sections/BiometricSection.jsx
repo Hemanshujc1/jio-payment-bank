@@ -13,6 +13,7 @@ const BiometricSection = ({
   onCaptureSuccess,
   disableDocumentValidation = false,
   message,
+  wadh,
 }) => {
   const [showDeviceModal, setShowDeviceModal] = useState(false);
 
@@ -20,6 +21,7 @@ const BiometricSection = ({
     setIsBiometricVerified,
     onCaptureSuccess,
     setShowDeviceModal,
+    wadh,
   });
 
   return (

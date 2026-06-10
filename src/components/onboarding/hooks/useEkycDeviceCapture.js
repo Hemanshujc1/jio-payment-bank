@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export const useEkycDeviceCapture = ({ setIsBiometricVerified, onCaptureSuccess, setShowDeviceModal }) => {
+export const useEkycDeviceCapture = ({ setIsBiometricVerified, onCaptureSuccess, setShowDeviceModal, wadh = "E0jzJ/P8UopUHAieZn8CKqS4WPMi5ZSYXgfnlfkWjrc=" }) => {
   const [isBiometricLoading, setIsBiometricLoading] = useState(false);
   const [rdError, setRdError] = useState({
     show: false,
@@ -107,7 +107,7 @@ export const useEkycDeviceCapture = ({ setIsBiometricVerified, onCaptureSuccess,
               pidVer="2.0" 
               timeout="20000" 
               env="${import.meta.env.VITE_PID_ENV}"
-              wadh="E0jzJ/P8UopUHAieZn8CKqS4WPMi5ZSYXgfnlfkWjrc="
+              wadh="${wadh}"
             />
           </PidOptions>
         `;
@@ -117,7 +117,7 @@ export const useEkycDeviceCapture = ({ setIsBiometricVerified, onCaptureSuccess,
       else if (deviceType === "MORPHO") {
         url = `http://127.0.0.1:${rdPort}/capture`;
 
-        xmlRequest = `<PidOptions ver="1.0"><Opts  env="${import.meta.env.VITE_PID_ENV}" fCount="1" fType="2" format="0" pidVer="2.0" timeout="10000" otp="" wadh="E0jzJ/P8UopUHAieZn8CKqS4WPMi5ZSYXgfnlfkWjrc=" posh=""/></PidOptions>`;
+        xmlRequest = `<PidOptions ver="1.0"><Opts  env="${import.meta.env.VITE_PID_ENV}" fCount="1" fType="2" format="0" pidVer="2.0" timeout="10000" otp="" wadh="${wadh}" posh=""/></PidOptions>`;
       }
 
       //  STARTEK CONFIG
@@ -136,7 +136,7 @@ export const useEkycDeviceCapture = ({ setIsBiometricVerified, onCaptureSuccess,
               pidVer="2.0"
               timeout="20000"
               otp=""
-              wadh="E0jzJ/P8UopUHAieZn8CKqS4WPMi5ZSYXgfnlfkWjrc="
+              wadh="${wadh}"
               posh=""
             />
           </PidOptions>

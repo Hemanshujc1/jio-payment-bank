@@ -5,13 +5,11 @@ import refundService from "../../services/refundService";
 import { useToast } from "../ui/Toast";
 
 const ReviewTransactionSection = ({
-  customerName = "Sai Vinayak Shekhar Bangera",
-  // applicationStatus = "Rejected",
+  customerName,
   applicationNumber,
   transactionType = "Savings Account",
-  // refundStatus = "In-Progress",
-  amountToRefund = "Rs. 400",
-  mobileNumber = "9876543210",
+  amountToRefund,
+  mobileNumber,
   onProceed,
   voucherCode,
   refundConsentData,
@@ -180,6 +178,7 @@ const ReviewTransactionSection = ({
           disableDocumentValidation={true}
           documentStatus="success"
           message="Biometric capture completed successfully"
+          wadh=""
         />
       </div>
 
