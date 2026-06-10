@@ -16,6 +16,7 @@ const AddressForm = ({ prefix, title, aadhaarAddress }) => {
     setValue,
     clearErrors,
     setError,
+    getValues,
     formState: { errors },
   } = useFormContext();
 
@@ -76,12 +77,24 @@ const AddressForm = ({ prefix, title, aadhaarAddress }) => {
 
   //  Pincode lookup — ONLY for "Others" mode
   useEffect(() => {
+    let isSubscribed = true;
+
     const lookupPincode = async () => {
       if (addressType !== "Others") return;
+      
+      // Ensure the pincode hasn't been cleared synchronously by the other effect
+      const currentFormPincode = getValues(`${prefix}.addressDetails.pincode`);
+      if (currentFormPincode !== pincode) return;
+
       if (pincode?.length === 6) {
         setIsPincodeLoading(true);
         try {
           const res = await onboardingService.getPincodeDetails(pincode);
+          
+          if (!isSubscribed) return;
+          // Verify again after the async call in case it was cleared while waiting
+          if (getValues(`${prefix}.addressDetails.pincode`) !== pincode) return;
+
           if (res.cityName && res.stateName) {
             const mapped = mapPincodeResponse(res);
             // Rule 2: only set city/district/state/stateCode from pincode API
@@ -100,19 +113,26 @@ const AddressForm = ({ prefix, title, aadhaarAddress }) => {
             setValue(`${prefix}.addressDetails.district`, "");
           }
         } catch (err) {
+          if (!isSubscribed) return;
           console.error("Pincode lookup failed", err);
           setError(`${prefix}.addressDetails.pincode`, {
             type: "manual",
             message: "Failed to fetch location details",
           });
         } finally {
-          setIsPincodeLoading(false);
+          if (isSubscribed) {
+            setIsPincodeLoading(false);
+          }
         }
       }
     };
 
     lookupPincode();
-  }, [pincode, addressType, setValue, setError, clearErrors, prefix]);
+
+    return () => {
+      isSubscribed = false;
+    };
+  }, [pincode, addressType, setValue, setError, clearErrors, prefix, getValues]);
 
   const error = getError(prefix);
 
