@@ -9,44 +9,44 @@ import ResendVoucher from "./pages/ResendVoucher";
 import { ToastProvider } from "./components/ui/Toast";
 
 const App = () => {
-  //  const [isValidating, setIsValidating] = useState(true);
-  //   useEffect(() => {
-  //     const backendUrl = import.meta.env.VITE_BACKEND_URL || "https://localhost:3000";
+   const [isValidating, setIsValidating] = useState(true);
+    useEffect(() => {
+      const backendUrl = import.meta.env.VITE_BACKEND_URL || "https://localhost:3000";
 
-  //     fetch(`${backendUrl}/validate`, {
-  //       credentials: "include"
-  //     })
-  //       .then(res => {
-  //         if (res.status === 401) {
-  //           window.location.href = `${backendUrl}`;
-  //         } else {
-  //           setIsValidating(false);
-  //         }
-  //       })
-  //       .catch(err => {
-  //         console.log("Server Error:", err);
-  //         window.location.href = `${backendUrl}`;
-  //       });
+      fetch(`${backendUrl}/validate`, {
+        credentials: "include"
+      })
+        .then(res => {
+          if (res.status === 401) {
+            window.location.href = `${backendUrl}`;
+          } else {
+            setIsValidating(false);
+          }
+        })
+        .catch(err => {
+          console.log("Server Error:", err);
+          window.location.href = `${backendUrl}`;
+        });
 
-  //   }, []);
+    }, []);
 
-  //  if (isValidating) {
-  //     return (
-  //      <div className="flex flex-col items-center justify-center min-h-screen bg-[#FAF7F0] text-brown-900 font-sans">
-  //      <div className="relative flex items-center justify-center">
-  //         <div className="rounded-full overflow-hidden w-32 h-32 animate-bounce">
-  //           <img src="./logo.jpeg" alt="Vakrangee Logo" />
-  //           </div>
-  //         </div>
-  //         <h2 className="mt-10 text-xl font-bold tracking-widest text-brown-800 uppercase animate-pulse">
-  //           Securing Session
-  //         </h2>
-  //         <p className="mt-3 text-sm text-brown-600/80 font-medium tracking-wide">
-  //           Verifying your authentication. Please wait...
-  //         </p>
-  //       </div>
-  //     );
-  //   }
+   if (isValidating) {
+      return (
+       <div className="flex flex-col items-center justify-center min-h-screen bg-[#FAF7F0] text-brown-900 font-sans">
+       <div className="relative flex items-center justify-center">
+          <div className="rounded-full overflow-hidden w-32 h-32 animate-bounce">
+            <img src="./logo.jpeg" alt="Vakrangee Logo" />
+            </div>
+          </div>
+          <h2 className="mt-10 text-xl font-bold tracking-widest text-brown-800 uppercase animate-pulse">
+            Securing Session
+          </h2>
+          <p className="mt-3 text-sm text-brown-600/80 font-medium tracking-wide">
+            Verifying your authentication. Please wait...
+          </p>
+        </div>
+      );
+    }
 
   return (
     <ToastProvider>
