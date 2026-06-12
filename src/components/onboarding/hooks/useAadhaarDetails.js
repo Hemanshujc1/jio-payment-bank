@@ -32,7 +32,7 @@ export const useAadhaarDetails = ({ kycData, onNext, setValue, trigger, toast })
   };
 
   const getImageSrc = (base64) => {
-    return base64 ? `data:image/jpeg;base64,${base64}` : "/jpb/2.jpeg";
+    return base64 ? `data:image/jpeg;base64,${base64}` : "";
   };
 
   const formatAddress = (addr) => {

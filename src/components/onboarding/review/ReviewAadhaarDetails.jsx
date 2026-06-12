@@ -27,7 +27,7 @@ const ReviewAadhaarDetails = ({ data, onEdit }) => {
     if (data?.photo) {
       return `data:image/jpeg;base64,${data.photo}`;
     }
-    return "/jpb/2.jpeg"; // fallback
+    return ""; // fallback
   };
 
   return (
