@@ -144,12 +144,12 @@ const Navbar = () => {
           >
             Logout
           </button>
-          <button
+          {/* <button
             onClick={refund}
             className="px-3 py-1 text-white text-[12px] sm:text-[14px] bg-gray-500 hover:bg-gray-600 rounded-lg shadow-sm"
           >
             Refund
-          </button>
+          </button> */}
         </div>
       </div>
     </nav>
