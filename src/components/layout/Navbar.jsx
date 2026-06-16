@@ -49,10 +49,10 @@ const Navbar = () => {
   // FETCH WALLET BALANCE
   // -----------------------------------------
   useEffect(() => {
-    // if (!user.user_id) return;
+   if (!user.user_id) return;
 
     const fetchBalance = async () => {
-      user.user_id = "RJ2903071";
+      // user.user_id = "RJ2903071";
       const vkid = user.user_id;
 
       setIsLoading(true);
