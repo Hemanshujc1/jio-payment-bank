@@ -51,10 +51,14 @@ const ReviewTransactionSection = ({
       if (res.status === "SUCCESS") {
         if (onProceed) onProceed(res);
       } else {
-        toast.error(res.message || res.error?.message || "Voucher redeem failed.");
+        toast.error(
+          res.message || res.error?.message || "Voucher redeem failed.",
+        );
       }
     } catch (err) {
-      toast.error(err?.data?.message || err?.message || "Voucher redeem failed.");
+      toast.error(
+        err?.data?.message || err?.message || "Voucher redeem failed.",
+      );
     } finally {
       setIsApiLoading(false);
     }
@@ -76,7 +80,8 @@ const ReviewTransactionSection = ({
               Application Number
             </span>
             <span className="text-[14px] sm:text-[15px] text-sand-900 font-extrabold text-right">
-              {applicationNumber}
+              {/* {applicationNumber} */}
+              {externalAppRefNumber}
             </span>
           </div>
 
@@ -113,7 +118,7 @@ const ReviewTransactionSection = ({
           {/* Amount To Refund */}
           <div className="flex justify-between items-center gap-4">
             <span className="text-[14px] sm:text-[15px] text-sand-500 font-bold">
-              Amount to be refund
+              Amount to be refunded
             </span>
             <span className="text-[14px] sm:text-[15px] text-sand-900 font-extrabold text-right">
               {amountToRefund}
@@ -187,7 +192,9 @@ const ReviewTransactionSection = ({
         <ProceedButton
           text={isApiLoading ? "PROCEEDING..." : "PROCEED"}
           onClick={handleProceedClick}
-          disabled={!refundConsentAccepted || !isBiometricVerified || isApiLoading}
+          disabled={
+            !refundConsentAccepted || !isBiometricVerified || isApiLoading
+          }
           className="w-full max-w-70 rounded-xl text-[14px] h-14 font-extrabold"
         />
       </div>

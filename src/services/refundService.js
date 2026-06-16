@@ -30,6 +30,21 @@ const refundService = {
       throw error;
     }
   },
+
+  /**
+   * Resends the voucher
+   * @param {Object} payload { mobileNumber, latitude, longitude, vkid }
+   */
+  resendVoucher: async (payload) => {
+    try {
+      const response = await apiClient.post("/voucher-resend", payload, {
+        baseURL: import.meta.env.VITE_REFUND_API_BASE_URL,
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 
 export default refundService;

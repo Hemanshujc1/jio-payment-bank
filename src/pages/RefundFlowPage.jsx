@@ -23,6 +23,7 @@ const RefundFlowPage = () => {
   const [verificationData, setVerificationData] = useState(null);
 
   const [isApiLoading, setIsApiLoading] = useState(false);
+  const [isResendLoading, setIsResendLoading] = useState(false);
 
   const [showSuccess, setShowSuccess] = useState(false);
   const [refundConsentData, setRefundConsentData] = useState(null);
@@ -61,15 +62,44 @@ const RefundFlowPage = () => {
           setVerificationData(res);
           toast.success("Verification successful!");
         } else {
-          toast.error(res.message || res.error?.message || "Verification failed.");
+          toast.error(
+            res.message || res.error?.message || "Verification failed.",
+          );
         }
       } catch (err) {
-        toast.error(err?.data?.message || err?.message || "Verification failed.");
+        toast.error(
+          err?.data?.message || err?.message || "Verification failed.",
+        );
       } finally {
         setIsApiLoading(false);
       }
     } else {
       toast.warning("Please enter a valid mobile number and voucher code.");
+    }
+  };
+
+  const handleResendVoucher = async () => {
+    if (MOBILE_REGEX.test(mobileNumber) && !isRepeatingDigits(mobileNumber)) {
+      setIsResendLoading(true);
+      try {
+        const payload = { mobileNumber };
+        const res = await refundService.resendVoucher(payload);
+        if (res.status === "SUCCESS") {
+          toast.success("Voucher sent successfully");
+        } else {
+          toast.error(
+            res.error?.message || res.message || "Failed to resend voucher.",
+          );
+        }
+      } catch (err) {
+        toast.error(
+          err?.message || err?.data?.message || "Failed to resend voucher.",
+        );
+      } finally {
+        setIsResendLoading(false);
+      }
+    } else {
+      toast.warning("Please enter a valid mobile number first.");
     }
   };
 
@@ -88,11 +118,24 @@ const RefundFlowPage = () => {
           <div className="w-full max-w-md mx-auto">
             {showSuccess ? (
               <RefundSuccessSection
-                applicationNumber={redeemData?.applicationNumber || verificationData?.applicationNumber}
-                transactionId={redeemData?.data?.voucherDetails?.[0]?.transactionId}
-                refundAmount={redeemData?.data?.voucherDetails?.[0]?.netAmount ? `Rs. ${redeemData.data.voucherDetails[0].netAmount}` : ""}
+                applicationNumber={
+                  redeemData?.applicationNumber ||
+                  verificationData?.applicationNumber
+                }
+                transactionId={
+                  redeemData?.data?.voucherDetails?.[0]?.transactionId
+                }
+                refundAmount={
+                  redeemData?.data?.voucherDetails?.[0]?.netAmount
+                    ? `Rs. ${redeemData.data.voucherDetails[0].netAmount}`
+                    : ""
+                }
                 mobileNumber={mobileNumber}
-                customerName={verificationData ? `${verificationData.data.persons[0].personalDetails.firstName} ${verificationData.data.persons[0].personalDetails.lastName}` : ""}
+                customerName={
+                  verificationData
+                    ? `${verificationData.data.persons[0].personalDetails.firstName} ${verificationData.data.persons[0].personalDetails.lastName}`
+                    : ""
+                }
                 onClose={() => {
                   handleReset();
                   navigate("/refund-flow");
@@ -100,16 +143,29 @@ const RefundFlowPage = () => {
               />
             ) : (
               <ReviewTransactionSection
-                customerName={verificationData ? [
-                  verificationData.data.persons[0].personalDetails.firstName,
-                  verificationData.data.persons[0].personalDetails.middleName,
-                  verificationData.data.persons[0].personalDetails.lastName
-                ].filter(Boolean).join(" ") : ""}
+                customerName={
+                  verificationData
+                    ? [
+                        verificationData.data.persons[0].personalDetails
+                          .firstName,
+                        verificationData.data.persons[0].personalDetails
+                          .middleName,
+                        verificationData.data.persons[0].personalDetails
+                          .lastName,
+                      ]
+                        .filter(Boolean)
+                        .join(" ")
+                    : ""
+                }
                 applicationNumber={verificationData?.applicationNumber}
                 externalAppRefNumber={verificationData?.externalAppRefNumber}
                 transactionType="Savings Account"
                 voucherCode={voucherCode}
-                amountToRefund={verificationData ? `Rs. ${verificationData.data.voucherDetails[0].netAmount}` : ""}
+                amountToRefund={
+                  verificationData
+                    ? `Rs. ${verificationData.data.voucherDetails[0].netAmount}`
+                    : ""
+                }
                 mobileNumber={mobileNumber}
                 refundConsentData={refundConsentData}
                 onProceed={(res) => {
@@ -207,26 +263,49 @@ const RefundFlowPage = () => {
 
               {/* Action Buttons */}
               {!isMobileVerified && (
-                <button
-                  onClick={handleProceedMobile}
-                  disabled={
-                    !MOBILE_REGEX.test(mobileNumber) ||
-                    isRepeatingDigits(mobileNumber) ||
-                    voucherCode.length !== 15 ||
-                    isRepeatingDigits(voucherCode) ||
-                    isApiLoading
-                  }
-                  className="mt-6 w-full h-11 bg-sand-500 text-sand-350 border border-brown-700 font-bold rounded-lg hover:bg-brown-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-[14px] flex items-center justify-center gap-2"
-                >
-                  {isApiLoading ? (
-                    <>
-                      <span className="w-4 h-4 border-2 border-sand-350 border-t-transparent rounded-full animate-spin"></span>
-                      Proceeding...
-                    </>
-                  ) : (
-                    "PROCEED"
-                  )}
-                </button>
+                <div className="mt-6 w-full flex gap-3">
+                  <button
+                    onClick={handleResendVoucher}
+                    disabled={
+                      !MOBILE_REGEX.test(mobileNumber) ||
+                      isRepeatingDigits(mobileNumber) ||
+                      isResendLoading ||
+                      isApiLoading
+                    }
+                    className="flex-1 h-11 bg-white text-sand-700 border border-sand-400 font-bold rounded-lg hover:bg-sand-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-[14px] flex items-center justify-center gap-2"
+                  >
+                    {isResendLoading ? (
+                      <>
+                        <span className="w-4 h-4 border-2 border-sand-500 border-t-transparent rounded-full animate-spin"></span>
+                        Sending...
+                      </>
+                    ) : (
+                      "RESEND VOUCHER"
+                    )}
+                  </button>
+
+                  <button
+                    onClick={handleProceedMobile}
+                    disabled={
+                      !MOBILE_REGEX.test(mobileNumber) ||
+                      isRepeatingDigits(mobileNumber) ||
+                      voucherCode.length !== 15 ||
+                      isRepeatingDigits(voucherCode) ||
+                      isApiLoading ||
+                      isResendLoading
+                    }
+                    className="flex-1 h-11 bg-sand-500 text-sand-350 border border-brown-700 font-bold rounded-lg hover:bg-brown-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-[14px] flex items-center justify-center gap-2"
+                  >
+                    {isApiLoading ? (
+                      <>
+                        <span className="w-4 h-4 border-2 border-sand-350 border-t-transparent rounded-full animate-spin"></span>
+                        Proceeding...
+                      </>
+                    ) : (
+                      "PROCEED"
+                    )}
+                  </button>
+                </div>
               )}
             </div>
           </>
