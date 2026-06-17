@@ -14,6 +14,7 @@ export const useOtpVerification = ({
   setIsMobileVerified,
   setShowEmailOtp,
   setIsEmailVerified,
+  variantDetails,
 }) => {
   const toast = useToast();
 
@@ -28,7 +29,8 @@ export const useOtpVerification = ({
       try {
         const response = await onboardingService.generateOtp(
           mobileNumber,
-          emailId
+          emailId,
+          variantDetails
         );
 
         if (response.applicationNumber)

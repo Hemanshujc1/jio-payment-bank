@@ -58,6 +58,16 @@ const OnboardingTab = ({
     isAllConsentsSelected,
   } = useConsents(language, setValue);
 
+  const variantDetails = {
+    subscriptionId: watch("onboarding.subscriptionId"),
+    schemeCode: watch("onboarding.schemeCode"),
+    network: watch("onboarding.network"),
+    region: watch("onboarding.region"),
+    cardType: watch("onboarding.cardType"),
+    tierType: watch("onboarding.tierType"),
+    issuanceFee: watch("onboarding.issuanceFee"),
+  };
+
   const {
     isApiLoading,
     isVerifyingOtp,
@@ -80,6 +90,7 @@ const OnboardingTab = ({
     setIsMobileVerified,
     setShowEmailOtp,
     setIsEmailVerified,
+    variantDetails,
   });
 
   const {

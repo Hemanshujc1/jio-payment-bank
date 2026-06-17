@@ -13,6 +13,7 @@ const CustomerOnboardingDetailsPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [stageFilter, setStageFilter] = useState("ALL");
   const [refundFilter, setRefundFilter] = useState("ALL");
+  const [cardOptedFilter, setCardOptedFilter] = useState("ALL");
   const [sortOrder, setSortOrder] = useState("NEWEST");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(30);
@@ -47,10 +48,15 @@ const CustomerOnboardingDetailsPage = () => {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, stageFilter, refundFilter, sortOrder, itemsPerPage]);
+  }, [searchTerm, stageFilter, refundFilter, cardOptedFilter, sortOrder, itemsPerPage]);
   const availableStages = useMemo(() => {
     const stages = new Set(customers.map((c) => c.stage).filter(Boolean));
     return ["ALL", ...Array.from(stages)];
+  }, [customers]);
+
+  const availableCardOpted = useMemo(() => {
+    const cards = new Set(customers.map((c) => c.cardOpted).filter(Boolean));
+    return ["ALL", ...Array.from(cards)];
   }, [customers]);
 
   const parseDateString = (dateStr) => {
@@ -87,7 +93,10 @@ const CustomerOnboardingDetailsPage = () => {
         (refundFilter === "TRUE" && customer.refundStatus === true) ||
         (refundFilter === "FALSE" && !customer.refundStatus);
 
-      return matchesSearch && matchesFilter && matchesRefund;
+      const matchesCardOpted =
+        cardOptedFilter === "ALL" || customer.cardOpted === cardOptedFilter;
+
+      return matchesSearch && matchesFilter && matchesRefund && matchesCardOpted;
     });
 
     // 2. Sort
@@ -102,7 +111,7 @@ const CustomerOnboardingDetailsPage = () => {
     });
 
     return result;
-  }, [customers, searchTerm, stageFilter, refundFilter, sortOrder]);
+  }, [customers, searchTerm, stageFilter, refundFilter, cardOptedFilter, sortOrder]);
 
   // Pagination calculations
   const totalPages = Math.ceil(processedCustomers.length / itemsPerPage) || 1;
@@ -118,7 +127,7 @@ const CustomerOnboardingDetailsPage = () => {
       "Application Number",
       "External Ref Number",
       "Mobile No",
-      "PAN No",
+      "Card Opted",
       "Refund Status",
       "Stage",
       "Date (Time)",
@@ -132,7 +141,7 @@ const CustomerOnboardingDetailsPage = () => {
         customer.applicationNumber || "",
         customer.externalAppRefNumber || "",
         customer.mobileNo || "",
-        customer.panNo || "",
+        customer.cardOpted || "",
         customer.refundStatus ? "Applicable" : "Not Applicable",
         customer.stage || "",
         customer.createdDateTime
@@ -210,10 +219,11 @@ const CustomerOnboardingDetailsPage = () => {
               >
                 <FaFilter className="text-brown-500" />
                 Filter
-                {(stageFilter !== "ALL" || refundFilter !== "ALL") && (
+                {(stageFilter !== "ALL" || refundFilter !== "ALL" || cardOptedFilter !== "ALL") && (
                   <span className="bg-brown-600 text-white text-xs px-2 py-0.5 rounded-full ml-1">
                     {(stageFilter !== "ALL" ? 1 : 0) +
-                      (refundFilter !== "ALL" ? 1 : 0)}
+                      (refundFilter !== "ALL" ? 1 : 0) +
+                      (cardOptedFilter !== "ALL" ? 1 : 0)}
                   </span>
                 )}
               </button>
@@ -381,7 +391,7 @@ const CustomerOnboardingDetailsPage = () => {
                       scope="col"
                       className="px-4 py-4 text-center text-sm font-semibold text-brown-700 uppercase tracking-wider"
                     >
-                      PAN No
+                      Card Opted
                     </th>
                     <th
                       scope="col"
@@ -407,7 +417,7 @@ const CustomerOnboardingDetailsPage = () => {
                   {paginatedCustomers.map((customer, index) => (
                     <tr
                       key={index}
-                      className="hover:bg-brown-50/50 transition-colors duration-150 divide-x divide-brown-100"
+                      className="hover:bg-brown-50/50 transition-colors duration-150 divide-x divide-brown-100 text-center"
                     >
                       <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-brown-900">
                         {customer.applicationNumber || "-"}
@@ -419,7 +429,7 @@ const CustomerOnboardingDetailsPage = () => {
                         {customer.mobileNo || "-"}
                       </td>
                       <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-brown-900">
-                        {customer.panNo || "-"}
+                        {customer.cardOpted || "-"}
                       </td>
                       <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-brown-900 text-center">
                         {customer.refundStatus ? (
@@ -623,11 +633,33 @@ const CustomerOnboardingDetailsPage = () => {
               </select>
             </div>
 
+            <div className="flex flex-col gap-2">
+              <label
+                htmlFor="sidebar-card-opted-filter"
+                className="text-sm font-medium text-brown-700"
+              >
+                Card Opted:
+              </label>
+              <select
+                id="sidebar-card-opted-filter"
+                value={cardOptedFilter}
+                onChange={(e) => setCardOptedFilter(e.target.value)}
+                className="w-full rounded-xl border-gray-300 shadow-sm focus:border-brown-500 focus:ring-brown-500 sm:text-sm py-2.5 pl-3 pr-10 border bg-white"
+              >
+                {availableCardOpted.map((card) => (
+                  <option key={card} value={card}>
+                    {card}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             <div className="pt-4 border-t border-gray-100">
               <button
                 onClick={() => {
                   setStageFilter("ALL");
                   setRefundFilter("ALL");
+                  setCardOptedFilter("ALL");
                 }}
                 className="w-full py-2.5 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition-colors"
               >

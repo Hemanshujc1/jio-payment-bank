@@ -34,9 +34,12 @@ const onboardingService = {
    * @param {string} mobileNumber
    * @param {string} emailId (Optional)
    */
-  generateOtp: async (mobileNumber, emailId = "") => {
+  generateOtp: async (mobileNumber, emailId = "", variantDetails = {}) => {
     try {
-      const payload = { mobileNumber };
+      const payload = { 
+        mobileNumber, 
+        addOn: variantDetails 
+      };
       if (emailId) {
         payload.emailId = emailId;
       }
