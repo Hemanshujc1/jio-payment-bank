@@ -49,7 +49,7 @@ const Navbar = () => {
   // FETCH WALLET BALANCE
   // -----------------------------------------
   useEffect(() => {
-   if (!user.user_id) return;
+    if (!user.user_id) return;
 
     const fetchBalance = async () => {
       // user.user_id = "RJ2903071";
@@ -107,8 +107,8 @@ const Navbar = () => {
   // -----------------------------------------
   // REFUND
   // -----------------------------------------
-  const refund = () => {
-    navigate("/refund-flow");
+  const customers = () => {
+    navigate("/customer-onboarding-details");
     setMenuOpen(false);
   };
 
@@ -142,7 +142,7 @@ const Navbar = () => {
             <span className="w-3 h-3 border-2 border-green-600 border-t-transparent rounded-full animate-spin"></span>
           ) : (
             <span className="text-[12px] sm:text-[14px] font-extrabold text-green-800">
-              ₹ {balance || "0.00"}
+              {balance || "0.00"}
             </span>
           )}
         </div>
@@ -185,12 +185,12 @@ const Navbar = () => {
               </p>
             </div>
 
-            {/* REFUND */}
+            {/* Customers */}
             <button
-              onClick={refund}
+              onClick={customers}
               className="w-full text-left px-4 py-3 text-[14px] font-semibold text-sand-900 hover:bg-sand-300 hover:text-brown-800 transition-colors"
             >
-              Refund
+              Customers Details
             </button>
 
             {/* LOGOUT */}

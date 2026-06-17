@@ -234,6 +234,21 @@ const onboardingService = {
       throw error;
     }
   },
+
+  /**
+   * Fetches customer onboarding details
+   * @param {Object} payload { vkid, latitude, longitude }
+   */
+  getCustomerDetails: async (payload) => {
+    try {
+      const response = await apiClient.post("/customer-details", payload, {
+        baseURL: import.meta.env.VITE_COMMON_API_BASE_URL,
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 
 export default onboardingService;
