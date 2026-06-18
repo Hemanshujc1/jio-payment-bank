@@ -125,7 +125,7 @@ const CustomerOnboardingDetailsPage = () => {
 
     const headers = [
       "Application Number",
-      "External Ref Number",
+      "Reference Number",
       "Mobile No",
       "Card Opted",
       "Refund Status",
@@ -134,6 +134,30 @@ const CustomerOnboardingDetailsPage = () => {
     ];
 
     const csvRows = [];
+
+    // Add filter information
+    csvRows.push(`"Applied Filters:"`);
+    if (searchTerm) {
+      csvRows.push(`"Search Term:","${searchTerm}"`);
+    }
+    csvRows.push(`"Stage Filter:","${stageFilter}"`);
+    csvRows.push(
+      `"Refund Filter:","${
+        refundFilter === "ALL"
+          ? "ALL"
+          : refundFilter === "TRUE"
+          ? "Applicable"
+          : "Not Applicable"
+      }"`
+    );
+    csvRows.push(`"Card Opted Filter:","${cardOptedFilter}"`);
+    csvRows.push(
+      `"Sort Order:","${
+        sortOrder === "NEWEST" ? "Newest First" : "Oldest First"
+      }"`
+    );
+    csvRows.push(""); // Empty row for spacing
+
     csvRows.push(headers.join(","));
 
     processedCustomers.forEach((customer) => {
@@ -158,7 +182,7 @@ const CustomerOnboardingDetailsPage = () => {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.setAttribute("download", "Customer Details.csv");
+    link.setAttribute("download", "Customer Onboarding Details.csv");
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -379,7 +403,7 @@ const CustomerOnboardingDetailsPage = () => {
                       scope="col"
                       className="px-4 py-4 text-center text-sm font-bold text-brown-700 uppercase tracking-wider"
                     >
-                      Ext Ref No
+                     Reference No
                     </th>
                     <th
                       scope="col"
