@@ -413,7 +413,7 @@ const CustomerOnboardingDetailsPage = () => {
                     </th>
                     <th
                       scope="col"
-                      className="px-4 py-4 text-center text-sm font-semibold text-brown-700 uppercase tracking-wider"
+                      className="px-4 py-4 text-center text-sm font-bold text-brown-700 uppercase tracking-wider"
                     >
                       Card Opted
                     </th>
