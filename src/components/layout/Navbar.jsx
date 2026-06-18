@@ -132,10 +132,16 @@ const Navbar = () => {
         className="relative flex items-center gap-3"
         onClick={(e) => e.stopPropagation()}
       >
+
+          {/* USER NAME */}
+          <span className="font-bold text-blue-700 text-[11px] sm:text-[14px] text-center whitespace-nowrap px-3 py-1 bg-blue-50 rounded-lg border border-blue-200 shadow-sm">
+            User Name: {user.user_name || "User"}
+          </span> 
+
         {/* WALLET */}
         <div className="flex items-center gap-2 px-3 py-2 bg-green-50 rounded-lg border border-green-200 shadow-sm">
           <span className="text-[10px] sm:text-[11px] font-bold text-green-600 uppercase">
-            Wallet:
+            Wallet Balance:
           </span>
 
           {isLoading && !balance ? (
@@ -177,10 +183,7 @@ const Navbar = () => {
           <div className="absolute right-0 top-14 w-56 bg-gray-200 rounded-xl border border-sand-200 shadow-xl z-50 overflow-hidden ring-1 ring-sand-900/5">
             {/* USER INFO */}
             <div className="px-4 py-3 bg-sand-50 border-b border-sand-200 text-left">
-              <p className="text-[14px] font-bold text-brown-800 truncate">
-                User: {user.user_name || "User"}
-              </p>
-              <p className="text-[12px] font-medium text-brown-600 mt-0.5 truncate">
+              <p className="text-[14px] font-medium text-brown-600 mt-0.5 truncate">
                 VK ID: {user.user_id || "-"}
               </p>
             </div>
