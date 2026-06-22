@@ -165,4 +165,4 @@ export default UserProfile;
 
 By following this pattern, your API logic remains decoupled from the UI, making it easier to maintain, test, and reuse across the application.
 
-// AAAPA1334A
+```
