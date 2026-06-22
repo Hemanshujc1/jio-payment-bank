@@ -21,7 +21,7 @@ const App = () => {
       .then((res) => {
         if (res.status === 401) {
           const currentUrl = encodeURIComponent(window.location.href);
-          console.log("App.jsx - Redirecting to backend for login. Target return URL:", window.location.href);
+          // console.log("App.jsx - Redirecting to backend for login. Target return URL:", window.location.href);
           window.location.href = `${backendUrl}?returnTo=${currentUrl}`;
           // window.location.href = `${backendUrl}`;
         } else {
@@ -29,7 +29,7 @@ const App = () => {
         }
       })
       .catch((err) => {
-        console.log("Server Error:", err);
+         console.error("Server Error:", err);
         window.location.href = `${backendUrl}`;
       });
   }, []);
