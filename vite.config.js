@@ -17,10 +17,10 @@ export default defineConfig(({ mode }) => {
       host: "localhost",
       port: 5173,
 
-      // https: {
-      //   key: fs.readFileSync("../backend/server.pem"),
-      //   cert: fs.readFileSync("../backend/server.crt"),
-      // },
+      https: {
+        key: fs.readFileSync("../backend/server.pem"),
+        cert: fs.readFileSync("../backend/server.crt"),
+      },
 
       proxy: {
         "/api": {
